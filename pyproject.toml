@@ -1,0 +1,32 @@
+[project]
+name = "wastewater-dashboard"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Nicholas Minor", email = "nicholasrminor@gmail.com" },
+    { name = "Devon Gregory", email = "virologistd@gmail.com" },
+    { name = "William Gardner", email = "wkgardner@wisc.edu" },
+]
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=2.2.2",
+    "pandas>=2.2.3",
+    "plotly[express]>=6.0.0",
+    "polars>=1.21.0",
+    "pysam>=0.22.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.26.0",
+    "loguru>=0.7.3",
+    "pytest>=8.3.4",
+    "ruff>=0.9.4",
+    "tox>=4.24.1",
+]
