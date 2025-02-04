@@ -3,7 +3,7 @@ name = "wastewater-dashboard"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "MIT"
 authors = [
     { name = "Nicholas Minor", email = "nicholasrminor@gmail.com" },
     { name = "Devon Gregory", email = "virologistd@gmail.com" },
@@ -11,12 +11,13 @@ authors = [
 ]
 requires-python = ">=3.10"
 dependencies = [
+    "altair[all]>=5.5.0",
     "ipykernel>=6.29.5",
     "jupyter>=1.1.1",
     "numpy>=2.2.2",
     "pandas>=2.2.3",
     "plotly[express]>=6.0.0",
-    "polars>=1.21.0",
+    "polars[async,excel,openpyxl,pandas,plot,pyarrow,xlsx2csv,xlsxwriter]>=1.21.0",
     "pysam>=0.22.1",
 ]
 
