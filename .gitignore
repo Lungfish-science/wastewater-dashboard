@@ -1,1 +1,32 @@
+*
+
+# project root exceptions
+!.gitignore
+!_quarto.yml
+!about.qmd
+!index.qmd
+!setup.qmd
+!styles.css
+!pyproject.toml
+!uv.lock
+!README.md
+!LICENSE
+!.python-version
+
+# python library code
+!/src
+!/src/wastewater_dashboard
+!/src/**/*.py
+
+# github workflows
+!/.github
+!/.github/workflows
+!/.github/workflows/*.yml
+!/.github/workflows/*.yaml
+
+# data folder
+!/data
+!/data/*.tsv.gz
+!/data/*.txt
+
 /.quarto/
