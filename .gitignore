@@ -29,4 +29,10 @@
 !/data/*.tsv.gz
 !/data/*.txt
 
+# plots folder
+!/plots
+!/plots/*.html
+!/plots/*.png
+!/plots/*.svg
+
 /.quarto/
