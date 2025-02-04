@@ -1,0 +1,9 @@
+---
+title: "Acknowledgements"
+toc: true
+format:
+    html:
+        embed-resources: true
+        keep-ipynb: false
+        code-copy: true
+---
