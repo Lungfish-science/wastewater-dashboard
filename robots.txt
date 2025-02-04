@@ -1,0 +1,1 @@
+Sitemap: https://inkfishmedical.github.io/wastewater-dashboard/sitemap.xml
