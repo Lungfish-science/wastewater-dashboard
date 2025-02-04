@@ -14,31 +14,31 @@ Monitoring wastewater for viruses allows observation of viral dynamics over larg
 
 ::: {.panel-tabset}
 
-## ORF1ab {width="100%"}
+## ORF1ab
 <iframe src="/plots/ORF1.html" width="100%" height="800"></iframe>
 
-## Spike {width="100%"}
+## Spike
 <iframe src="/plots/S.html" width="100%" height="800"></iframe>
 
-## ORF3a {width="100%"}
+## ORF3a
 <iframe src="/plots/ORF3a.html" width="100%" height="800"></iframe>
 
-## E {width="100%"}
+## E
 
-## M {width="100%"}
+## M
 
-## ORF6 {width="100%"}
+## ORF6
 
-## ORF7a {width="100%"}
+## ORF7a
 <iframe src="/plots/ORF7a.html" width="100%" height="800"></iframe>
 
-## ORF7b {width="100%"}
+## ORF7b
 <iframe src="/plots/ORF7b.html" width="100%" height="800"></iframe>
 
-## ORF8 {width="100%"}
+## ORF8
 <iframe src="/plots/ORF8.html" width="100%" height="800"></iframe>
 
-## N {width="100%"}
+## N
 <iframe src="/plots/N.html" width="100%" height="800"></iframe>
 
 ## ORF10
