@@ -1,5 +1,6 @@
 project:
   type: website
+  output-dir: docs
 
 website:
   title: "Inkfish Medical SARS-CoV-2 Wastewater Dashboard"
@@ -17,5 +18,6 @@ format:
     css: styles.css
     toc: true
 
-
+execute:
+  freeze: auto
 

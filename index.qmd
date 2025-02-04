@@ -1,12 +1,46 @@
 ---
-title: "Inkfish Medical SARS-CoV-2 Wastewater Dashboard"
-format: dashboard
+format:
+  dashboard:
+    scrolling: true 
 ---
 
-```{python}
-import plotly.express as px
-df = px.data.iris()
-fig = px.scatter(df, x="sepal_width", y="sepal_length", color="species",
-                 size='petal_length', hover_data=['petal_width'])
-fig.show()
-```
+:::{.card title="About Wastewater Monitoring" .flow}
+
+Monitoring wastewater for viruses allows observation of viral dynamics over large populations with relatively small effort, and especially with reduced clinical testing, a more accurate view of broad trends.  We download samples with SARS-CoV-2 sequences amplified from wastewater from NCBI's Sequence Read Archive (SRA).  From the samples, we track polymorphisms of SARS-CoV-2 and their abundances, comparing the most recent two consecutive three-week periods for which samples are available.  As JN.1 is the progenitor of most currently circulating strains, polymorphisms defining JN.1 were excluded from further analysis.  Metadata on the samples included in each analysis is provided, a small number of samples are excluded that have known complexities that could distort results.  Polymorphisms that appeared above a 2% threshold in either three-week period are displayed in a scatter plot.  Changes in abundance of polymorphisms allow us to track the circulation dynamics of their associated strains and observe the appearance of novel strains or polymorphisms.  Changes are denoted relative to the ancestral Wuhan-I strain. 
+
+:::
+
+## Row
+
+::: {.panel-tabset}
+
+## ORF1ab
+<iframe src="/plots/ORF1.html" width="100%" height="800"></iframe>
+
+## Spike
+<iframe src="/plots/S.html" width="100%" height="800"></iframe>
+
+## ORF3a
+<iframe src="/plots/ORF3a.html" width="100%" height="800"></iframe>
+
+## E
+
+## M
+
+## ORF6
+
+## ORF7a
+<iframe src="/plots/ORF7a.html" width="100%" height="800"></iframe>
+
+## ORF7b
+<iframe src="/plots/ORF7b.html" width="100%" height="800"></iframe>
+
+## ORF8
+<iframe src="/plots/ORF8.html" width="100%" height="800"></iframe>
+
+## N
+<iframe src="/plots/N.html" width="100%" height="800"></iframe>
+
+## ORF10
+
+:::
