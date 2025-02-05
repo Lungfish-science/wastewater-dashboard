@@ -78,6 +78,43 @@ class OrfDataset:
     chart: alt.LayerChart | None = None
 
 
+def setup_logging(level: int = 0) -> None:
+    """
+    Configure logging settings using loguru library.
+
+    Removes default handler and configures a new stderr handler with colorization and the requested
+    logging level.
+
+    Args:
+        level (int): Determines logging level:
+            0 = WARNING (default)
+            1 = SUCCESS
+            2 = INFO
+            3 = DEBUG
+
+    Returns:
+        None
+    """
+    # determine the correct logging level based on the optionally provided integer,
+    # defaulting to setting the level at warning.
+    match level:
+        case 0:
+            level_str = "WARNING"
+        case 1:
+            level_str = "SUCCESS"
+        case 2:
+            level_str = "INFO"
+        case 3:
+            level_str = "DEBUG"
+        case _:
+            level_str = "WARNING"
+
+    # get rid of the default logger loaded by loguru and replace it with a
+    # colorized logger that outputs to standard error at the requested level.
+    logger.remove()
+    logger.add(sys.stderr, colorize=True, level=level_str)
+
+
 def collect_orf_data(
     query_file: Path | str,
 ) -> OrfDataset:
@@ -313,8 +350,7 @@ def main() -> None:
     )
 
     # set up the logger to use standard error at the warning level
-    logger.remove()
-    logger.add(sys.stderr, colorize=True, level="WARNING")
+    setup_logging(0)
 
     # parse the two positional arguments as input directory paths
     search_dir = Path(sys.argv[1])

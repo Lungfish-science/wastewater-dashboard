@@ -28,6 +28,7 @@
 # data folder
 !/data
 !/data/*.tsv.gz
+!/data/*.tsv
 !/data/*.txt
 
 # plots folder
