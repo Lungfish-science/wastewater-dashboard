@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#     "altair[all]",
+#     "numpy",
+#     "pandas",
+# ]
+# ///
 
 # pyright: basic, reportUnknownMemberType=false, reportMissingTypeStubs=false
 
@@ -13,6 +21,7 @@ import altair as alt
 import numpy as np
 import pandas as pd
 
+# A list of supported ORF sames to be used in membership checks.
 SUPPORTED_ORFS = [
     "ORF1",
     "S",
@@ -26,8 +35,32 @@ SUPPORTED_ORFS = [
     "N",
     "ORF10",
 ]
-TRIWEEKS = ("W1", "W2")
+
+# The labels for the two weeks to compare
+COMPARISON_WEEKS = ("Week N - 1", "Week N")
+
+# String literal constant to represent the possible output formats. Type checkers will
+# enforce that the user select only from these options.
 OUTPUT_FORMAT: Literal["html", "svg", "png", "pdf"] = "html"
+
+# String literal constant to represent the supported altair themes. Type checkers will
+# enforce that the user select only from these options.
+ALTAIR_THEME: Literal[
+    "default",
+    "dark",
+    "excel",
+    "fivethirtyeight",
+    "ggplot2",
+    "googlecharts",
+    "latimes",
+    "powerbi",
+    "quartz",
+    "urbaninstitute",
+    "vox",
+] = "default"
+
+# The height of the plot in pixels.
+PLOT_HEIGHT = 600
 
 
 @dataclass
@@ -96,27 +129,29 @@ def find_plotting_files(
 
 def parse_plotting_files(
     orf_files: list[OrfDataset],
-    triweeks: tuple[str, str],
+    comparison_weeks: tuple[str, str],
 ) -> list[OrfDataset]:
     """
     Reads a list of ORF data files and processes the data into numeric values.
 
     Args:
         orf_files (list[OrfFile]): List of OrfFile dataclass objects containing file metadata
-        triweeks (tuple[str, str]): Tuple containing the two triweek labels to process
+        comparison_weeks (tuple[str, str]): Tuple containing the two week labels to process
 
     Returns:
         list[OrfFile]: The input OrfFile objects with their dataframes populated
     """
+    # for each file, loop through and fill a parsed dataframe into the OrfDataset's
+    # df field
     for file in orf_files:
         orf_df = pd.read_csv(
             file.path,
             sep="\t",
             encoding="utf-8",
             header=None,
-            names=["Change", "Vars", "W1", "W2"],
+            names=["Amino Acid Substitution", "Associated Variants", "Week N - 1", "Week N"],
         )
-        for triweek in triweeks:
+        for triweek in comparison_weeks:
             orf_df[triweek] = pd.to_numeric(orf_df[triweek])
             orf_df["y"] = np.where(orf_df[triweek] < 0.01, 0.01, orf_df[triweek])  # noqa: PLR2004
             orf_df[triweek] = orf_df["y"]
@@ -144,10 +179,17 @@ def render_scatter_plot(
     Raises:
         AssertionError: If the orf_bundle's dataframe is None
     """
+    # Use an assertion to check our assumption that this function will only ever be
+    # called when the dataframe field of our OrfDataset instance has been filled
     assert orf_bundle.df is not None
+
+    # set the altair theme using the constant above
+    alt.theme.enable(ALTAIR_THEME)
+
+    # render the scatterplot base
     scatter = (
         alt.Chart(orf_bundle.df)
-        .mark_circle(size=60)
+        .mark_circle(size=120)
         .encode(
             x=alt.X(
                 f"{triweeks[0]}:Q",
@@ -159,17 +201,18 @@ def render_scatter_plot(
                 scale=alt.Scale(type="log", domain=[0.01, 1]),
                 title=triweeks[1],
             ),
-            color=alt.Color("Change:N"),
-            tooltip=["Change", "Vars"],
+            color=alt.Color("Amino Acid Substitution:N"),
+            tooltip=["Amino Acid Substitution", "Associated Variants"],
         )
     )
+
+    # render the diagonal line
     line_data = pd.DataFrame(
         {
             triweeks[0]: [0.01, 1],
             triweeks[1]: [0.01, 1],
         },
     )
-
     line = (
         alt.Chart(line_data)
         .mark_line(
@@ -186,9 +229,13 @@ def render_scatter_plot(
     combined_chart = scatter + line
 
     # add the interactive chart to the Orf bundle and return
-    orf_bundle.chart = combined_chart.interactive().properties(
-        width="container",
-        height=500,
+    orf_bundle.chart = (
+        combined_chart.interactive()
+        .properties(
+            width="container",
+            height=PLOT_HEIGHT,
+        )
+        .configure_axis(labelFontSize=14, titleFontSize=14)
     )
 
     return orf_bundle
@@ -206,10 +253,17 @@ def render_all_plots(search_dir: Path | str, output_dir: str | Path) -> None:
     Returns:
         None
     """
+    # find all the files available for plotting and collect them into a list of OrfDataset objects
     plotting_files = find_plotting_files(search_dir, SUPPORTED_ORFS)
-    orf_data = parse_plotting_files(plotting_files, TRIWEEKS)
-    final_data_bundles = [render_scatter_plot(orf_bundle, TRIWEEKS) for orf_bundle in orf_data]
 
+    # parse the file for each orf dataset into dataframes
+    orf_data = parse_plotting_files(plotting_files, COMPARISON_WEEKS)
+
+    # use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
+    # OrfDataset as well
+    final_data_bundles = [render_scatter_plot(orf_bundle, COMPARISON_WEEKS) for orf_bundle in orf_data]
+
+    # for each fine dataset, write out the rendered plot in the requested format
     for orf_dataset in final_data_bundles:
         if orf_dataset.chart is None:
             continue

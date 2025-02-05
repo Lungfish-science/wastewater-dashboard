@@ -24,10 +24,13 @@ Monitoring wastewater for viruses allows observation of viral dynamics over larg
 <iframe src="/plots/ORF3a.html" width="100%" height="800"></iframe>
 
 ## E
+<iframe src="/plots/E.html" width="100%" height="800"></iframe>
 
 ## M
+<iframe src="/plots/M.html" width="100%" height="800"></iframe>
 
 ## ORF6
+<iframe src="/plots/ORF6.html" width="100%" height="800"></iframe>
 
 ## ORF7a
 <iframe src="/plots/ORF7a.html" width="100%" height="800"></iframe>
@@ -42,5 +45,6 @@ Monitoring wastewater for viruses allows observation of viral dynamics over larg
 <iframe src="/plots/N.html" width="100%" height="800"></iframe>
 
 ## ORF10
+<iframe src="/plots/ORF10.html" width="100%" height="800"></iframe>
 
 :::
