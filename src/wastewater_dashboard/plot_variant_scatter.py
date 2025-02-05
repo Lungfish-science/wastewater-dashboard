@@ -3,6 +3,7 @@
 # requires-python = ">=3.10"
 # dependencies = [
 #     "altair[all]",
+#     "loguru",
 #     "numpy",
 #     "pandas",
 # ]
@@ -20,6 +21,7 @@ from typing import Literal
 import altair as alt
 import numpy as np
 import pandas as pd
+from loguru import logger
 
 # A list of supported ORF sames to be used in membership checks.
 SUPPORTED_ORFS = [
@@ -274,8 +276,13 @@ def render_all_plots(search_dir: Path | str, output_dir: str | Path) -> None:
             orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.png")
         elif OUTPUT_FORMAT == "svg":
             orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.svg")
+        elif OUTPUT_FORMAT == "pdf":
+            orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.pdf")
         else:
-            pass
+            # this branch should be unreachable because all the literals in the OUTPUT_FORMAT
+            # constant have been covered.
+            logger.warning("Unsupported output format requested. Defaulting to HTML.")
+            orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.html")
 
 
 def main() -> None:
