@@ -10,41 +10,232 @@ Monitoring wastewater for viruses allows observation of viral dynamics over larg
 
 :::
 
-## Row
+```{python}
+import sys
+
+from wastewater_dashboard.plot_variant_scatter import (
+    collect_orf_data,
+    parse_plotting_files,
+    render_scatter_plot,
+)
+from pathlib import Path
+```
+
+##
 
 ::: {.panel-tabset}
 
 ## ORF1ab
-<iframe src="/plots/ORF1.html" width="100%" height="800"></iframe>
+
+```{python}
+ORF_TSV = "data/ORF1.plot.tsv.gz"
+
+if Path(ORF_TSV).is_file():
+  orf_dataset = collect_orf_data(ORF_TSV)
+  with_dfs = parse_plotting_files([orf_dataset])
+  final_dataset = render_scatter_plot(with_dfs[0])
+
+  final_dataset.chart
+```
 
 ## Spike
-<iframe src="/plots/S.html" width="100%" height="800"></iframe>
+
+```{python}
+ORF_TSV = "data/S.plot.tsv.gz"
+
+if Path(ORF_TSV).is_file():
+  orf_dataset = collect_orf_data(ORF_TSV)
+  with_dfs = parse_plotting_files([orf_dataset])[0]
+  final_dataset = render_scatter_plot(with_dfs)
+
+  final_dataset.chart
+else:
+  orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
+  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs.df = with_dfs.df.iloc[0:0]
+  final_dataset = render_scatter_plot(with_dfs)
+
+  final_dataset.chart
+```
 
 ## ORF3a
-<iframe src="/plots/ORF3a.html" width="100%" height="800"></iframe>
+
+```{python}
+ORF_TSV = "data/ORF3a.plot.tsv.gz"
+
+if Path(ORF_TSV).is_file():
+  orf_dataset = collect_orf_data(ORF_TSV)
+  with_dfs = parse_plotting_files([orf_dataset])
+  final_dataset = render_scatter_plot(with_dfs[0])
+
+  final_dataset.chart
+else:
+  orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
+  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs.df = with_dfs.df.iloc[0:0]
+  final_dataset = render_scatter_plot(with_dfs)
+
+  final_dataset.chart
+```
 
 ## E
-<iframe src="/plots/E.html" width="100%" height="800"></iframe>
+
+```{python}
+ORF_TSV = "data/E.plot.tsv.gz"
+
+if Path(ORF_TSV).is_file():
+  orf_dataset = collect_orf_data(ORF_TSV)
+  with_dfs = parse_plotting_files([orf_dataset])
+  final_dataset = render_scatter_plot(with_dfs[0])
+
+  final_dataset.chart.show()
+else:
+  orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
+  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs.df = with_dfs.df.iloc[0:0]
+  final_dataset = render_scatter_plot(with_dfs)
+
+  final_dataset.chart.show()
+```
 
 ## M
-<iframe src="/plots/M.html" width="100%" height="800"></iframe>
+
+```{python}
+ORF_TSV = "data/M.plot.tsv.gz"
+
+if Path(ORF_TSV).is_file():
+  orf_dataset = collect_orf_data(ORF_TSV)
+  with_dfs = parse_plotting_files([orf_dataset])
+  final_dataset = render_scatter_plot(with_dfs[0])
+
+  final_dataset.chart.show()
+else:
+  orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
+  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs.df = with_dfs.df.iloc[0:0]
+  final_dataset = render_scatter_plot(with_dfs)
+
+  final_dataset.chart.show()
+```
 
 ## ORF6
-<iframe src="/plots/ORF6.html" width="100%" height="800"></iframe>
+
+```{python}
+ORF_TSV = "data/ORF6.plot.tsv.gz"
+
+if Path(ORF_TSV).is_file():
+  orf_dataset = collect_orf_data(ORF_TSV)
+  with_dfs = parse_plotting_files([orf_dataset])
+  final_dataset = render_scatter_plot(with_dfs[0])
+
+  final_dataset.chart.show()
+else:
+  orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
+  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs.df = with_dfs.df.iloc[0:0]
+  final_dataset = render_scatter_plot(with_dfs)
+
+  final_dataset.chart.show()
+```
 
 ## ORF7a
-<iframe src="/plots/ORF7a.html" width="100%" height="800"></iframe>
+
+```{python}
+ORF_TSV  = "data/ORF7a.plot.tsv.gz"
+
+if Path(ORF_TSV).is_file():
+  orf_dataset = collect_orf_data(ORF_TSV)
+  with_dfs = parse_plotting_files([orf_dataset])
+  final_dataset = render_scatter_plot(with_dfs[0])
+
+  final_dataset.chart
+else:
+  orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
+  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs.df = with_dfs.df.iloc[0:0]
+  final_dataset = render_scatter_plot(with_dfs)
+
+  final_dataset.chart
+```
 
 ## ORF7b
-<iframe src="/plots/ORF7b.html" width="100%" height="800"></iframe>
+
+```{python}
+ORF_TSV  = "data/ORF7b.plot.tsv.gz"
+
+if Path(ORF_TSV).is_file():
+  orf_dataset = collect_orf_data(ORF_TSV)
+  with_dfs = parse_plotting_files([orf_dataset])
+  final_dataset = render_scatter_plot(with_dfs[0])
+
+  final_dataset.chart
+else:
+  orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
+  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs.df = with_dfs.df.iloc[0:0]
+  final_dataset = render_scatter_plot(with_dfs)
+
+  final_dataset.chart
+```
 
 ## ORF8
-<iframe src="/plots/ORF8.html" width="100%" height="800"></iframe>
+
+```{python}
+ORF_TSV  = "data/ORF8.plot.tsv.gz"
+
+if Path(ORF_TSV).is_file():
+  orf_dataset = collect_orf_data(ORF_TSV)
+  with_dfs = parse_plotting_files([orf_dataset])
+  final_dataset = render_scatter_plot(with_dfs[0])
+
+  final_dataset.chart
+else:
+  orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
+  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs.df = with_dfs.df.iloc[0:0]
+  final_dataset = render_scatter_plot(with_dfs)
+
+  final_dataset.chart
+```
 
 ## N
-<iframe src="/plots/N.html" width="100%" height="800"></iframe>
+
+```{python}
+ORF_TSV  = "data/N.plot.tsv.gz"
+
+if Path(ORF_TSV).is_file():
+  orf_dataset = collect_orf_data(ORF_TSV)
+  with_dfs = parse_plotting_files([orf_dataset])
+  final_dataset = render_scatter_plot(with_dfs[0])
+
+  final_dataset.chart
+else:
+  orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
+  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs.df = with_dfs.df.iloc[0:0]
+  final_dataset = render_scatter_plot(with_dfs)
+
+  final_dataset.chart
+```
 
 ## ORF10
-<iframe src="/plots/ORF10.html" width="100%" height="800"></iframe>
+
+```{python}
+ORF_TSV  = "data/ORF10.plot.tsv.gz"
+
+if Path(ORF_TSV).is_file():
+  orf_dataset = collect_orf_data(ORF_TSV)
+  with_dfs = parse_plotting_files([orf_dataset])
+  final_dataset = render_scatter_plot(with_dfs[0])
+
+  final_dataset.chart
+else:
+  orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
+  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs.df = with_dfs.df.iloc[0:0]
+  final_dataset = render_scatter_plot(with_dfs)
+
+  final_dataset.chart
+```
 
 :::

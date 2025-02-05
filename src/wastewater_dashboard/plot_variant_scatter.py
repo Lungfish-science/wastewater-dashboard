@@ -80,14 +80,12 @@ class OrfDataset:
 
 def collect_orf_data(
     query_file: Path | str,
-    expected_orfs: list[str],
 ) -> OrfDataset:
     """
     Parses a provided file path and extracts the ORF name, validating it is supported.
 
     Args:
         query_file (Path | str): Path to the input data file
-        expected_orfs (list[str]): List of valid ORF names to validate against
 
     Returns:
         OrfFile: A dataclass containing the parsed ORF name and file path
@@ -103,8 +101,8 @@ def collect_orf_data(
     orf = path.stem.replace(".plot.tsv", "")
 
     # check that the parsed ORF is one of the expected ORFs
-    if len(expected_orfs) > 0:
-        assert orf in expected_orfs, (
+    if len(SUPPORTED_ORFS) > 0:
+        assert orf in SUPPORTED_ORFS, (
             f"The ORF, '{orf}', parsed from the file name '{query_file}' did not matched the provided list of expected ORFs."
         )
 
@@ -114,31 +112,27 @@ def collect_orf_data(
 
 def find_plotting_files(
     search_dir: Path | str,
-    supported_orfs: list[str],
 ) -> list[OrfDataset]:
     """
     Searches a specified directory for plotting files, filters the dataset, and converts each file into an OrfFile dataclass.
 
     Args:
         search_dir (Path | str): Directory path to search for plotting files
-        supported_orfs (list[str]): List of valid ORF names to validate against
 
     Returns:
         list[OrfFile]: A list of parsed OrfFile dataclass objects containing file metadata
     """
-    return [collect_orf_data(file, supported_orfs) for file in Path(search_dir).glob("*plot.tsv.gz")]
+    return [collect_orf_data(file) for file in Path(search_dir).glob("*plot.tsv.gz")]
 
 
 def parse_plotting_files(
     orf_files: list[OrfDataset],
-    comparison_weeks: tuple[str, str],
 ) -> list[OrfDataset]:
     """
     Reads a list of ORF data files and processes the data into numeric values.
 
     Args:
         orf_files (list[OrfFile]): List of OrfFile dataclass objects containing file metadata
-        comparison_weeks (tuple[str, str]): Tuple containing the two week labels to process
 
     Returns:
         list[OrfFile]: The input OrfFile objects with their dataframes populated
@@ -153,7 +147,7 @@ def parse_plotting_files(
             header=None,
             names=["Amino Acid Substitution", "Associated Variants", "Week N - 1", "Week N"],
         )
-        for triweek in comparison_weeks:
+        for triweek in COMPARISON_WEEKS:
             orf_df[triweek] = pd.to_numeric(orf_df[triweek])
             orf_df["y"] = np.where(orf_df[triweek] < 0.01, 0.01, orf_df[triweek])  # noqa: PLR2004
             orf_df[triweek] = orf_df["y"]
@@ -166,14 +160,12 @@ def parse_plotting_files(
 
 def render_scatter_plot(
     orf_bundle: OrfDataset,
-    triweeks: tuple[str, str],
 ) -> OrfDataset:
     """
     Generates an interactive scatter plot for a given ORF dataset.
 
     Args:
         orf_bundle (OrfFile): A dataclass containing the ORF data and metadata
-        triweeks (tuple[str, str]): Tuple containing the two triweek labels to plot
 
     Returns:
         OrfFile: The input OrfFile object with its chart attribute populated
@@ -194,14 +186,14 @@ def render_scatter_plot(
         .mark_circle(size=120)
         .encode(
             x=alt.X(
-                f"{triweeks[0]}:Q",
+                f"{COMPARISON_WEEKS[0]}:Q",
                 scale=alt.Scale(type="log", domain=[0.01, 1]),
-                title=triweeks[0],
+                title=COMPARISON_WEEKS[0],
             ),
             y=alt.Y(
-                f"{triweeks[1]}:Q",
+                f"{COMPARISON_WEEKS[1]}:Q",
                 scale=alt.Scale(type="log", domain=[0.01, 1]),
-                title=triweeks[1],
+                title=COMPARISON_WEEKS[1],
             ),
             color=alt.Color("Amino Acid Substitution:N"),
             tooltip=["Amino Acid Substitution", "Associated Variants"],
@@ -211,8 +203,8 @@ def render_scatter_plot(
     # render the diagonal line
     line_data = pd.DataFrame(
         {
-            triweeks[0]: [0.01, 1],
-            triweeks[1]: [0.01, 1],
+            COMPARISON_WEEKS[0]: [0.01, 1],
+            COMPARISON_WEEKS[1]: [0.01, 1],
         },
     )
     line = (
@@ -222,8 +214,8 @@ def render_scatter_plot(
             color="black",
         )
         .encode(
-            x=alt.X(f"{triweeks[0]}:Q", scale=alt.Scale(type="log", domain=[0.01, 1])),
-            y=alt.Y(f"{triweeks[1]}:Q", scale=alt.Scale(type="log", domain=[0.01, 1])),
+            x=alt.X(f"{COMPARISON_WEEKS[0]}:Q", scale=alt.Scale(type="log", domain=[0.01, 1])),
+            y=alt.Y(f"{COMPARISON_WEEKS[1]}:Q", scale=alt.Scale(type="log", domain=[0.01, 1])),
         )
     )
 
@@ -256,14 +248,14 @@ def render_all_plots(search_dir: Path | str, output_dir: str | Path) -> None:
         None
     """
     # find all the files available for plotting and collect them into a list of OrfDataset objects
-    plotting_files = find_plotting_files(search_dir, SUPPORTED_ORFS)
+    plotting_files = find_plotting_files(search_dir)
 
     # parse the file for each orf dataset into dataframes
-    orf_data = parse_plotting_files(plotting_files, COMPARISON_WEEKS)
+    orf_data = parse_plotting_files(plotting_files)
 
     # use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
     # OrfDataset as well
-    final_data_bundles = [render_scatter_plot(orf_bundle, COMPARISON_WEEKS) for orf_bundle in orf_data]
+    final_data_bundles = [render_scatter_plot(orf_bundle) for orf_bundle in orf_data]
 
     # for each fine dataset, write out the rendered plot in the requested format
     for orf_dataset in final_data_bundles:
