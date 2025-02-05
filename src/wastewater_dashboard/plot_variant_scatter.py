@@ -145,7 +145,12 @@ def parse_plotting_files(
             sep="\t",
             encoding="utf-8",
             header=None,
-            names=["Amino Acid Substitution", "Associated Variants", "Week N - 1", "Week N"],
+            names=[
+                "Amino Acid Substitution",
+                "Associated Variants",
+                "Week N - 1",
+                "Week N",
+            ],
         )
         for triweek in COMPARISON_WEEKS:
             orf_df[triweek] = pd.to_numeric(orf_df[triweek])
@@ -156,6 +161,38 @@ def parse_plotting_files(
         file.df = orf_df
 
     return orf_files
+
+
+def render_diag_line() -> alt.Chart:
+    """
+    Renders a diagonal line as an Altair chart component for visual reference.
+
+    Returns:
+        alt.Chart: An altair chart object representing a diagonal line from (0.01, 0.01) to (1, 1) with dashed black styling
+    """
+    line_data = pd.DataFrame(
+        {
+            COMPARISON_WEEKS[0]: [0.01, 1],
+            COMPARISON_WEEKS[1]: [0.01, 1],
+        },
+    )
+    return (
+        alt.Chart(line_data)
+        .mark_line(
+            strokeDash=[5, 5],  # This sets a dashed style
+            color="black",
+        )
+        .encode(
+            x=alt.X(
+                f"{COMPARISON_WEEKS[0]}:Q",
+                scale=alt.Scale(type="log", domain=[0.01, 1]),
+            ),
+            y=alt.Y(
+                f"{COMPARISON_WEEKS[1]}:Q",
+                scale=alt.Scale(type="log", domain=[0.01, 1]),
+            ),
+        )
+    )
 
 
 def render_scatter_plot(
@@ -181,7 +218,7 @@ def render_scatter_plot(
     alt.theme.enable(ALTAIR_THEME)
 
     # render the scatterplot base
-    scatter = (
+    scatter_chart = (
         alt.Chart(orf_bundle.df)
         .mark_circle(size=120)
         .encode(
@@ -201,28 +238,13 @@ def render_scatter_plot(
     )
 
     # render the diagonal line
-    line_data = pd.DataFrame(
-        {
-            COMPARISON_WEEKS[0]: [0.01, 1],
-            COMPARISON_WEEKS[1]: [0.01, 1],
-        },
-    )
-    line = (
-        alt.Chart(line_data)
-        .mark_line(
-            strokeDash=[5, 5],  # This sets a dashed style
-            color="black",
-        )
-        .encode(
-            x=alt.X(f"{COMPARISON_WEEKS[0]}:Q", scale=alt.Scale(type="log", domain=[0.01, 1])),
-            y=alt.Y(f"{COMPARISON_WEEKS[1]}:Q", scale=alt.Scale(type="log", domain=[0.01, 1])),
-        )
-    )
+    line_chart = render_diag_line()
 
     # Combine the scatter plot and the line into one chart
-    combined_chart = scatter + line
+    combined_chart = scatter_chart + line_chart
 
-    # add the interactive chart to the Orf bundle and return
+    # set the chart to be interactive, make it auto-size to the user's screen width,
+    # and make the text on the axes a little bigger
     orf_bundle.chart = (
         combined_chart.interactive()
         .properties(
@@ -259,7 +281,11 @@ def render_all_plots(search_dir: Path | str, output_dir: str | Path) -> None:
 
     # for each fine dataset, write out the rendered plot in the requested format
     for orf_dataset in final_data_bundles:
+        # skip to the next dataset if no chart has been generated
         if orf_dataset.chart is None:
+            logger.warning(
+                f"The scatter plot for {orf_dataset.orf} was missing and will be skipped. However, this may indicate that functions in this module are being run in an incorrect order.",
+            )
             continue
 
         if OUTPUT_FORMAT == "html":
@@ -281,12 +307,23 @@ def main() -> None:
     """
     Program entrypoint if run as an executable script
     """
+    # make sure the required arguments are provided
     assert len(sys.argv) == 3, (  # noqa: PLR2004
         "Usage: plot_variant_scatter.py <SEARCH_DIR> <OUTPUT_DIR>"
     )
+
+    # set up the logger to use standard error at the warning level
+    logger.remove()
+    logger.add(sys.stderr, colorize=True, level="WARNING")
+
+    # parse the two positional arguments as input directory paths
     search_dir = Path(sys.argv[1])
     output_dir = Path(sys.argv[2])
+
+    # make sure the input path exists
     assert search_dir.is_dir(), f"The provided path, '{search_dir}', does not exist."
+
+    # render all the plots
     render_all_plots(search_dir, output_dir)
 
 
