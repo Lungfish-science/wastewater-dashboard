@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
+# pyright: basic, reportUnknownMemberType=false, reportMissingTypeStubs=false
+
 from __future__ import annotations
 
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Literal
 
 import altair as alt
 import numpy as np
@@ -24,11 +27,16 @@ SUPPORTED_ORFS = [
     "ORF10",
 ]
 TRIWEEKS = ("W1", "W2")
-OUTPUT_FORMAT = "html"
+OUTPUT_FORMAT: Literal["html", "svg", "png", "pdf"] = "html"
 
 
 @dataclass
-class OrfFile:
+class OrfDataset:
+    """
+    A state-machine dataclass for containing metadata for each orf dataset alongside
+    each ORF's dataframe and rendered altair chart.
+    """
+
     orf: str
     path: Path | str
     df: pd.DataFrame | None = None
@@ -38,7 +46,20 @@ class OrfFile:
 def collect_orf_data(
     query_file: Path | str,
     expected_orfs: list[str],
-) -> OrfFile:
+) -> OrfDataset:
+    """
+    Parses a provided file path and extracts the ORF name, validating it is supported.
+
+    Args:
+        query_file (Path | str): Path to the input data file
+        expected_orfs (list[str]): List of valid ORF names to validate against
+
+    Returns:
+        OrfFile: A dataclass containing the parsed ORF name and file path
+
+    Raises:
+        AssertionError: If filename format is invalid or ORF is not in expected list
+    """
     # make sure the provided file name has the expected extension
     assert "plot.tsv.gz" in str(query_file), "Unsupported file name supplied."
 
@@ -53,14 +74,40 @@ def collect_orf_data(
         )
 
     # return the ORF information as a dataclass (this could also be a named tuple)
-    return OrfFile(orf, path)
+    return OrfDataset(orf, path)
 
 
-def find_plotting_files(search_dir: Path | str, supported_orfs: list[str]) -> list[OrfFile]:
+def find_plotting_files(
+    search_dir: Path | str,
+    supported_orfs: list[str],
+) -> list[OrfDataset]:
+    """
+    Searches a specified directory for plotting files, filters the dataset, and converts each file into an OrfFile dataclass.
+
+    Args:
+        search_dir (Path | str): Directory path to search for plotting files
+        supported_orfs (list[str]): List of valid ORF names to validate against
+
+    Returns:
+        list[OrfFile]: A list of parsed OrfFile dataclass objects containing file metadata
+    """
     return [collect_orf_data(file, supported_orfs) for file in Path(search_dir).glob("*plot.tsv.gz")]
 
 
-def parse_plotting_files(orf_files: list[OrfFile], triweeks: tuple[str, str]) -> list[OrfFile]:
+def parse_plotting_files(
+    orf_files: list[OrfDataset],
+    triweeks: tuple[str, str],
+) -> list[OrfDataset]:
+    """
+    Reads a list of ORF data files and processes the data into numeric values.
+
+    Args:
+        orf_files (list[OrfFile]): List of OrfFile dataclass objects containing file metadata
+        triweeks (tuple[str, str]): Tuple containing the two triweek labels to process
+
+    Returns:
+        list[OrfFile]: The input OrfFile objects with their dataframes populated
+    """
     for file in orf_files:
         orf_df = pd.read_csv(
             file.path,
@@ -71,7 +118,7 @@ def parse_plotting_files(orf_files: list[OrfFile], triweeks: tuple[str, str]) ->
         )
         for triweek in triweeks:
             orf_df[triweek] = pd.to_numeric(orf_df[triweek])
-            orf_df["y"] = np.where(orf_df[triweek] < 0.01, 0.01, orf_df[triweek])
+            orf_df["y"] = np.where(orf_df[triweek] < 0.01, 0.01, orf_df[triweek])  # noqa: PLR2004
             orf_df[triweek] = orf_df["y"]
             orf_df[triweek] = pd.to_numeric(orf_df[triweek])
 
@@ -80,7 +127,23 @@ def parse_plotting_files(orf_files: list[OrfFile], triweeks: tuple[str, str]) ->
     return orf_files
 
 
-def render_scatter_plot(orf_bundle: OrfFile, triweeks: tuple[str, str]) -> OrfFile:
+def render_scatter_plot(
+    orf_bundle: OrfDataset,
+    triweeks: tuple[str, str],
+) -> OrfDataset:
+    """
+    Generates an interactive scatter plot for a given ORF dataset.
+
+    Args:
+        orf_bundle (OrfFile): A dataclass containing the ORF data and metadata
+        triweeks (tuple[str, str]): Tuple containing the two triweek labels to plot
+
+    Returns:
+        OrfFile: The input OrfFile object with its chart attribute populated
+
+    Raises:
+        AssertionError: If the orf_bundle's dataframe is None
+    """
     assert orf_bundle.df is not None
     scatter = (
         alt.Chart(orf_bundle.df)
@@ -123,12 +186,26 @@ def render_scatter_plot(orf_bundle: OrfFile, triweeks: tuple[str, str]) -> OrfFi
     combined_chart = scatter + line
 
     # add the interactive chart to the Orf bundle and return
-    orf_bundle.chart = combined_chart.interactive().properties(width="container", height=500)
+    orf_bundle.chart = combined_chart.interactive().properties(
+        width="container",
+        height=500,
+    )
 
     return orf_bundle
 
 
 def render_all_plots(search_dir: Path | str, output_dir: str | Path) -> None:
+    """
+    Renders scatter plots for all valid ORF files in a specified directory and saves them as
+    output files in a specified format.
+
+    Args:
+        search_dir (Path | str): Directory path to search for plotting files
+        output_dir (str | Path): Directory path to save rendered plot files
+
+    Returns:
+        None
+    """
     plotting_files = find_plotting_files(search_dir, SUPPORTED_ORFS)
     orf_data = parse_plotting_files(plotting_files, TRIWEEKS)
     final_data_bundles = [render_scatter_plot(orf_bundle, TRIWEEKS) for orf_bundle in orf_data]
@@ -148,7 +225,12 @@ def render_all_plots(search_dir: Path | str, output_dir: str | Path) -> None:
 
 
 def main() -> None:
-    assert len(sys.argv) == 3, "Usage: plot_variant_scatter.py <SEARCH_DIR> <OUTPUT_DIR>"  # noqa: PLR2004
+    """
+    Program entrypoint if run as an executable script
+    """
+    assert len(sys.argv) == 3, (  # noqa: PLR2004
+        "Usage: plot_variant_scatter.py <SEARCH_DIR> <OUTPUT_DIR>"
+    )
     search_dir = Path(sys.argv[1])
     output_dir = Path(sys.argv[2])
     assert search_dir.is_dir(), f"The provided path, '{search_dir}', does not exist."
