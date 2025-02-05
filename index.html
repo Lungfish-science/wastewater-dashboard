@@ -23,7 +23,7 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -74,6 +74,9 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -131,7 +134,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 
 <div class="bslib-grid-item html-fill-item bslib-grid" data-layout="flow" style="display: grid; grid-template-rows: minmax(3em, max-content) minmax(3em, max-content); grid-auto-columns: minmax(0, 1fr);">
-<div class="card flow bslib-card html-fill-container" data-fill="false" data-title="About Wastewater Monitoring" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card flow bslib-card html-fill-container" data-title="About Wastewater Monitoring" data-fill="false" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-header"><div class="card-title"><span style="display: inline">
 About Wastewater Monitoring
 </span></div></div>
@@ -152,48 +155,895 @@ grid-auto-rows: minmax(0, 1fr);">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">ORF1ab</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Spike</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">ORF3a</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">E</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false">M</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-6" role="tab" aria-controls="tabset-1-6" aria-selected="false">ORF6</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-7-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-7" role="tab" aria-controls="tabset-1-7" aria-selected="false">ORF7a</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-8-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-8" role="tab" aria-controls="tabset-1-8" aria-selected="false">ORF7b</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-9-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-9" role="tab" aria-controls="tabset-1-9" aria-selected="false">ORF8</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-10-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-10" role="tab" aria-controls="tabset-1-10" aria-selected="false">N</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-11-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-11" role="tab" aria-controls="tabset-1-11" aria-selected="false">ORF10</a></li></ul>
 <div class="tab-content html-fill-item html-fill-container">
 <div id="tabset-1-1" class="tab-pane active html-fill-item html-fill-container" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-<iframe src="./plots/ORF1.html" width="100%" height="800">
-</iframe>
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="2">
+
+<style>
+  #altair-viz-0a39b527e523442caa51f6cf4dc45d22.vega-embed {
+    width: 100%;
+    display: flex;
+  }
+
+  #altair-viz-0a39b527e523442caa51f6cf4dc45d22.vega-embed details,
+  #altair-viz-0a39b527e523442caa51f6cf4dc45d22.vega-embed details summary {
+    position: relative;
+  }
+</style>
+<div id="altair-viz-0a39b527e523442caa51f6cf4dc45d22" class="html-fill-item html-fill-container"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-0a39b527e523442caa51f6cf4dc45d22") {
+      outputDiv = document.getElementById("altair-viz-0a39b527e523442caa51f6cf4dc45d22");
+    }
+
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm/vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm/vega-lite@5.20.1?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm/vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      let deps = ["vega-embed"];
+      require(deps, displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "5.20.1"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "axis": {"labelFontSize": 14, "titleFontSize": 14}, "legend": {"labelFontSize": 12, "titleFontSize": 12}, "header": {"labelFontSize": 13, "titleFontSize": 13}, "title": {"fontSize": 15}, "mark": {"fontSize": 12}}, "height": 600, "width": "container", "layer": [{"data": {"name": "data-1863b3c56760bb3ba39be5f62b8ad617"}, "mark": {"type": "circle", "size": 120}, "encoding": {"color": {"field": "Amino Acid Substitution", "type": "nominal"}, "tooltip": [{"field": "Amino Acid Substitution", "type": "nominal"}, {"field": "Associated Variants", "type": "nominal"}], "x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N - 1", "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N", "type": "quantitative"}}, "name": "view_1"}, {"data": {"name": "data-ae6838f0a780e6fb004e787ed5e0a49f"}, "mark": {"type": "line", "color": "black", "strokeDash": [5, 5]}, "encoding": {"x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}}}], "params": [{"name": "param_1", "select": {"type": "interval", "encodings": ["x", "y"]}, "bind": "scales", "views": ["view_1"]}], "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-1863b3c56760bb3ba39be5f62b8ad617": [{"Amino Acid Substitution": "VM84-85del", "Associated Variants": null, "Week N - 1": 0.016188, "Week N": 0.031073, "y": 0.031073}, {"Amino Acid Substitution": "H110Y", "Associated Variants": "XEK", "Week N - 1": 0.033114, "Week N": 0.032327, "y": 0.032327}, {"Amino Acid Substitution": "184fs", "Associated Variants": null, "Week N - 1": 0.025001, "Week N": 0.01, "y": 0.01}, {"Amino Acid Substitution": "A599T", "Associated Variants": "XEC*", "Week N - 1": 0.345071, "Week N": 0.329508, "y": 0.329508}, {"Amino Acid Substitution": "R1225I", "Associated Variants": null, "Week N - 1": 0.01, "Week N": 0.020467, "y": 0.020467}, {"Amino Acid Substitution": "I1367L", "Associated Variants": "KP.3.3.4,XEC.2,XEP", "Week N - 1": 0.063116, "Week N": 0.039283, "y": 0.039283}, {"Amino Acid Substitution": "D1639N", "Associated Variants": "NC.1.1", "Week N - 1": 0.015493, "Week N": 0.021573, "y": 0.021573}, {"Amino Acid Substitution": "A1997V", "Associated Variants": "LP.8,LP.11", "Week N - 1": 0.084557, "Week N": 0.141962, "y": 0.141962}, {"Amino Acid Substitution": "T2283I", "Associated Variants": "JN.1.11.1,XDV,KU.2", "Week N - 1": 0.450093, "Week N": 0.349972, "y": 0.349972}, {"Amino Acid Substitution": "S2285F", "Associated Variants": null, "Week N - 1": 0.01, "Week N": 0.025972, "y": 0.025972}, {"Amino Acid Substitution": "S2535L", "Associated Variants": "LF.7", "Week N - 1": 0.012126, "Week N": 0.042944, "y": 0.042944}, {"Amino Acid Substitution": "A2554S", "Associated Variants": null, "Week N - 1": 0.01, "Week N": 0.048094, "y": 0.048094}, {"Amino Acid Substitution": "V3056I", "Associated Variants": null, "Week N - 1": 0.014678, "Week N": 0.021364, "y": 0.021364}, {"Amino Acid Substitution": "K3353R", "Associated Variants": "MC.10.2,JN.1.52", "Week N - 1": 0.020545, "Week N": 0.01, "y": 0.01}, {"Amino Acid Substitution": "H3580Y", "Associated Variants": null, "Week N - 1": 0.031746, "Week N": 0.010572, "y": 0.010572}, {"Amino Acid Substitution": "R3821K", "Associated Variants": "JN.1", "Week N - 1": 0.987067, "Week N": 0.9897, "y": 0.9897}, {"Amino Acid Substitution": "L4111F", "Associated Variants": null, "Week N - 1": 0.01, "Week N": 0.029002, "y": 0.029002}, {"Amino Acid Substitution": "S4286C", "Associated Variants": "KP.3.1.1", "Week N - 1": 0.300544, "Week N": 0.264411, "y": 0.264411}, {"Amino Acid Substitution": "K4900N", "Associated Variants": null, "Week N - 1": 0.022407, "Week N": 0.021802, "y": 0.021802}, {"Amino Acid Substitution": "S5560I", "Associated Variants": null, "Week N - 1": 0.020896, "Week N": 0.024576, "y": 0.024576}, {"Amino Acid Substitution": "T5956I", "Associated Variants": null, "Week N - 1": 0.036203, "Week N": 0.028885, "y": 0.028885}], "data-ae6838f0a780e6fb004e787ed5e0a49f": [{"Week N - 1": 0.01, "Week N": 0.01}, {"Week N - 1": 1.0, "Week N": 1.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
 <div id="tabset-1-2" class="tab-pane html-fill-item html-fill-container" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<iframe src="./plots/S.html" width="100%" height="800">
-</iframe>
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="3">
+
+<style>
+  #altair-viz-f14a288ae62941518313724f221e7c41.vega-embed {
+    width: 100%;
+    display: flex;
+  }
+
+  #altair-viz-f14a288ae62941518313724f221e7c41.vega-embed details,
+  #altair-viz-f14a288ae62941518313724f221e7c41.vega-embed details summary {
+    position: relative;
+  }
+</style>
+<div id="altair-viz-f14a288ae62941518313724f221e7c41" class="html-fill-item html-fill-container"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-f14a288ae62941518313724f221e7c41") {
+      outputDiv = document.getElementById("altair-viz-f14a288ae62941518313724f221e7c41");
+    }
+
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm/vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm/vega-lite@5.20.1?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm/vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      let deps = ["vega-embed"];
+      require(deps, displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "5.20.1"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "axis": {"labelFontSize": 14, "titleFontSize": 14}, "legend": {"labelFontSize": 12, "titleFontSize": 12}, "header": {"labelFontSize": 13, "titleFontSize": 13}, "title": {"fontSize": 15}, "mark": {"fontSize": 12}}, "height": 600, "width": "container", "layer": [{"data": {"name": "data-1036d888c5cd09d2daafd37c6aae04e4"}, "mark": {"type": "circle", "size": 120}, "encoding": {"color": {"field": "Amino Acid Substitution", "type": "nominal"}, "tooltip": [{"field": "Amino Acid Substitution", "type": "nominal"}, {"field": "Associated Variants", "type": "nominal"}], "x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N - 1", "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N", "type": "quantitative"}}, "name": "view_2"}, {"data": {"name": "data-ae6838f0a780e6fb004e787ed5e0a49f"}, "mark": {"type": "line", "color": "black", "strokeDash": [5, 5]}, "encoding": {"x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}}}], "params": [{"name": "param_2", "select": {"type": "interval", "encodings": ["x", "y"]}, "bind": "scales", "views": ["view_2"]}], "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-1036d888c5cd09d2daafd37c6aae04e4": [{"Amino Acid Substitution": "L5F", "Associated Variants": "ND.1.1.1", "Week N - 1": 0.01, "Week N": 0.021642, "y": 0.021642}, {"Amino Acid Substitution": "V16VMPLF", "Associated Variants": null, "Week N - 1": 0.036189, "Week N": 0.035535, "y": 0.035535}, {"Amino Acid Substitution": "T22N", "Associated Variants": "XEC*,LF.7,LJ.1,KP.2.18,MU.3,KP.2.2.1,MB.1.1,MJ.1.1,XEL,KP.2.14,XEN,XDV.1.7.1...", "Week N - 1": 0.473114, "Week N": 0.550647, "y": 0.550647}, {"Amino Acid Substitution": "NS30-31Ndel", "Associated Variants": null, "Week N - 1": 0.4574, "Week N": 0.443728, "y": 0.443728}, {"Amino Acid Substitution": "S31P", "Associated Variants": "LF.7,MJ.1,KP.2.26,NF.1,KP.3.2.6,MT.1,JN.1.40", "Week N - 1": 0.029229, "Week N": 0.043542, "y": 0.043542}, {"Amino Acid Substitution": "L56V", "Associated Variants": "KP.2.11,MJ.2.1.1", "Week N - 1": 0.01, "Week N": 0.056395, "y": 0.056395}, {"Amino Acid Substitution": "F59L", "Associated Variants": "MD.1.2,NJ.1,KP.2.2,JN.1.11.2,KR.1.1", "Week N - 1": 0.01, "Week N": 0.054304, "y": 0.054304}, {"Amino Acid Substitution": "F59S", "Associated Variants": "XEC*,JN.1.18.6,KS.1,XDR.1,KP.1.1.5,JN.1.18.2,MN.1,KP.2.10,NB.1,KP.3.1.8,JN.1.42.1,KR.1.4...", "Week N - 1": 0.435534, "Week N": 0.510532, "y": 0.510532}, {"Amino Acid Substitution": "K182R", "Associated Variants": "LF.7,LB.1.3.3,KP.2.2.2,XEC.1,MC.15", "Week N - 1": 0.029698, "Week N": 0.047517, "y": 0.047517}, {"Amino Acid Substitution": "Q183H", "Associated Variants": "LB.1,LY.2,JN.1.9,JN.1.32.1", "Week N - 1": 0.027206, "Week N": 0.0109, "y": 0.0109}, {"Amino Acid Substitution": "F186L", "Associated Variants": "LP.8.1,LP.8.2", "Week N - 1": 0.054449, "Week N": 0.085726, "y": 0.085726}, {"Amino Acid Substitution": "R190S", "Associated Variants": "LP.8.1,LF.7,NL.1,LP.1.2,LP.7,LB.1.4.1,MA.1,KP.4.2.4,JN.1.59.1,NC.1,NK.1", "Week N - 1": 0.11029, "Week N": 0.179079, "y": 0.179079}, {"Amino Acid Substitution": "A344S", "Associated Variants": null, "Week N - 1": 0.021299, "Week N": 0.01, "y": 0.01}, {"Amino Acid Substitution": "R346T", "Associated Variants": "MC.19,JN.1.16.1,KP.2,JN.1.18,KS.1,KP.4.1,LG.1,MF.1,JN.1.39.2,KQ.1,XDD.1.1.1,JN.1.8.2...", "Week N - 1": 0.139492, "Week N": 0.159484, "y": 0.159484}, {"Amino Acid Substitution": "D428Y", "Associated Variants": null, "Week N - 1": 0.01, "Week N": 0.021732, "y": 0.021732}, {"Amino Acid Substitution": "A435S", "Associated Variants": "MC.10.1,KP.3.3.2,XEP,MC.28.1,MC.13.2,XDY.1,KP.3.3.5,KP.3.7,MU.2.1.1,XDV.1.9.1,LP.10.1.1,MC.21.1", "Week N - 1": 0.047365, "Week N": 0.049268, "y": 0.049268}, {"Amino Acid Substitution": "K444R", "Associated Variants": "LF.7,NA.1.1,JN.1.23,JN.1.61", "Week N - 1": 0.036397, "Week N": 0.039683, "y": 0.039683}, {"Amino Acid Substitution": "V445R", "Associated Variants": "MC.19.1,LP.8,MK.3", "Week N - 1": 0.075317, "Week N": 0.123326, "y": 0.123326}, {"Amino Acid Substitution": "V445P", "Associated Variants": "LB.1.3.1,LF.3.1,MA.1.1.1,LP.1.2.1,LB.1.10,NC.1.2,JN.1.1.8,NN.1,MU.5,JN.1.50,NS.1.1,LP.9...", "Week N - 1": 0.042427, "Week N": 0.050328, "y": 0.050328}, {"Amino Acid Substitution": "L455S", "Associated Variants": "JN.1", "Week N - 1": 0.908303, "Week N": 0.917152, "y": 0.917152}, {"Amino Acid Substitution": "F456L", "Associated Variants": "JN.1.11.1,JN.1.16,KS.1,XDV.1,JN.1.55.2,LZ.2,LM.1,LR.1,XDR.1.1,JN.1.29.1,XDD.3,JN.1.67.1...", "Week N - 1": 0.981448, "Week N": 0.953758, "y": 0.953758}, {"Amino Acid Substitution": "Q493E", "Associated Variants": "KP.3,LP.8,XEF,XDY,XET,KP.3.4,JN.1.16.4,JN.1.16.5,XEQ", "Week N - 1": 0.821062, "Week N": 0.831133, "y": 0.831133}, {"Amino Acid Substitution": "T572I", "Associated Variants": "MC.1,XEC.4,JN.1.7,LD.1,KV.2,JN.1.9.1,XDD.3,KP.2.27,KP.2.9,LB.1.2.2,MC.8.1,JN.1.4.3...", "Week N - 1": 0.089143, "Week N": 0.090799, "y": 0.090799}, {"Amino Acid Substitution": "K1086R", "Associated Variants": "KP.1.1,KP.1", "Week N - 1": 0.086208, "Week N": 0.121159, "y": 0.121159}, {"Amino Acid Substitution": "V1104L", "Associated Variants": "JN.1.11,XEF,XDY,LB.1.1,XEQ", "Week N - 1": 0.881443, "Week N": 0.849452, "y": 0.849452}], "data-ae6838f0a780e6fb004e787ed5e0a49f": [{"Week N - 1": 0.01, "Week N": 0.01}, {"Week N - 1": 1.0, "Week N": 1.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
 <div id="tabset-1-3" class="tab-pane html-fill-item html-fill-container" role="tabpanel" aria-labelledby="tabset-1-3-tab">
-<iframe src="./plots/ORF3a.html" width="100%" height="800">
-</iframe>
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="4">
+
+<style>
+  #altair-viz-bf734002845849cfbc08b53baa1b3791.vega-embed {
+    width: 100%;
+    display: flex;
+  }
+
+  #altair-viz-bf734002845849cfbc08b53baa1b3791.vega-embed details,
+  #altair-viz-bf734002845849cfbc08b53baa1b3791.vega-embed details summary {
+    position: relative;
+  }
+</style>
+<div id="altair-viz-bf734002845849cfbc08b53baa1b3791" class="html-fill-item html-fill-container"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-bf734002845849cfbc08b53baa1b3791") {
+      outputDiv = document.getElementById("altair-viz-bf734002845849cfbc08b53baa1b3791");
+    }
+
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm/vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm/vega-lite@5.20.1?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm/vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      let deps = ["vega-embed"];
+      require(deps, displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "5.20.1"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "axis": {"labelFontSize": 14, "titleFontSize": 14}, "legend": {"labelFontSize": 12, "titleFontSize": 12}, "header": {"labelFontSize": 13, "titleFontSize": 13}, "title": {"fontSize": 15}, "mark": {"fontSize": 12}}, "height": 600, "width": "container", "layer": [{"data": {"name": "data-6666a2532a2a5ed2dd9b296b6bf857bc"}, "mark": {"type": "circle", "size": 120}, "encoding": {"color": {"field": "Amino Acid Substitution", "type": "nominal"}, "tooltip": [{"field": "Amino Acid Substitution", "type": "nominal"}, {"field": "Associated Variants", "type": "nominal"}], "x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N - 1", "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N", "type": "quantitative"}}, "name": "view_3"}, {"data": {"name": "data-ae6838f0a780e6fb004e787ed5e0a49f"}, "mark": {"type": "line", "color": "black", "strokeDash": [5, 5]}, "encoding": {"x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}}}], "params": [{"name": "param_3", "select": {"type": "interval", "encodings": ["x", "y"]}, "bind": "scales", "views": ["view_3"]}], "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-6666a2532a2a5ed2dd9b296b6bf857bc": [{"Amino Acid Substitution": "P178L", "Associated Variants": "LP.8,LP.11", "Week N - 1": 0.088706, "Week N": 0.147462, "y": 0.147462}], "data-ae6838f0a780e6fb004e787ed5e0a49f": [{"Week N - 1": 0.01, "Week N": 0.01}, {"Week N - 1": 1.0, "Week N": 1.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
 <div id="tabset-1-4" class="tab-pane html-fill-item html-fill-container" role="tabpanel" aria-labelledby="tabset-1-4-tab">
-<iframe src="./plots/E.html" width="100%" height="800">
-</iframe>
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+
+<style>
+  #altair-viz-973253a93f964ddfafea2188a8c98ded.vega-embed {
+    width: 100%;
+    display: flex;
+  }
+
+  #altair-viz-973253a93f964ddfafea2188a8c98ded.vega-embed details,
+  #altair-viz-973253a93f964ddfafea2188a8c98ded.vega-embed details summary {
+    position: relative;
+  }
+</style>
+<div id="altair-viz-973253a93f964ddfafea2188a8c98ded" class="html-fill-item html-fill-container"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-973253a93f964ddfafea2188a8c98ded") {
+      outputDiv = document.getElementById("altair-viz-973253a93f964ddfafea2188a8c98ded");
+    }
+
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm/vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm/vega-lite@5.20.1?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm/vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      let deps = ["vega-embed"];
+      require(deps, displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "5.20.1"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "axis": {"labelFontSize": 14, "titleFontSize": 14}, "legend": {"labelFontSize": 12, "titleFontSize": 12}, "header": {"labelFontSize": 13, "titleFontSize": 13}, "title": {"fontSize": 15}, "mark": {"fontSize": 12}}, "height": 600, "width": "container", "layer": [{"data": {"name": "data-4f53cda18c2baa0c0354bb5f9a3ecbe5"}, "mark": {"type": "circle", "size": 120}, "encoding": {"color": {"field": "Amino Acid Substitution", "type": "nominal"}, "tooltip": [{"field": "Amino Acid Substitution", "type": "nominal"}, {"field": "Associated Variants", "type": "nominal"}], "x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N - 1", "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N", "type": "quantitative"}}, "name": "view_4"}, {"data": {"name": "data-ae6838f0a780e6fb004e787ed5e0a49f"}, "mark": {"type": "line", "color": "black", "strokeDash": [5, 5]}, "encoding": {"x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}}}], "params": [{"name": "param_4", "select": {"type": "interval", "encodings": ["x", "y"]}, "bind": "scales", "views": ["view_4"]}], "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-4f53cda18c2baa0c0354bb5f9a3ecbe5": [], "data-ae6838f0a780e6fb004e787ed5e0a49f": [{"Week N - 1": 0.01, "Week N": 0.01}, {"Week N - 1": 1.0, "Week N": 1.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
 <div id="tabset-1-5" class="tab-pane html-fill-item html-fill-container" role="tabpanel" aria-labelledby="tabset-1-5-tab">
-<iframe src="./plots/M.html" width="100%" height="800">
-</iframe>
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+
+<style>
+  #altair-viz-b00b0160e1a44e05a7983f0486887fa3.vega-embed {
+    width: 100%;
+    display: flex;
+  }
+
+  #altair-viz-b00b0160e1a44e05a7983f0486887fa3.vega-embed details,
+  #altair-viz-b00b0160e1a44e05a7983f0486887fa3.vega-embed details summary {
+    position: relative;
+  }
+</style>
+<div id="altair-viz-b00b0160e1a44e05a7983f0486887fa3" class="html-fill-item html-fill-container"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-b00b0160e1a44e05a7983f0486887fa3") {
+      outputDiv = document.getElementById("altair-viz-b00b0160e1a44e05a7983f0486887fa3");
+    }
+
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm/vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm/vega-lite@5.20.1?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm/vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      let deps = ["vega-embed"];
+      require(deps, displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "5.20.1"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "axis": {"labelFontSize": 14, "titleFontSize": 14}, "legend": {"labelFontSize": 12, "titleFontSize": 12}, "header": {"labelFontSize": 13, "titleFontSize": 13}, "title": {"fontSize": 15}, "mark": {"fontSize": 12}}, "height": 600, "width": "container", "layer": [{"data": {"name": "data-4f53cda18c2baa0c0354bb5f9a3ecbe5"}, "mark": {"type": "circle", "size": 120}, "encoding": {"color": {"field": "Amino Acid Substitution", "type": "nominal"}, "tooltip": [{"field": "Amino Acid Substitution", "type": "nominal"}, {"field": "Associated Variants", "type": "nominal"}], "x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N - 1", "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N", "type": "quantitative"}}, "name": "view_5"}, {"data": {"name": "data-ae6838f0a780e6fb004e787ed5e0a49f"}, "mark": {"type": "line", "color": "black", "strokeDash": [5, 5]}, "encoding": {"x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}}}], "params": [{"name": "param_5", "select": {"type": "interval", "encodings": ["x", "y"]}, "bind": "scales", "views": ["view_5"]}], "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-4f53cda18c2baa0c0354bb5f9a3ecbe5": [], "data-ae6838f0a780e6fb004e787ed5e0a49f": [{"Week N - 1": 0.01, "Week N": 0.01}, {"Week N - 1": 1.0, "Week N": 1.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
 <div id="tabset-1-6" class="tab-pane html-fill-item html-fill-container" role="tabpanel" aria-labelledby="tabset-1-6-tab">
-<iframe src="./plots/ORF6.html" width="100%" height="800">
-</iframe>
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+
+<style>
+  #altair-viz-714ba58b7eff4a3eb4a3d7a1c745a332.vega-embed {
+    width: 100%;
+    display: flex;
+  }
+
+  #altair-viz-714ba58b7eff4a3eb4a3d7a1c745a332.vega-embed details,
+  #altair-viz-714ba58b7eff4a3eb4a3d7a1c745a332.vega-embed details summary {
+    position: relative;
+  }
+</style>
+<div id="altair-viz-714ba58b7eff4a3eb4a3d7a1c745a332" class="html-fill-item html-fill-container"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-714ba58b7eff4a3eb4a3d7a1c745a332") {
+      outputDiv = document.getElementById("altair-viz-714ba58b7eff4a3eb4a3d7a1c745a332");
+    }
+
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm/vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm/vega-lite@5.20.1?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm/vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      let deps = ["vega-embed"];
+      require(deps, displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "5.20.1"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "axis": {"labelFontSize": 14, "titleFontSize": 14}, "legend": {"labelFontSize": 12, "titleFontSize": 12}, "header": {"labelFontSize": 13, "titleFontSize": 13}, "title": {"fontSize": 15}, "mark": {"fontSize": 12}}, "height": 600, "width": "container", "layer": [{"data": {"name": "data-4f53cda18c2baa0c0354bb5f9a3ecbe5"}, "mark": {"type": "circle", "size": 120}, "encoding": {"color": {"field": "Amino Acid Substitution", "type": "nominal"}, "tooltip": [{"field": "Amino Acid Substitution", "type": "nominal"}, {"field": "Associated Variants", "type": "nominal"}], "x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N - 1", "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N", "type": "quantitative"}}, "name": "view_6"}, {"data": {"name": "data-ae6838f0a780e6fb004e787ed5e0a49f"}, "mark": {"type": "line", "color": "black", "strokeDash": [5, 5]}, "encoding": {"x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}}}], "params": [{"name": "param_6", "select": {"type": "interval", "encodings": ["x", "y"]}, "bind": "scales", "views": ["view_6"]}], "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-4f53cda18c2baa0c0354bb5f9a3ecbe5": [], "data-ae6838f0a780e6fb004e787ed5e0a49f": [{"Week N - 1": 0.01, "Week N": 0.01}, {"Week N - 1": 1.0, "Week N": 1.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
 <div id="tabset-1-7" class="tab-pane html-fill-item html-fill-container" role="tabpanel" aria-labelledby="tabset-1-7-tab">
-<iframe src="./plots/ORF7a.html" width="100%" height="800">
-</iframe>
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="8">
+
+<style>
+  #altair-viz-6fcca4a8e24b485a99c72a7c16c50642.vega-embed {
+    width: 100%;
+    display: flex;
+  }
+
+  #altair-viz-6fcca4a8e24b485a99c72a7c16c50642.vega-embed details,
+  #altair-viz-6fcca4a8e24b485a99c72a7c16c50642.vega-embed details summary {
+    position: relative;
+  }
+</style>
+<div id="altair-viz-6fcca4a8e24b485a99c72a7c16c50642" class="html-fill-item html-fill-container"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-6fcca4a8e24b485a99c72a7c16c50642") {
+      outputDiv = document.getElementById("altair-viz-6fcca4a8e24b485a99c72a7c16c50642");
+    }
+
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm/vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm/vega-lite@5.20.1?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm/vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      let deps = ["vega-embed"];
+      require(deps, displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "5.20.1"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "axis": {"labelFontSize": 14, "titleFontSize": 14}, "legend": {"labelFontSize": 12, "titleFontSize": 12}, "header": {"labelFontSize": 13, "titleFontSize": 13}, "title": {"fontSize": 15}, "mark": {"fontSize": 12}}, "height": 600, "width": "container", "layer": [{"data": {"name": "data-182212cbd01b8239710419e99103bd21"}, "mark": {"type": "circle", "size": 120}, "encoding": {"color": {"field": "Amino Acid Substitution", "type": "nominal"}, "tooltip": [{"field": "Amino Acid Substitution", "type": "nominal"}, {"field": "Associated Variants", "type": "nominal"}], "x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N - 1", "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N", "type": "quantitative"}}, "name": "view_7"}, {"data": {"name": "data-ae6838f0a780e6fb004e787ed5e0a49f"}, "mark": {"type": "line", "color": "black", "strokeDash": [5, 5]}, "encoding": {"x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}}}], "params": [{"name": "param_7", "select": {"type": "interval", "encodings": ["x", "y"]}, "bind": "scales", "views": ["view_7"]}], "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-182212cbd01b8239710419e99103bd21": [{"Amino Acid Substitution": "T28I", "Associated Variants": "LB.1.3.1,JN.1.8.1,JN.1.8", "Week N - 1": 0.040705, "Week N": 0.038605, "y": 0.038605}], "data-ae6838f0a780e6fb004e787ed5e0a49f": [{"Week N - 1": 0.01, "Week N": 0.01}, {"Week N - 1": 1.0, "Week N": 1.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
 <div id="tabset-1-8" class="tab-pane html-fill-item html-fill-container" role="tabpanel" aria-labelledby="tabset-1-8-tab">
-<iframe src="./plots/ORF7b.html" width="100%" height="800">
-</iframe>
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="9">
+
+<style>
+  #altair-viz-f416d321b56141a9bd08213cf82fa042.vega-embed {
+    width: 100%;
+    display: flex;
+  }
+
+  #altair-viz-f416d321b56141a9bd08213cf82fa042.vega-embed details,
+  #altair-viz-f416d321b56141a9bd08213cf82fa042.vega-embed details summary {
+    position: relative;
+  }
+</style>
+<div id="altair-viz-f416d321b56141a9bd08213cf82fa042" class="html-fill-item html-fill-container"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-f416d321b56141a9bd08213cf82fa042") {
+      outputDiv = document.getElementById("altair-viz-f416d321b56141a9bd08213cf82fa042");
+    }
+
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm/vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm/vega-lite@5.20.1?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm/vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      let deps = ["vega-embed"];
+      require(deps, displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "5.20.1"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "axis": {"labelFontSize": 14, "titleFontSize": 14}, "legend": {"labelFontSize": 12, "titleFontSize": 12}, "header": {"labelFontSize": 13, "titleFontSize": 13}, "title": {"fontSize": 15}, "mark": {"fontSize": 12}}, "height": 600, "width": "container", "layer": [{"data": {"name": "data-babf377ccfc3d1d67c98c1967575dfee"}, "mark": {"type": "circle", "size": 120}, "encoding": {"color": {"field": "Amino Acid Substitution", "type": "nominal"}, "tooltip": [{"field": "Amino Acid Substitution", "type": "nominal"}, {"field": "Associated Variants", "type": "nominal"}], "x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N - 1", "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N", "type": "quantitative"}}, "name": "view_8"}, {"data": {"name": "data-ae6838f0a780e6fb004e787ed5e0a49f"}, "mark": {"type": "line", "color": "black", "strokeDash": [5, 5]}, "encoding": {"x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}}}], "params": [{"name": "param_8", "select": {"type": "interval", "encodings": ["x", "y"]}, "bind": "scales", "views": ["view_8"]}], "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-babf377ccfc3d1d67c98c1967575dfee": [{"Amino Acid Substitution": "F19L", "Associated Variants": "JN.1", "Week N - 1": 0.713398, "Week N": 0.717801, "y": 0.717801}], "data-ae6838f0a780e6fb004e787ed5e0a49f": [{"Week N - 1": 0.01, "Week N": 0.01}, {"Week N - 1": 1.0, "Week N": 1.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
 <div id="tabset-1-9" class="tab-pane html-fill-item html-fill-container" role="tabpanel" aria-labelledby="tabset-1-9-tab">
-<iframe src="./plots/ORF8.html" width="100%" height="800">
-</iframe>
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="10">
+
+<style>
+  #altair-viz-f73328a064254cf08ec9a055c109cc5c.vega-embed {
+    width: 100%;
+    display: flex;
+  }
+
+  #altair-viz-f73328a064254cf08ec9a055c109cc5c.vega-embed details,
+  #altair-viz-f73328a064254cf08ec9a055c109cc5c.vega-embed details summary {
+    position: relative;
+  }
+</style>
+<div id="altair-viz-f73328a064254cf08ec9a055c109cc5c" class="html-fill-item html-fill-container"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-f73328a064254cf08ec9a055c109cc5c") {
+      outputDiv = document.getElementById("altair-viz-f73328a064254cf08ec9a055c109cc5c");
+    }
+
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm/vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm/vega-lite@5.20.1?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm/vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      let deps = ["vega-embed"];
+      require(deps, displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "5.20.1"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "axis": {"labelFontSize": 14, "titleFontSize": 14}, "legend": {"labelFontSize": 12, "titleFontSize": 12}, "header": {"labelFontSize": 13, "titleFontSize": 13}, "title": {"fontSize": 15}, "mark": {"fontSize": 12}}, "height": 600, "width": "container", "layer": [{"data": {"name": "data-e129c8232d41c9792f5b4843d7ad1fe4"}, "mark": {"type": "circle", "size": 120}, "encoding": {"color": {"field": "Amino Acid Substitution", "type": "nominal"}, "tooltip": [{"field": "Amino Acid Substitution", "type": "nominal"}, {"field": "Associated Variants", "type": "quantitative"}], "x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N - 1", "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N", "type": "quantitative"}}, "name": "view_9"}, {"data": {"name": "data-ae6838f0a780e6fb004e787ed5e0a49f"}, "mark": {"type": "line", "color": "black", "strokeDash": [5, 5]}, "encoding": {"x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}}}], "params": [{"name": "param_9", "select": {"type": "interval", "encodings": ["x", "y"]}, "bind": "scales", "views": ["view_9"]}], "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-e129c8232d41c9792f5b4843d7ad1fe4": [{"Amino Acid Substitution": "A51V", "Associated Variants": null, "Week N - 1": 0.023206, "Week N": 0.01, "y": 0.01}], "data-ae6838f0a780e6fb004e787ed5e0a49f": [{"Week N - 1": 0.01, "Week N": 0.01}, {"Week N - 1": 1.0, "Week N": 1.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
 <div id="tabset-1-10" class="tab-pane html-fill-item html-fill-container" role="tabpanel" aria-labelledby="tabset-1-10-tab">
-<iframe src="./plots/N.html" width="100%" height="800">
-</iframe>
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="11">
+
+<style>
+  #altair-viz-8c4e1a99d0834c2f859a663f603b9b27.vega-embed {
+    width: 100%;
+    display: flex;
+  }
+
+  #altair-viz-8c4e1a99d0834c2f859a663f603b9b27.vega-embed details,
+  #altair-viz-8c4e1a99d0834c2f859a663f603b9b27.vega-embed details summary {
+    position: relative;
+  }
+</style>
+<div id="altair-viz-8c4e1a99d0834c2f859a663f603b9b27" class="html-fill-item html-fill-container"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-8c4e1a99d0834c2f859a663f603b9b27") {
+      outputDiv = document.getElementById("altair-viz-8c4e1a99d0834c2f859a663f603b9b27");
+    }
+
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm/vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm/vega-lite@5.20.1?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm/vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      let deps = ["vega-embed"];
+      require(deps, displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "5.20.1"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "axis": {"labelFontSize": 14, "titleFontSize": 14}, "legend": {"labelFontSize": 12, "titleFontSize": 12}, "header": {"labelFontSize": 13, "titleFontSize": 13}, "title": {"fontSize": 15}, "mark": {"fontSize": 12}}, "height": 600, "width": "container", "layer": [{"data": {"name": "data-254237995e6c809a08a8841eb33a7a67"}, "mark": {"type": "circle", "size": 120}, "encoding": {"color": {"field": "Amino Acid Substitution", "type": "nominal"}, "tooltip": [{"field": "Amino Acid Substitution", "type": "nominal"}, {"field": "Associated Variants", "type": "nominal"}], "x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N - 1", "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N", "type": "quantitative"}}, "name": "view_10"}, {"data": {"name": "data-ae6838f0a780e6fb004e787ed5e0a49f"}, "mark": {"type": "line", "color": "black", "strokeDash": [5, 5]}, "encoding": {"x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}}}], "params": [{"name": "param_10", "select": {"type": "interval", "encodings": ["x", "y"]}, "bind": "scales", "views": ["view_10"]}], "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-254237995e6c809a08a8841eb33a7a67": [{"Amino Acid Substitution": "G204P", "Associated Variants": "KP.3.3,XEP", "Week N - 1": 0.447334, "Week N": 0.481567, "y": 0.481567}, {"Amino Acid Substitution": "T379I", "Associated Variants": "LB.1.3.1,NS.3,XDS,XEC.2.3,NT.1", "Week N - 1": 0.036661, "Week N": 0.029888, "y": 0.029888}], "data-ae6838f0a780e6fb004e787ed5e0a49f": [{"Week N - 1": 0.01, "Week N": 0.01}, {"Week N - 1": 1.0, "Week N": 1.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
 <div id="tabset-1-11" class="tab-pane html-fill-item html-fill-container" role="tabpanel" aria-labelledby="tabset-1-11-tab">
-<iframe src="./plots/ORF10.html" width="100%" height="800">
-</iframe>
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="12">
+
+<style>
+  #altair-viz-6bb2b1fe9a7542718777b475b06fe6a9.vega-embed {
+    width: 100%;
+    display: flex;
+  }
+
+  #altair-viz-6bb2b1fe9a7542718777b475b06fe6a9.vega-embed details,
+  #altair-viz-6bb2b1fe9a7542718777b475b06fe6a9.vega-embed details summary {
+    position: relative;
+  }
+</style>
+<div id="altair-viz-6bb2b1fe9a7542718777b475b06fe6a9" class="html-fill-item html-fill-container"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-6bb2b1fe9a7542718777b475b06fe6a9") {
+      outputDiv = document.getElementById("altair-viz-6bb2b1fe9a7542718777b475b06fe6a9");
+    }
+
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm/vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm/vega-lite@5.20.1?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm/vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      let deps = ["vega-embed"];
+      require(deps, displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "5.20.1"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}, "axis": {"labelFontSize": 14, "titleFontSize": 14}, "legend": {"labelFontSize": 12, "titleFontSize": 12}, "header": {"labelFontSize": 13, "titleFontSize": 13}, "title": {"fontSize": 15}, "mark": {"fontSize": 12}}, "height": 600, "width": "container", "layer": [{"data": {"name": "data-4f53cda18c2baa0c0354bb5f9a3ecbe5"}, "mark": {"type": "circle", "size": 120}, "encoding": {"color": {"field": "Amino Acid Substitution", "type": "nominal"}, "tooltip": [{"field": "Amino Acid Substitution", "type": "nominal"}, {"field": "Associated Variants", "type": "nominal"}], "x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N - 1", "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "title": "Week N", "type": "quantitative"}}, "name": "view_11"}, {"data": {"name": "data-ae6838f0a780e6fb004e787ed5e0a49f"}, "mark": {"type": "line", "color": "black", "strokeDash": [5, 5]}, "encoding": {"x": {"field": "Week N - 1", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}, "y": {"field": "Week N", "scale": {"domain": [0.01, 1], "type": "log"}, "type": "quantitative"}}}], "params": [{"name": "param_11", "select": {"type": "interval", "encodings": ["x", "y"]}, "bind": "scales", "views": ["view_11"]}], "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-4f53cda18c2baa0c0354bb5f9a3ecbe5": [], "data-ae6838f0a780e6fb004e787ed5e0a49f": [{"Week N - 1": 0.01, "Week N": 0.01}, {"Week N - 1": 1.0, "Week N": 1.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
 </div>
 </div>
