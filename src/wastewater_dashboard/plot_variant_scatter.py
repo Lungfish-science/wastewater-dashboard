@@ -131,7 +131,9 @@ def collect_orf_data(
         AssertionError: If filename format is invalid or ORF is not in expected list
     """
     # make sure the provided file name has the expected extension
-    assert "plot.tsv.gz" in str(query_file), "Unsupported file name supplied."
+    assert "plot.tsv.gz" in str(query_file), (
+        f"Unsupported file name supplied in {query_file}; file names must end with '.plot.tsv.gz'."
+    )
 
     # parse out the filename as a Path, and use to to retrieve the ORF
     path = Path(query_file)
@@ -147,57 +149,40 @@ def collect_orf_data(
     return OrfDataset(orf, path)
 
 
-def find_plotting_files(
-    search_dir: Path | str,
-) -> list[OrfDataset]:
+def parse_plotting_file(
+    orf_file: OrfDataset,
+) -> OrfDataset:
     """
-    Searches a specified directory for plotting files, filters the dataset, and converts each file into an OrfFile dataclass.
+    Reads an ORF data file and processes the data into numeric values.
 
     Args:
-        search_dir (Path | str): Directory path to search for plotting files
+        orf_file (OrfFile): OrfFile dataclass object containing file metadata
 
     Returns:
-        list[OrfFile]: A list of parsed OrfFile dataclass objects containing file metadata
+        OrfFile: The input OrfFile object with its dataframe populated
     """
-    return [collect_orf_data(file) for file in Path(search_dir).glob("*plot.tsv.gz")]
+    # fill a parsed dataframe into the OrfDataset's df field
+    orf_df = pd.read_csv(
+        orf_file.path,
+        sep="\t",
+        encoding="utf-8",
+        header=None,
+        names=[
+            "Amino Acid Substitution",
+            "Associated Variants",
+            "Week N - 1",
+            "Week N",
+        ],
+    )
+    for triweek in COMPARISON_WEEKS:
+        orf_df[triweek] = pd.to_numeric(orf_df[triweek])
+        orf_df["y"] = np.where(orf_df[triweek] < 0.01, 0.01, orf_df[triweek])  # noqa: PLR2004
+        orf_df[triweek] = orf_df["y"]
+        orf_df[triweek] = pd.to_numeric(orf_df[triweek])
 
+    orf_file.df = orf_df
 
-def parse_plotting_files(
-    orf_files: list[OrfDataset],
-) -> list[OrfDataset]:
-    """
-    Reads a list of ORF data files and processes the data into numeric values.
-
-    Args:
-        orf_files (list[OrfFile]): List of OrfFile dataclass objects containing file metadata
-
-    Returns:
-        list[OrfFile]: The input OrfFile objects with their dataframes populated
-    """
-    # for each file, loop through and fill a parsed dataframe into the OrfDataset's
-    # df field
-    for file in orf_files:
-        orf_df = pd.read_csv(
-            file.path,
-            sep="\t",
-            encoding="utf-8",
-            header=None,
-            names=[
-                "Amino Acid Substitution",
-                "Associated Variants",
-                "Week N - 1",
-                "Week N",
-            ],
-        )
-        for triweek in COMPARISON_WEEKS:
-            orf_df[triweek] = pd.to_numeric(orf_df[triweek])
-            orf_df["y"] = np.where(orf_df[triweek] < 0.01, 0.01, orf_df[triweek])  # noqa: PLR2004
-            orf_df[triweek] = orf_df["y"]
-            orf_df[triweek] = pd.to_numeric(orf_df[triweek])
-
-        file.df = orf_df
-
-    return orf_files
+    return orf_file
 
 
 def render_diag_line() -> alt.Chart:
@@ -294,50 +279,64 @@ def render_scatter_plot(
     return orf_bundle
 
 
-def render_all_plots(search_dir: Path | str, output_dir: str | Path) -> None:
+def write_rendered_plot(orf_dataset: OrfDataset, output_dir: str | Path) -> None:
+    """
+    Writes rendered plots to a specified output directory.
+
+    Args:
+        orf_dataset (OrfDataset): Dataset containing ORF data and rendered plot
+        output_dir (str | Path): Directory path to save rendered plot files
+
+    Returns:
+        None
+    """
+    # skip to the next dataset if no chart has been generated
+    if orf_dataset.chart is None:
+        logger.warning(
+            f"The scatter plot for {orf_dataset.orf} was missing and will be skipped. However, this may indicate that functions in this module are being run in an incorrect order.",
+        )
+        return
+
+    if OUTPUT_FORMAT == "html":
+        orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.html")
+    elif OUTPUT_FORMAT == "png":
+        orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.png")
+    elif OUTPUT_FORMAT == "svg":
+        orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.svg")
+    elif OUTPUT_FORMAT == "pdf":
+        orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.pdf")
+    else:
+        # this branch should be unreachable because all the literals in the OUTPUT_FORMAT
+        # constant have been covered.
+        logger.warning("Unsupported output format requested. Defaulting to HTML.")
+        orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.html")
+
+
+def render_all_plots(search_dir: Path | str, output_dir: Path | str) -> None:
     """
     Renders scatter plots for all valid ORF files in a specified directory and saves them as
     output files in a specified format.
 
     Args:
         search_dir (Path | str): Directory path to search for plotting files
-        output_dir (str | Path): Directory path to save rendered plot files
+        output_dir (Path | str): Directory path to save rendered plot files
 
     Returns:
         None
     """
     # find all the files available for plotting and collect them into a list of OrfDataset objects
-    plotting_files = find_plotting_files(search_dir)
+    plotting_files = [collect_orf_data(file) for file in Path(search_dir).glob("*plot.tsv.gz")]
 
     # parse the file for each orf dataset into dataframes
-    orf_data = parse_plotting_files(plotting_files)
+    orf_datasets = [parse_plotting_file(file) for file in plotting_files]
 
     # use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
     # OrfDataset as well
-    final_data_bundles = [render_scatter_plot(orf_bundle) for orf_bundle in orf_data]
+    final_data_bundles = [render_scatter_plot(orf_dataset) for orf_dataset in orf_datasets]
 
     # for each fine dataset, write out the rendered plot in the requested format
     for orf_dataset in final_data_bundles:
-        # skip to the next dataset if no chart has been generated
-        if orf_dataset.chart is None:
-            logger.warning(
-                f"The scatter plot for {orf_dataset.orf} was missing and will be skipped. However, this may indicate that functions in this module are being run in an incorrect order.",
-            )
-            continue
-
-        if OUTPUT_FORMAT == "html":
-            orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.html")
-        elif OUTPUT_FORMAT == "png":
-            orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.png")
-        elif OUTPUT_FORMAT == "svg":
-            orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.svg")
-        elif OUTPUT_FORMAT == "pdf":
-            orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.pdf")
-        else:
-            # this branch should be unreachable because all the literals in the OUTPUT_FORMAT
-            # constant have been covered.
-            logger.warning("Unsupported output format requested. Defaulting to HTML.")
-            orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.html")
+        write_rendered_plot(orf_dataset, output_dir)
 
 
 def main() -> None:

@@ -4,6 +4,7 @@ project:
 
 website:
   title: "Inkfish Medical SARS-CoV-2 Wastewater Dashboard"
+  repo-url: https://github.com/inkfishmedical/wastewater-dashboard
   navbar:
     left:
       - href: index.qmd

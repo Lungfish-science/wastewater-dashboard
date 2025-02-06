@@ -15,7 +15,7 @@ import sys
 
 from wastewater_dashboard.plot_variant_scatter import (
     collect_orf_data,
-    parse_plotting_files,
+    parse_plotting_file,
     render_scatter_plot,
 )
 from pathlib import Path
@@ -32,8 +32,8 @@ ORF_TSV = "data/ORF1.plot.tsv.gz"
 
 if Path(ORF_TSV).is_file():
   orf_dataset = collect_orf_data(ORF_TSV)
-  with_dfs = parse_plotting_files([orf_dataset])
-  final_dataset = render_scatter_plot(with_dfs[0])
+  with_dfs = parse_plotting_file(orf_dataset)
+  final_dataset = render_scatter_plot(with_dfs)
 
   final_dataset.chart
 ```
@@ -45,13 +45,13 @@ ORF_TSV = "data/S.plot.tsv.gz"
 
 if Path(ORF_TSV).is_file():
   orf_dataset = collect_orf_data(ORF_TSV)
-  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs = parse_plotting_file(orf_dataset)
   final_dataset = render_scatter_plot(with_dfs)
 
   final_dataset.chart
 else:
   orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
-  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs = parse_plotting_file(orf_dataset)
   with_dfs.df = with_dfs.df.iloc[0:0]
   final_dataset = render_scatter_plot(with_dfs)
 
@@ -65,13 +65,13 @@ ORF_TSV = "data/ORF3a.plot.tsv.gz"
 
 if Path(ORF_TSV).is_file():
   orf_dataset = collect_orf_data(ORF_TSV)
-  with_dfs = parse_plotting_files([orf_dataset])
-  final_dataset = render_scatter_plot(with_dfs[0])
+  with_dfs = parse_plotting_file(orf_dataset)
+  final_dataset = render_scatter_plot(with_dfs)
 
   final_dataset.chart
 else:
   orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
-  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs = parse_plotting_file(orf_dataset)
   with_dfs.df = with_dfs.df.iloc[0:0]
   final_dataset = render_scatter_plot(with_dfs)
 
@@ -85,13 +85,13 @@ ORF_TSV = "data/E.plot.tsv.gz"
 
 if Path(ORF_TSV).is_file():
   orf_dataset = collect_orf_data(ORF_TSV)
-  with_dfs = parse_plotting_files([orf_dataset])
-  final_dataset = render_scatter_plot(with_dfs[0])
+  with_dfs = parse_plotting_file(orf_dataset)
+  final_dataset = render_scatter_plot(with_dfs)
 
   final_dataset.chart.show()
 else:
   orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
-  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs = parse_plotting_file(orf_dataset)
   with_dfs.df = with_dfs.df.iloc[0:0]
   final_dataset = render_scatter_plot(with_dfs)
 
@@ -105,13 +105,13 @@ ORF_TSV = "data/M.plot.tsv.gz"
 
 if Path(ORF_TSV).is_file():
   orf_dataset = collect_orf_data(ORF_TSV)
-  with_dfs = parse_plotting_files([orf_dataset])
-  final_dataset = render_scatter_plot(with_dfs[0])
+  with_dfs = parse_plotting_file(orf_dataset)
+  final_dataset = render_scatter_plot(with_dfs)
 
   final_dataset.chart.show()
 else:
   orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
-  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs = parse_plotting_file(orf_dataset)
   with_dfs.df = with_dfs.df.iloc[0:0]
   final_dataset = render_scatter_plot(with_dfs)
 
@@ -125,13 +125,13 @@ ORF_TSV = "data/ORF6.plot.tsv.gz"
 
 if Path(ORF_TSV).is_file():
   orf_dataset = collect_orf_data(ORF_TSV)
-  with_dfs = parse_plotting_files([orf_dataset])
-  final_dataset = render_scatter_plot(with_dfs[0])
+  with_dfs = parse_plotting_file(orf_dataset)
+  final_dataset = render_scatter_plot(with_dfs)
 
   final_dataset.chart.show()
 else:
   orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
-  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs = parse_plotting_file(orf_dataset)
   with_dfs.df = with_dfs.df.iloc[0:0]
   final_dataset = render_scatter_plot(with_dfs)
 
@@ -145,13 +145,13 @@ ORF_TSV  = "data/ORF7a.plot.tsv.gz"
 
 if Path(ORF_TSV).is_file():
   orf_dataset = collect_orf_data(ORF_TSV)
-  with_dfs = parse_plotting_files([orf_dataset])
-  final_dataset = render_scatter_plot(with_dfs[0])
+  with_dfs = parse_plotting_file(orf_dataset)
+  final_dataset = render_scatter_plot(with_dfs)
 
   final_dataset.chart
 else:
   orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
-  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs = parse_plotting_file(orf_dataset)
   with_dfs.df = with_dfs.df.iloc[0:0]
   final_dataset = render_scatter_plot(with_dfs)
 
@@ -165,13 +165,13 @@ ORF_TSV  = "data/ORF7b.plot.tsv.gz"
 
 if Path(ORF_TSV).is_file():
   orf_dataset = collect_orf_data(ORF_TSV)
-  with_dfs = parse_plotting_files([orf_dataset])
-  final_dataset = render_scatter_plot(with_dfs[0])
+  with_dfs = parse_plotting_file(orf_dataset)
+  final_dataset = render_scatter_plot(with_dfs)
 
   final_dataset.chart
 else:
   orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
-  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs = parse_plotting_file(orf_dataset)
   with_dfs.df = with_dfs.df.iloc[0:0]
   final_dataset = render_scatter_plot(with_dfs)
 
@@ -185,13 +185,13 @@ ORF_TSV  = "data/ORF8.plot.tsv.gz"
 
 if Path(ORF_TSV).is_file():
   orf_dataset = collect_orf_data(ORF_TSV)
-  with_dfs = parse_plotting_files([orf_dataset])
-  final_dataset = render_scatter_plot(with_dfs[0])
+  with_dfs = parse_plotting_file(orf_dataset)
+  final_dataset = render_scatter_plot(with_dfs)
 
   final_dataset.chart
 else:
   orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
-  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs = parse_plotting_file(orf_dataset)
   with_dfs.df = with_dfs.df.iloc[0:0]
   final_dataset = render_scatter_plot(with_dfs)
 
@@ -205,13 +205,13 @@ ORF_TSV  = "data/N.plot.tsv.gz"
 
 if Path(ORF_TSV).is_file():
   orf_dataset = collect_orf_data(ORF_TSV)
-  with_dfs = parse_plotting_files([orf_dataset])
-  final_dataset = render_scatter_plot(with_dfs[0])
+  with_dfs = parse_plotting_file(orf_dataset)
+  final_dataset = render_scatter_plot(with_dfs)
 
   final_dataset.chart
 else:
   orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
-  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs = parse_plotting_file(orf_dataset)
   with_dfs.df = with_dfs.df.iloc[0:0]
   final_dataset = render_scatter_plot(with_dfs)
 
@@ -225,13 +225,13 @@ ORF_TSV  = "data/ORF10.plot.tsv.gz"
 
 if Path(ORF_TSV).is_file():
   orf_dataset = collect_orf_data(ORF_TSV)
-  with_dfs = parse_plotting_files([orf_dataset])
-  final_dataset = render_scatter_plot(with_dfs[0])
+  with_dfs = parse_plotting_file(orf_dataset)
+  final_dataset = render_scatter_plot(with_dfs)
 
   final_dataset.chart
 else:
   orf_dataset = collect_orf_data("data/ORF1.plot.tsv.gz")
-  with_dfs = parse_plotting_files([orf_dataset])[0]
+  with_dfs = parse_plotting_file(orf_dataset)
   with_dfs.df = with_dfs.df.iloc[0:0]
   final_dataset = render_scatter_plot(with_dfs)
 
