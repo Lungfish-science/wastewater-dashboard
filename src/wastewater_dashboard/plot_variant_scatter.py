@@ -14,14 +14,14 @@
 from __future__ import annotations
 
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
 import altair as alt
-import numpy as np
-import pandas as pd
+import polars as pl
 from loguru import logger
+from typing_extensions import Self
 
 # A list of supported ORF sames to be used in membership checks.
 SUPPORTED_ORFS = [
@@ -37,9 +37,6 @@ SUPPORTED_ORFS = [
     "N",
     "ORF10",
 ]
-
-# The labels for the two weeks to compare
-COMPARISON_WEEKS = ("Week N - 1", "Week N")
 
 # String literal constant to represent the possible output formats. Type checkers will
 # enforce that the user select only from these options.
@@ -66,6 +63,33 @@ PLOT_HEIGHT = 600
 
 
 @dataclass
+class TimeWindows:
+    # This field is used only for initialization.
+    _input_list: list[str]
+
+    latest_window: str = field(init=False)
+    previous_window: str = field(init=False)
+
+    def __post_init__(self) -> Self | None:
+        timespans: list[str] = []
+        for entry in self._input_list:
+            if "--" not in entry:
+                continue
+            timespans.append(entry)
+        if len(timespans) != 2:  # noqa: PLR2004
+            logger.error(
+                f"The provided input list does contain the expected date-range information, e.g., '2024-12-15--2025-01-04': {self._input_list}",
+            )
+            return None
+
+        # Unpack the input list into the actual fields
+        logger.debug(f"Setting the `previous_window` attribute to {timespans[0]}")
+        self.previous_window = timespans[0]
+        logger.debug(f"Setting the `latest_window` attribute to {timespans[1]}")
+        self.latest_window = timespans[1]
+
+
+@dataclass
 class OrfDataset:
     """
     A state-machine dataclass for containing metadata for each orf dataset alongside
@@ -73,8 +97,8 @@ class OrfDataset:
     """
 
     orf: str
-    path: Path | str
-    df: pd.DataFrame | None = None
+    df: pl.DataFrame
+    windows: TimeWindows
     chart: alt.LayerChart | None = None
 
 
@@ -115,87 +139,98 @@ def setup_logging(level: int = 0) -> None:
     logger.add(sys.stderr, colorize=True, level=level_str)
 
 
-def collect_orf_data(
-    query_file: Path | str,
-) -> OrfDataset:
-    """
-    Parses a provided file path and extracts the ORF name, validating it is supported.
-
-    Args:
-        query_file (Path | str): Path to the input data file
-
-    Returns:
-        OrfFile: A dataclass containing the parsed ORF name and file path
-
-    Raises:
-        AssertionError: If filename format is invalid or ORF is not in expected list
-    """
-    # make sure the provided file name has the expected extension
-    assert "plot.tsv.gz" in str(query_file), (
-        f"Unsupported file name supplied in {query_file}; file names must end with '.plot.tsv.gz'."
-    )
-
-    # parse out the filename as a Path, and use to to retrieve the ORF
-    path = Path(query_file)
-    orf = path.stem.replace(".plot.tsv", "")
-
-    # check that the parsed ORF is one of the expected ORFs
-    if len(SUPPORTED_ORFS) > 0:
-        assert orf in SUPPORTED_ORFS, (
-            f"The ORF, '{orf}', parsed from the file name '{query_file}' did not matched the provided list of expected ORFs."
-        )
-
-    # return the ORF information as a dataclass (this could also be a named tuple)
-    return OrfDataset(orf, path)
-
-
 def parse_plotting_file(
-    orf_file: OrfDataset,
-) -> OrfDataset:
+    orf_file: str | Path,
+) -> list[OrfDataset]:
     """
-    Reads an ORF data file and processes the data into numeric values.
+    Parse a variant frequencies file from disk into a list of OrfDataset objects.
+
+    The input `.tsv` file is expected to contain several columns of data:
+    - ORFs: The ORF label (e.g., "S", "N", etc.)
+    - AA Change: The amino acid change for this variant
+    - Associated Variants: A list of variants with this change
+    - Abundance: The frequency in Week N-1
+    - Abundance_duplicated_0: The frequency in Week N
+
+    Each abundance column header contains the date range for that week, e.g., '2024-12-15--2025-01-04'.
+
+    The polars query plan:
+    1. Reads the header for time window information
+    2. Scans the TSV file lazily, skipping the header row
+    3. Selects and renames relevant columns
+    4. Replaces abundance values < 0.01 with 0.1 to handle logarithmic plotting
+    5. Collects and partitions the data by ORF
 
     Args:
-        orf_file (OrfFile): OrfFile dataclass object containing file metadata
+        orf_file (str | Path): Path to the TSV file containing variant frequencies
 
     Returns:
-        OrfFile: The input OrfFile object with its dataframe populated
+        list[OrfDataset]: A list of OrfDataset objects, one per ORF, containing the
+            parsed dataframe and time window information
     """
-    # fill a parsed dataframe into the OrfDataset's df field
-    orf_df = pd.read_csv(
-        orf_file.path,
-        sep="\t",
-        encoding="utf-8",
-        header=None,
-        names=[
-            "Amino Acid Substitution",
+    # parse time window information from the header line
+    header = pl.read_csv(orf_file, separator="\t", n_rows=0).columns
+    timespans = TimeWindows(header)
+
+    # scan the CSV into a lazy query plan, skipping the header line that we have now parsed
+    orf_df_pl = pl.scan_csv("data/VariantPMs.tsv", separator="\t", skip_rows=1)
+
+    # extend the query plan
+    all_orf_abundances = (
+        orf_df_pl.select(
+            "ORFs",
+            "AA Change",
             "Associated Variants",
-            "Week N - 1",
-            "Week N",
-        ],
+            "Abundance",
+            "Abundance_duplicated_0",
+        )
+        .rename(
+            {
+                "ORFs": "ORF",
+                "Abundance": timespans.previous_window,
+                "Abundance_duplicated_0": timespans.latest_window,
+            },
+        )
+        .with_columns(
+            pl.when(pl.col(timespans.previous_window) < 0.01)
+            .then(pl.lit(0.1))
+            .otherwise(pl.col(timespans.previous_window))
+            .alias(timespans.previous_window),
+        )
+        .with_columns(
+            pl.when(pl.col(timespans.latest_window) < 0.01)
+            .then(pl.lit(0.1))
+            .otherwise(pl.col(timespans.latest_window))
+            .alias(timespans.latest_window),
+        )
     )
-    for triweek in COMPARISON_WEEKS:
-        orf_df[triweek] = pd.to_numeric(orf_df[triweek])
-        orf_df["y"] = np.where(orf_df[triweek] < 0.01, 0.01, orf_df[triweek])  # noqa: PLR2004
-        orf_df[triweek] = orf_df["y"]
-        orf_df[triweek] = pd.to_numeric(orf_df[triweek])
 
-    orf_file.df = orf_df
+    # execute the optimized query plan with `.collect()`, and then split out one dataframe
+    # per ORF with `.partition_by("ORF")`
+    orf_dfs = all_orf_abundances.collect().partition_by("ORF", as_dict=True)
 
-    return orf_file
+    # return a list of OrfDataset objects
+    return [OrfDataset(orf=str(orf_label[0]), windows=timespans, df=orf_df) for orf_label, orf_df in orf_dfs.items()]
 
 
-def render_diag_line() -> alt.Chart:
+def render_diag_line(orf_bundle: OrfDataset) -> alt.Chart:
     """
-    Renders a diagonal line as an Altair chart component for visual reference.
+    Create a diagonal trend line for a comparison scatter plot.
+
+    This function generates a straight diagonal trend line representing the line of equality
+    (y=x) for the scatter plot. Points below this line indicate a decrease in abundance
+    between the two time windows, while points above indicate an increase.
+
+    Args:
+        orf_bundle (OrfDataset): Dataset containing the ORF data and time window information
 
     Returns:
-        alt.Chart: An altair chart object representing a diagonal line from (0.01, 0.01) to (1, 1) with dashed black styling
+        alt.Chart: An Altair chart object containing the rendered diagonal line
     """
-    line_data = pd.DataFrame(
+    line_data = pl.DataFrame(
         {
-            COMPARISON_WEEKS[0]: [0.01, 1],
-            COMPARISON_WEEKS[1]: [0.01, 1],
+            orf_bundle.windows.previous_window: [0.01, 1],
+            orf_bundle.windows.latest_window: [0.01, 1],
         },
     )
     return (
@@ -206,20 +241,18 @@ def render_diag_line() -> alt.Chart:
         )
         .encode(
             x=alt.X(
-                f"{COMPARISON_WEEKS[0]}:Q",
+                f"{orf_bundle.windows.previous_window}:Q",
                 scale=alt.Scale(type="log", domain=[0.01, 1]),
             ),
             y=alt.Y(
-                f"{COMPARISON_WEEKS[1]}:Q",
+                f"{orf_bundle.windows.latest_window}:Q",
                 scale=alt.Scale(type="log", domain=[0.01, 1]),
             ),
         )
     )
 
 
-def render_scatter_plot(
-    orf_bundle: OrfDataset,
-) -> OrfDataset:
+def render_scatter_plot(orf_bundle: OrfDataset) -> OrfDataset:
     """
     Generates an interactive scatter plot for a given ORF dataset.
 
@@ -228,14 +261,7 @@ def render_scatter_plot(
 
     Returns:
         OrfFile: The input OrfFile object with its chart attribute populated
-
-    Raises:
-        AssertionError: If the orf_bundle's dataframe is None
     """
-    # Use an assertion to check our assumption that this function will only ever be
-    # called when the dataframe field of our OrfDataset instance has been filled
-    assert orf_bundle.df is not None
-
     # set the altair theme using the constant above
     alt.theme.enable(ALTAIR_THEME)
 
@@ -245,22 +271,22 @@ def render_scatter_plot(
         .mark_circle(size=120)
         .encode(
             x=alt.X(
-                f"{COMPARISON_WEEKS[0]}:Q",
+                f"{orf_bundle.windows.previous_window}:Q",
                 scale=alt.Scale(type="log", domain=[0.01, 1]),
-                title=COMPARISON_WEEKS[0],
+                title=orf_bundle.windows.previous_window,
             ),
             y=alt.Y(
-                f"{COMPARISON_WEEKS[1]}:Q",
+                f"{orf_bundle.windows.latest_window}:Q",
                 scale=alt.Scale(type="log", domain=[0.01, 1]),
-                title=COMPARISON_WEEKS[1],
+                title=orf_bundle.windows.latest_window,
             ),
-            color=alt.Color("Amino Acid Substitution:N"),
-            tooltip=["Amino Acid Substitution", "Associated Variants"],
+            color=alt.Color("AA Change:N"),
+            tooltip=["AA Change", "Associated Variants"],
         )
     )
 
     # render the diagonal line
-    line_chart = render_diag_line()
+    line_chart = render_diag_line(orf_bundle)
 
     # Combine the scatter plot and the line into one chart
     combined_chart = scatter_chart + line_chart
@@ -273,7 +299,7 @@ def render_scatter_plot(
             width="container",
             height=PLOT_HEIGHT,
         )
-        .configure_axis(labelFontSize=14, titleFontSize=14)
+        .configure_axis(labelFontSize=14, titleFontSize=16)
     )
 
     return orf_bundle
@@ -312,33 +338,6 @@ def write_rendered_plot(orf_dataset: OrfDataset, output_dir: str | Path) -> None
         orf_dataset.chart.save(f"{output_dir}/{orf_dataset.orf}.html")
 
 
-def render_all_plots(search_dir: Path | str, output_dir: Path | str) -> None:
-    """
-    Renders scatter plots for all valid ORF files in a specified directory and saves them as
-    output files in a specified format.
-
-    Args:
-        search_dir (Path | str): Directory path to search for plotting files
-        output_dir (Path | str): Directory path to save rendered plot files
-
-    Returns:
-        None
-    """
-    # find all the files available for plotting and collect them into a list of OrfDataset objects
-    plotting_files = [collect_orf_data(file) for file in Path(search_dir).glob("*plot.tsv.gz")]
-
-    # parse the file for each orf dataset into dataframes
-    orf_datasets = [parse_plotting_file(file) for file in plotting_files]
-
-    # use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
-    # OrfDataset as well
-    final_data_bundles = [render_scatter_plot(orf_dataset) for orf_dataset in orf_datasets]
-
-    # for each fine dataset, write out the rendered plot in the requested format
-    for orf_dataset in final_data_bundles:
-        write_rendered_plot(orf_dataset, output_dir)
-
-
 def main() -> None:
     """
     Program entrypoint if run as an executable script
@@ -351,15 +350,23 @@ def main() -> None:
     # set up the logger to use standard error at the warning level
     setup_logging(0)
 
-    # parse the two positional arguments as input directory paths
-    search_dir = Path(sys.argv[1])
+    # parse the two positional arguments as input paths
+    all_orf_tsv = Path(sys.argv[1])
     output_dir = Path(sys.argv[2])
 
     # make sure the input path exists
-    assert search_dir.is_dir(), f"The provided path, '{search_dir}', does not exist."
+    assert all_orf_tsv.is_file(), f"The provided path, '{all_orf_tsv}', does not exist."
 
-    # render all the plots
-    render_all_plots(search_dir, output_dir)
+    # parse the file for each orf dataset into dataframes
+    orf_datasets = parse_plotting_file(all_orf_tsv)
+
+    # use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
+    # OrfDataset as well
+    final_data_bundles = [render_scatter_plot(orf_dataset) for orf_dataset in orf_datasets]
+
+    # for each fine dataset, write out the rendered plot in the requested format
+    for orf_dataset in final_data_bundles:
+        write_rendered_plot(orf_dataset, output_dir)
 
 
 if __name__ == "__main__":
