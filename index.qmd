@@ -121,3 +121,21 @@ render_for_quarto(final_data_bundles, "ORF10")
 ```
 
 :::
+
+##
+
+:::{.card title="Wastewater Monitoring Metadata" .flow}
+
+Description coming soon!
+
+:::
+
+
+## Variant Metadata {height=800 scrolling="false"}
+
+```{python}
+import itables as it
+from palmerpenguins import load_penguins
+penguins = load_penguins()
+it.show(penguins, column_filters="header")
+```
