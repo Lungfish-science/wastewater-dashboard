@@ -1624,6 +1624,19 @@ wheels = [
 ]
 
 [[package]]
+name = "palmerpenguins"
+version = "0.1.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "pandas" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/67/6a/5f701d151baa94985cfebf56697f3c6f86546e96f75362b15f5b758251bd/palmerpenguins-0.1.4.tar.gz", hash = "sha256:d04d9064930e053fb0805261fe2aa26b4581fdabacaa54d393ddd65bb93bbaf2", size = 5626 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/23/78/d81191d1faf9c41e8707eb0c08dc6d489157bfa42faad62e0ab90c37ebbc/palmerpenguins-0.1.4-py3-none-any.whl", hash = "sha256:63c904db3dcef10e4ff1372f9b7f50a8f44c7364cc03f27f9a487fe5762d159c", size = 17523 },
+]
+
+[[package]]
 name = "pandas"
 version = "2.2.3"
 source = { registry = "https://pypi.org/simple" }
@@ -2721,6 +2734,7 @@ dev = [
     { name = "basedpyright" },
     { name = "loguru" },
     { name = "marimo", extra = ["sql"] },
+    { name = "palmerpenguins" },
     { name = "pytest" },
     { name = "ruff" },
     { name = "tox" },
@@ -2746,6 +2760,7 @@ dev = [
     { name = "basedpyright", specifier = ">=1.26.0" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "marimo", extras = ["sql"], specifier = ">=0.11.0" },
+    { name = "palmerpenguins", specifier = ">=0.1.4" },
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "ruff", specifier = ">=0.9.4" },
     { name = "tox", specifier = ">=4.24.1" },
