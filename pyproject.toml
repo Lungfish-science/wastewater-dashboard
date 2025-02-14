@@ -17,6 +17,7 @@ dependencies = [
     "itables>=2.2.4",
     "jupyter>=1.1.1",
     "loguru>=0.7.3",
+    "nbformat>=5.10.4",
     "numpy>=2.2.2",
     "pandas>=2.2.3",
     "plotly[express]>=6.0.0",
