@@ -1,141 +1,141 @@
 ---
-format:
-  dashboard:
-    scrolling: true 
+toc: false
 ---
 
-:::{.card title="About Wastewater Monitoring" .flow}
+::: {#hero-banner .column-screen}
+::: {.grid .column-page}
+::: {.headline .g-col-lg-6 .g-col-12 .g-col-md-12}
+::: h1
+Dashboard Gallery
+:::
 
-Monitoring wastewater for viruses allows observation of viral dynamics over large populations with relatively small effort, and especially with reduced clinical testing, a more accurate view of broad trends.  We download samples with SARS-CoV-2 sequences amplified from wastewater from NCBI's Sequence Read Archive (SRA).  From the samples, we track polymorphisms of SARS-CoV-2 and their abundances, comparing the most recent two consecutive three-week periods for which samples are available.  As JN.1 is the progenitor of most currently circulating strains, polymorphisms defining JN.1 were excluded from further analysis.  Metadata on the samples included in each analysis is provided, a small number of samples are excluded that have known complexities that could distort results.  Polymorphisms that appeared above a 2% threshold in either three-week period are displayed in a scatter plot.  Changes in abundance of polymorphisms allow us to track the circulation dynamics of their associated strains and observe the appearance of novel strains or polymorphisms.  Changes are denoted relative to the ancestral Wuhan-I strain. 
+Welcome to the **lung.fish** initiative's public health data explorer, a growing collection of dashboards driven by environmental monitoring data:
+
+-   [SARS-CoV-2 Wastewater Monitoring](dashboard1.qmd)
 
 :::
 
 ```{python}
-import sys
+#| classes: '.g-col-lg-6 .g-col-12 .g-col-md-12'
+#| warning: false
+#| echo: false
 
-from wastewater_dashboard.plot_variant_scatter import (
-    parse_plotting_file,
-    render_scatter_plot,
-    setup_logging,
-)
-from loguru import logger
-from pathlib import Path
+import yaml
+from IPython.display import HTML, display
+from wastewater_dashboard.render_carousel import carousel
 
-ALL_ORF_TSV = Path("data/VariantPMs.tsv")
-assert ALL_ORF_TSV.is_file(), f"The provided path, '{ALL_ORF_TSV}', does not exist."
+# Load the carousel items from a YAML file.
+with open("carousel.yml") as f:
+    items = yaml.safe_load(f)
 
-setup_logging(3)
+# Build the carousel HTML with an id and duration (e.g., 5000 ms).
+html_output = carousel("gallery-carousel", 5000, items)
 
-# parse the file for each orf dataset into dataframes
-orf_datasets = parse_plotting_file(ALL_ORF_TSV)
+# Tell Quarto to render the HTML instead of displaying raw text.
+display(HTML(html_output))
 
-# use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
-# OrfDataset as well
-final_data_bundles = [
-    render_scatter_plot(orf_dataset) for orf_dataset in orf_datasets
-]
+```
+:::
+:::
 
-def render_for_quarto(final_data_bundles, orf_label: str) -> None:
-  logger.debug([data.orf for data in final_data_bundles])
-  orf_dataset = [dataset for dataset in final_data_bundles if orf_label in dataset.orf]
-  logger.debug(orf_dataset)
-  if not len(orf_dataset) == 1:
-    orf_dataset = [dataset for dataset in final_data_bundles if dataset.orf == "ORF1"]
-    assert len(orf_dataset) == 1
-    orf_dataset = orf_dataset[0]
-    orf_dataset.df = orf_dataset.df.clear()
-    emptied_dataset = render_scatter_plot(orf_dataset)
-    emptied_dataset.chart.show()
-  else:
-    orf_dataset[0].chart.show()
+::: {#gallery .column-page}
+:::
+
+```{=html}
+<style>
+
+#hero-banner {
+  padding-top: 30px;
+  background-color: rgb(237,243,249);
+}
+
+#quarto-content main { 
+  margin-top: 0;
+  padding-top: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.headline {
+  font-size: 1.25em;
+  font-weight: 300;
+  padding-bottom: 1em;
+}
+
+.headline p {
+  margin: 0;
+  padding-bottom: 0.2rem;
+}
+
+.headline a {
+  text-decoration: none;
+}
+
+.headline ul li {
+  margin-bottom: 0.3em;
+}
+
+.carousel.card {
+  padding-top: 2em;
+}
+
+.carousel img {
+  width: 70%;
+  margin-bottom: 110px;
+}
+
+.carousel-control-prev-icon, .carousel-control-next-icon {
+  margin-bottom: 110px;
+}
+
+.carousel-caption {
+  padding-top: 1em;
+}
+
+.touch {
+  
+}
+</style>
 ```
 
-##
+#### **lung.fish** is a consortium of academic research laboratories and public health organizations whose mission is to advance environmental monitoring as a means of detecting, forecasting, and containing pathogen outbreaks.
 
-::: {.panel-tabset}
+---
 
-## ORF1ab
+### Our Philosophy {style="text-align: center"}
 
-```{python}
-render_for_quarto(final_data_bundles, "ORF1")
-```
+::: {.grid}
 
-## Spike
+::: {.g-col-6}
 
-```{python}
-render_for_quarto(final_data_bundles, "S")
-```
+#### Environmental Monitoring
 
-## ORF3a
+This column takes 1/2 of the page
 
-```{python}
-render_for_quarto(final_data_bundles, "ORF3a")
-```
+#### Open Data
 
-## E
-
-```{python}
-render_for_quarto(final_data_bundles, "E")
-```
-
-## M
-
-```{python}
-render_for_quarto(final_data_bundles, "M")
-```
-
-## ORF6
-
-```{python}
-render_for_quarto(final_data_bundles, "ORF6")
-```
-
-## ORF7a
-
-```{python}
-render_for_quarto(final_data_bundles, "ORF7a")
-```
-
-## ORF7b
-
-```{python}
-render_for_quarto(final_data_bundles, "ORF7b")
-```
-
-## ORF8
-
-```{python}
-render_for_quarto(final_data_bundles, "ORF7b")
-```
-
-## N
-
-```{python}
-render_for_quarto(final_data_bundles, "N")
-```
-
-## ORF10
-
-```{python}
-render_for_quarto(final_data_bundles, "ORF10")
-```
+This column takes 1/2 of the page
 
 :::
 
-##
+::: {.g-col-6}
 
-:::{.card title="Wastewater Monitoring Metadata" .flow}
+#### Scientific Reproducibility
 
-Description coming soon!
+This column takes 1/2 of the page
+
+#### Open Source
+
+This column takes 1/2 of the page
 
 :::
 
+:::
 
-## Variant Metadata {height=800 scrolling="false"}
+---
 
-```{python}
-import itables as it
-from palmerpenguins import load_penguins
-penguins = load_penguins()
-it.show(penguins, column_filters="header")
-```
+#### Interested in collaborating?
+
+[Get In Touch](/docs/get-started/index.qmd){.btn-action-primary .btn-action .btn .btn-success .btn-lg role="button"}

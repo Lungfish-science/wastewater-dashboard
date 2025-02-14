@@ -192,22 +192,28 @@ def parse_plotting_file(
             },
         )
         .with_columns(
-            pl.when(pl.col(timespans.previous_window) < 0.01)
+            pl.when(pl.col(timespans.previous_window) < 0.01)  # noqa: PLR2004
             .then(pl.lit(0.1))
             .otherwise(pl.col(timespans.previous_window))
             .alias(timespans.previous_window),
         )
         .with_columns(
-            pl.when(pl.col(timespans.latest_window) < 0.01)
+            pl.when(pl.col(timespans.latest_window) < 0.01)  # noqa: PLR2004
             .then(pl.lit(0.1))
             .otherwise(pl.col(timespans.latest_window))
             .alias(timespans.latest_window),
         )
     )
 
+    # split off a dataframe copy for displaying all mutations across the whole genome
+    whole_genome_lf = all_orf_abundances.with_columns(
+        pl.concat_str([pl.col("ORF"), pl.col("AA Change")], separator=" ").alias("AA Change"),
+        pl.lit("Whole Genome").alias("ORF"),
+    )
+
     # execute the optimized query plan with `.collect()`, and then split out one dataframe
     # per ORF with `.partition_by("ORF")`
-    orf_dfs = all_orf_abundances.collect().partition_by("ORF", as_dict=True)
+    orf_dfs = all_orf_abundances.collect().vstack(whole_genome_lf.collect()).partition_by("ORF", as_dict=True)
 
     # return a list of OrfDataset objects
     return [OrfDataset(orf=str(orf_label[0]), windows=timespans, df=orf_df) for orf_label, orf_df in orf_dfs.items()]

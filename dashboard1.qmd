@@ -1,0 +1,210 @@
+---
+format:
+  dashboard:
+    scrolling: true 
+---
+
+# Scatter Plot Visualization {.center}
+
+:::{.card title="About Wastewater Monitoring" .flow}
+
+Monitoring wastewater for viruses allows observation of viral dynamics over large populations with relatively small effort, and especially with reduced clinical testing, a more accurate view of broad trends.  We download samples with SARS-CoV-2 sequences amplified from wastewater from NCBI's Sequence Read Archive (SRA).  From the samples, we track polymorphisms of SARS-CoV-2 and their abundances, comparing the most recent two consecutive three-week periods for which samples are available.  As JN.1 is the progenitor of most currently circulating strains, polymorphisms defining JN.1 were excluded from further analysis.  Metadata on the samples included in each analysis is provided, a small number of samples are excluded that have known complexities that could distort results.  Polymorphisms that appeared above a 2% threshold in either three-week period are displayed in a scatter plot.  Changes in abundance of polymorphisms allow us to track the circulation dynamics of their associated strains and observe the appearance of novel strains or polymorphisms.  Changes are denoted relative to the ancestral Wuhan-I strain. 
+
+:::
+
+```{python}
+import sys
+
+from wastewater_dashboard.plot_variant_scatter import (
+    parse_plotting_file,
+    render_scatter_plot,
+    setup_logging,
+)
+from loguru import logger
+from pathlib import Path
+
+ALL_ORF_TSV = Path("data/VariantPMs.tsv")
+assert ALL_ORF_TSV.is_file(), f"The provided path, '{ALL_ORF_TSV}', does not exist."
+
+setup_logging(3)
+
+# parse the file for each orf dataset into dataframes
+orf_datasets = parse_plotting_file(ALL_ORF_TSV)
+
+# use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
+# OrfDataset as well
+final_data_bundles = [
+    render_scatter_plot(orf_dataset) for orf_dataset in orf_datasets
+]
+
+def render_for_quarto(final_data_bundles, orf_label: str) -> None:
+  logger.debug([data.orf for data in final_data_bundles])
+  orf_dataset = [dataset for dataset in final_data_bundles if orf_label in dataset.orf]
+  logger.debug(orf_dataset)
+  if not len(orf_dataset) == 1:
+    orf_dataset = [dataset for dataset in final_data_bundles if dataset.orf == "ORF1"]
+    assert len(orf_dataset) == 1
+    orf_dataset = orf_dataset[0]
+    orf_dataset.df = orf_dataset.df.clear()
+    emptied_dataset = render_scatter_plot(orf_dataset)
+    emptied_dataset.chart.show()
+  else:
+    orf_dataset[0].chart.show()
+```
+
+##
+
+::: {.panel-tabset}
+
+## Whole Genome
+
+#### Notes on Interpretation
+
+We can add some explanatory narrative here.
+
+```{python}
+render_for_quarto(final_data_bundles, "Whole Genome")
+```
+
+## ORF1ab
+
+#### Notes on Interpretation
+
+We can add some explanatory narrative here.
+
+```{python}
+render_for_quarto(final_data_bundles, "ORF1")
+```
+
+## Spike
+
+#### Notes on Interpretation
+
+We can add some explanatory narrative here.
+
+```{python}
+render_for_quarto(final_data_bundles, "S")
+```
+
+## ORF3a
+
+#### Notes on Interpretation
+
+We can add some explanatory narrative here.
+
+```{python}
+render_for_quarto(final_data_bundles, "ORF3a")
+```
+
+## E
+
+#### Notes on Interpretation
+
+We can add some explanatory narrative here.
+
+```{python}
+render_for_quarto(final_data_bundles, "E")
+```
+
+## M
+
+#### Notes on Interpretation
+
+We can add some explanatory narrative here.
+
+```{python}
+render_for_quarto(final_data_bundles, "M")
+```
+
+## ORF6
+
+#### Notes on Interpretation
+
+We can add some explanatory narrative here.
+
+```{python}
+render_for_quarto(final_data_bundles, "ORF6")
+```
+
+## ORF7a
+
+#### Notes on Interpretation
+
+We can add some explanatory narrative here.
+
+```{python}
+render_for_quarto(final_data_bundles, "ORF7a")
+```
+
+## ORF7b
+
+#### Notes on Interpretation
+
+We can add some explanatory narrative here.
+
+```{python}
+render_for_quarto(final_data_bundles, "ORF7b")
+```
+
+## ORF8
+
+#### Notes on Interpretation
+
+We can add some explanatory narrative here.
+
+```{python}
+render_for_quarto(final_data_bundles, "ORF7b")
+```
+
+## N
+
+#### Notes on Interpretation
+
+We can add some explanatory narrative here.
+
+```{python}
+render_for_quarto(final_data_bundles, "N")
+```
+
+## ORF10
+
+#### Notes on Interpretation
+
+We can add some explanatory narrative here.
+
+```{python}
+render_for_quarto(final_data_bundles, "ORF10")
+```
+
+:::
+
+##
+
+:::{.card title="Final Notes & Addendums" .flow}
+
+Coming soon!
+
+:::
+
+# Input Data Browser
+
+##
+
+:::{.card title="Wastewater Monitoring Metadata" .flow}
+
+Description coming soon!
+
+:::
+
+
+## Variant Metadata {height=800 scrolling="false"}
+
+```{python}
+import itables as it
+import polars as pl
+
+variant_data = pl.read_csv("./data/VariantPMs.tsv", separator="\t", skip_rows=1)
+it.init_notebook_mode(all_interactive=True)
+it.show(variant_data, column_filters="header", classes="display compact cell-border")
+```
+
