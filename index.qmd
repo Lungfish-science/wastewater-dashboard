@@ -104,7 +104,7 @@ html {
 
 ---
 
-### Our Philosophy {style="text-align: center"}
+### Our Vision {style="text-align: center"}
 
 ::: {.grid}
 
