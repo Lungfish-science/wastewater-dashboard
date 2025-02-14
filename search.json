@@ -1,9 +1,37 @@
 [
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "𓆞 lung.fish Data Explorer",
+    "section": "",
+    "text": "Dashboard Gallery\n\nWelcome to the lung.fish initiative’s public health data explorer, a growing collection of dashboards driven by environmental monitoring data:\n\nSARS-CoV-2 Wastewater Monitoring\n\n\n\n\n\n\n\n\n\n\n\n          SARS-CoV-2 Variant Monitoring through Targeted Wastewater Sequencing  \n          SARS-CoV-2 Variant Monitoring through Targeted Wastewater Sequencing  \n          SARS-CoV-2 Variant Monitoring through Targeted Wastewater Sequencing  \n\n    Previous\n    Next\n\n\n\n\n\n\n\n\n\n\nlung.fish is a consortium of academic research laboratories and public health organizations whose mission is to advance environmental monitoring as a means of detecting, forecasting, and containing pathogen outbreaks.\n\n\n\nOur Philosophy\n\n\n\nEnvironmental Monitoring\nThis column takes 1/2 of the page\n\n\nOpen Data\nThis column takes 1/2 of the page\n\n\n\n\nScientific Reproducibility\nThis column takes 1/2 of the page\n\n\nOpen Source\nThis column takes 1/2 of the page\n\n\n\n\n\nInterested in collaborating?\nGet In Touch\n\n\n\n\n\n Back to top"
+  },
+  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this site"
+    "text": "Welcome to the lung.fish project’s public health data explorer, a growing collection of dashboards driven by environmental monitoring data. The lung.fish initiative focuses on improving environmental sampling and promoting open data sharing by publishing data and experiments in public repositories."
+  },
+  {
+    "objectID": "about.html#our-mission",
+    "href": "about.html#our-mission",
+    "title": "About",
+    "section": "🌍 Our Mission",
+    "text": "🌍 Our Mission\nWe aim to:\n\nEnhance environmental data collection methods.\nFacilitate more accessible and transparent sharing of environmental data.\nFoster collaboration in the scientific community for better ecological understanding."
+  },
+  {
+    "objectID": "about.html#open-data-for-all",
+    "href": "about.html#open-data-for-all",
+    "title": "About",
+    "section": "📊 Open Data for All",
+    "text": "📊 Open Data for All\nWe believe in the power of open science. To learn about the legal licenses, please reach out to us directly!"
+  },
+  {
+    "objectID": "acknowledgements.html",
+    "href": "acknowledgements.html",
+    "title": "Acknowledgements",
+    "section": "",
+    "text": "Back to top"
   }
 ]
