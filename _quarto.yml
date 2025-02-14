@@ -42,7 +42,7 @@ website:
       - text: "About"
         href: about.qmd
       - text: "License"
-        href: https://github.com/inkfishmedical/wastewater-dashboard/LICENSE
+        href: https://github.com/inkfishmedical/wastewater-dashboard/blob/main/LICENSE
     right: 
       - icon: github
         href: https://github.com/inkfishmedical
