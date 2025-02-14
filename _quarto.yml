@@ -3,14 +3,49 @@ project:
   output-dir: docs
 
 website:
-  title: "Inkfish Medical SARS-CoV-2 Wastewater Dashboard"
+  title: "𓆞 lung.fish Data Explorer"
   repo-url: https://github.com/inkfishmedical/wastewater-dashboard
   navbar:
-    left:
+    right:
       - href: index.qmd
         text: Home
       - about.qmd
+      - text: "Dashboards"
+        menu:
+          - href: dashboard1.qmd
+            text: Wastewater Dashboard
       - acknowledgements.qmd
+      - text: "Help"
+        menu:
+          - text: "Report a Bug"
+            icon: "bug"
+            href: "https://github.com/inkfishmedical/wastewater-dashboard/issues"
+          - text: "Ask a Question"
+            icon: "chat-right-text"
+            href: "https://github.com/inkfishmedical/wastewater-dashboard/discussions"
+    tools:
+      - icon: github
+        menu:
+          - text: Source Code
+            href:  https://github.com/inkfishmedical/wastewater-dashboard
+          - text: Report a Bug
+            href:  https://github.com/inkfishmedical/wastewater-dashboard/issues
+    collapse: true
+    collapse-below: lg
+    toggle-position: right
+  back-to-top-navigation: true
+  page-navigation: true
+  reader-mode: true
+  page-footer: 
+    left: "Copyright 2025, lung.fish" 
+    center:
+      - text: "About"
+        href: about.qmd
+      - text: "License"
+        href: https://github.com/inkfishmedical/wastewater-dashboard/LICENSE
+    right: 
+      - icon: github
+        href: https://github.com/inkfishmedical
 
 format:
   html:

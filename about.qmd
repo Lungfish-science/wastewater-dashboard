@@ -2,4 +2,16 @@
 title: "About"
 ---
 
-About this site
+Welcome to the **lung.fish** project's public health data explorer, a growing collection of dashboards driven by environmental monitoring data. The **lung.fish** initiative focuses on improving environmental sampling and promoting open data sharing by publishing data and experiments in public repositories.
+
+## 🌍 Our Mission
+
+We aim to:
+
+- Enhance environmental data collection methods.
+- Facilitate more accessible and transparent sharing of environmental data.
+- Foster collaboration in the scientific community for better ecological understanding.
+
+## 📊 Open Data for All
+
+We believe in the power of open science. To learn about the legal licenses, please reach out to us directly!
