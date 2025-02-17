@@ -193,13 +193,13 @@ def parse_plotting_file(
         )
         .with_columns(
             pl.when(pl.col(timespans.previous_window) < 0.01)  # noqa: PLR2004
-            .then(pl.lit(0.1))
+            .then(pl.lit(0.01))
             .otherwise(pl.col(timespans.previous_window))
             .alias(timespans.previous_window),
         )
         .with_columns(
             pl.when(pl.col(timespans.latest_window) < 0.01)  # noqa: PLR2004
-            .then(pl.lit(0.1))
+            .then(pl.lit(0.01))
             .otherwise(pl.col(timespans.latest_window))
             .alias(timespans.latest_window),
         )
@@ -287,7 +287,12 @@ def render_scatter_plot(orf_bundle: OrfDataset) -> OrfDataset:
                 title=orf_bundle.windows.latest_window,
             ),
             color=alt.Color("AA Change:N"),
-            tooltip=["AA Change", "Associated Variants"],
+            tooltip=[
+                "AA Change",
+                "Associated Variants",
+                orf_bundle.windows.previous_window,
+                orf_bundle.windows.latest_window,
+            ],
         )
     )
 
