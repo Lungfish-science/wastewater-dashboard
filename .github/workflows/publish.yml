@@ -5,6 +5,7 @@ on:
     paths:
       - '**/*.py'
       - '**/*.tsv.gz'
+      - '**/*.tsv'
       - '**/*.qmd'
       - '_quarto.yml'
       - 'pyproject.toml'
