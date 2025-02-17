@@ -1,14 +1,14 @@
 ---
 format:
   dashboard:
-    scrolling: true 
+    scrolling: true
 ---
 
 # Scatter Plot Visualization {.center}
 
 :::{.card title="Why Wastewater Monitoring?" .flow}
 
-Monitoring wastewater for viruses allows observation of viral dynamics over large populations with relatively small effort, and especially with reduced clinical testing, a more accurate view of broad trends.  We download samples with SARS-CoV-2 sequences amplified from wastewater from NCBI's Sequence Read Archive (SRA).  From the samples, we track polymorphisms of SARS-CoV-2 and their abundances, comparing the most recent two consecutive three-week periods for which samples are available.  As JN.1 is the progenitor of most currently circulating strains, polymorphisms defining JN.1 were excluded from further analysis.  Metadata on the samples included in each analysis is provided, a small number of samples are excluded that have known complexities that could distort results.  Polymorphisms that appeared above a 2% threshold in either three-week period are displayed in a scatter plot.  Changes in abundance of polymorphisms allow us to track the circulation dynamics of their associated strains and observe the appearance of novel strains or polymorphisms.  Changes are denoted relative to the ancestral Wuhan-I strain. 
+Monitoring wastewater for viruses allows observation of viral dynamics over large populations with relatively small effort, and especially with reduced clinical testing, a more accurate view of broad trends.  We download samples with SARS-CoV-2 sequences amplified from wastewater from NCBI's Sequence Read Archive (SRA).  From the samples, we track polymorphisms of SARS-CoV-2 and their abundances, comparing the most recent two consecutive three-week periods for which samples are available.  As JN.1 is the progenitor of most currently circulating strains, polymorphisms defining JN.1 were excluded from further analysis.  Metadata on the samples included in each analysis is provided, a small number of samples are excluded that have known complexities that could distort results.  Polymorphisms that appeared above a 2% threshold in either three-week period are displayed in a scatter plot.  Changes in abundance of polymorphisms allow us to track the circulation dynamics of their associated strains and observe the appearance of novel strains or polymorphisms.  Changes are denoted relative to the ancestral Wuhan-I strain.
 
 :::
 
@@ -217,7 +217,7 @@ Coming soon!
 
 :::{.card title="Amino Acid Substitution Data" .flow}
 
-Description coming soon!
+This searchable table displays all plotted mutations. It shows the nucleotide positions where changes occur, along with their corresponding gene region and standardized mutation naming conventions.
 
 :::
 
@@ -239,14 +239,14 @@ it.show(variant_data, column_filters="header", classes="display compact cell-bor
 
 :::{.card title="Wastewater Monitoring Project Metadata" .flow}
 
-Description coming soon!
+Metadata file available for all recently reviewed submissions available <a href="data/weeks_meta.tsv" download="weeks_meta.tsv">here</a>.
 
 :::
 
 ## Project Metadata {height=800 scrolling="false"}
 
 ```{python}
-project_data = pl.read_csv("./data/weeks_meta.tsv", separator="\t", has_header=False)
+project_data = pl.read_csv("./data/weeks_meta.tsv", separator="\t", has_header=True)
 it.init_notebook_mode(all_interactive=True)
 it.show(project_data, column_filters="header", classes="display compact cell-border")
 ```
