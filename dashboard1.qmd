@@ -58,123 +58,147 @@ def render_for_quarto(final_data_bundles, orf_label: str) -> None:
 
 ## Whole Genome
 
-#### Notes on Interpretation
-
-We can add some explanatory narrative here.
-
 ```{python}
 render_for_quarto(final_data_bundles, "Whole Genome")
 ```
 
-## ORF1ab
-
-#### Notes on Interpretation
+:::{.card title="Notes on Interpretation" .flow}
 
 We can add some explanatory narrative here.
+
+:::
+
+## ORF1ab
 
 ```{python}
 render_for_quarto(final_data_bundles, "ORF1")
 ```
 
-## Spike
-
-#### Notes on Interpretation
+:::{.card title="Notes on Interpretation" .flow}
 
 We can add some explanatory narrative here.
+
+:::
+
+## Spike
 
 ```{python}
 render_for_quarto(final_data_bundles, "S")
 ```
 
-## ORF3a
-
-#### Notes on Interpretation
+:::{.card title="Notes on Interpretation" .flow}
 
 We can add some explanatory narrative here.
+
+:::
+
+## ORF3a
 
 ```{python}
 render_for_quarto(final_data_bundles, "ORF3a")
 ```
 
-## E
-
-#### Notes on Interpretation
+:::{.card title="Notes on Interpretation" .flow}
 
 We can add some explanatory narrative here.
+
+:::
+
+## E
 
 ```{python}
 render_for_quarto(final_data_bundles, "E")
 ```
 
-## M
-
-#### Notes on Interpretation
+:::{.card title="Notes on Interpretation" .flow}
 
 We can add some explanatory narrative here.
+
+:::
+
+## M
 
 ```{python}
 render_for_quarto(final_data_bundles, "M")
 ```
 
-## ORF6
-
-#### Notes on Interpretation
+:::{.card title="Notes on Interpretation" .flow}
 
 We can add some explanatory narrative here.
+
+:::
+
+## ORF6
 
 ```{python}
 render_for_quarto(final_data_bundles, "ORF6")
 ```
 
-## ORF7a
-
-#### Notes on Interpretation
+:::{.card title="Notes on Interpretation" .flow}
 
 We can add some explanatory narrative here.
+
+:::
+
+## ORF7a
 
 ```{python}
 render_for_quarto(final_data_bundles, "ORF7a")
 ```
 
-## ORF7b
-
-#### Notes on Interpretation
+:::{.card title="Notes on Interpretation" .flow}
 
 We can add some explanatory narrative here.
+
+:::
+
+## ORF7b
 
 ```{python}
 render_for_quarto(final_data_bundles, "ORF7b")
 ```
+
+:::{.card title="Notes on Interpretation" .flow}
+
+We can add some explanatory narrative here.
+
+:::
 
 ## ORF8
 
-#### Notes on Interpretation
-
-We can add some explanatory narrative here.
-
 ```{python}
 render_for_quarto(final_data_bundles, "ORF7b")
 ```
 
-## N
-
-#### Notes on Interpretation
+:::{.card title="Notes on Interpretation" .flow}
 
 We can add some explanatory narrative here.
+
+:::
+
+## N
 
 ```{python}
 render_for_quarto(final_data_bundles, "N")
 ```
 
-## ORF10
-
-#### Notes on Interpretation
+:::{.card title="Notes on Interpretation" .flow}
 
 We can add some explanatory narrative here.
+
+:::
+
+## ORF10
 
 ```{python}
 render_for_quarto(final_data_bundles, "ORF10")
 ```
+
+:::{.card title="Notes on Interpretation" .flow}
+
+We can add some explanatory narrative here.
+
+:::
 
 :::
 
@@ -186,11 +210,11 @@ Coming soon!
 
 :::
 
-# Input Data Browser
+# Variant Data Browser
 
 ##
 
-:::{.card title="Wastewater Monitoring Metadata" .flow}
+:::{.card title="Amino Acid Substitution Data" .flow}
 
 Description coming soon!
 
@@ -208,3 +232,20 @@ it.init_notebook_mode(all_interactive=True)
 it.show(variant_data, column_filters="header", classes="display compact cell-border")
 ```
 
+# Project Metadata Browser
+
+##
+
+:::{.card title="Wastewater Monitoring Project Metadata" .flow}
+
+Description coming soon!
+
+:::
+
+## Project Metadata {height=800 scrolling="false"}
+
+```{python}
+project_data = pl.read_csv("./data/weeks_meta.tsv", separator="\t", has_header=False)
+it.init_notebook_mode(all_interactive=True)
+it.show(project_data, column_filters="header", classes="display compact cell-border")
+```
