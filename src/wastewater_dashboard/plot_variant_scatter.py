@@ -290,8 +290,9 @@ def render_scatter_plot(orf_bundle: OrfDataset) -> OrfDataset:
             tooltip=[
                 "AA Change",
                 "Associated Variants",
-                orf_bundle.windows.previous_window,
+                #orf_bundle.windows.previous_window,
                 orf_bundle.windows.latest_window,
+                orf_bundle.windows.previous_window,
             ],
         )
     )
