@@ -13,6 +13,7 @@
 
 from __future__ import annotations
 
+import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -60,6 +61,21 @@ ALTAIR_THEME: Literal[
 
 # The height of the plot in pixels.
 PLOT_HEIGHT = 600
+
+# The expected major lineage
+# TODO(@Nick): This will be replaced with a command line arg at some point
+MAJOR_LINEAGES = [
+    "XEC",
+    "XEC.4",
+    "KP.3.1.1",
+    "MC.10.1",
+    "PA.1",
+    "LP.8.1",
+    "LF.7",
+    "LB.1.3.1",
+    "XEK",
+    "XEQ",
+]
 
 
 @dataclass
@@ -139,66 +155,23 @@ def setup_logging(level: int = 0) -> None:
     logger.add(sys.stderr, colorize=True, level=level_str)
 
 
-def collate_sorted_variants(
-    all_orf_lf: pl.LazyFrame,
-    timespans: TimeWindows,
-) -> list[str]:
-    # collate a list of associated variants
-    return (
-        all_orf_lf.drop("ORF", "AA Change")
-        .filter(pl.col(timespans.previous_window) >= 0.02)  # noqa: PLR2004
-        .filter(pl.col(timespans.latest_window) >= 0.02)  # noqa: PLR2004
-        .with_columns(pl.col("Associated Variants").str.split(",").alias("Associated Variants"))
-        .filter(pl.col("Associated Variants").is_not_null())
-        .explode("Associated Variants")
-        .group_by("Associated Variants")
-        .agg(
-            pl.col(timespans.previous_window).median(),
-            pl.col(timespans.latest_window).median(),
-        )
-        .sort(
-            [
-                pl.col(timespans.previous_window),
-                pl.col(timespans.latest_window),
-                pl.col("Associated Variants"),
-            ],
-            descending=[True, True, False],
-        )
-        .select("Associated Variants")
-        .collect()
-        .to_series()
-        .to_list()
-    )
-
-
-def parse_plotting_file(
-    orf_file: str | Path,
-) -> tuple[list[str], list[OrfDataset]]:
+def parse_plotting_file(orf_file: str | Path) -> list[OrfDataset]:
     """
-    Parse a variant frequencies file from disk into a list of OrfDataset objects.
+    Parse a tab-separated file containing ORF abundance data and return a list of OrfDataset objects.
 
-    The input `.tsv` file is expected to contain several columns of data:
-    - ORFs: The ORF label (e.g., "S", "N", etc.)
-    - AA Change: The amino acid change for this variant
-    - Associated Variants: A list of variants with this change
-    - Abundance: The frequency in Week N-1
-    - Abundance_duplicated_0: The frequency in Week N
-
-    Each abundance column header contains the date range for that week, e.g., '2024-12-15--2025-01-04'.
-
-    The polars query plan:
-    1. Reads the header for time window information
-    2. Scans the TSV file lazily, skipping the header row
-    3. Selects and renames relevant columns
-    4. Replaces abundance values < 0.01 with 0.1 to handle logarithmic plotting
-    5. Collects and partitions the data by ORF
+    This function reads a TSV file containing abundance data for different ORFs across two time windows.
+    It extracts time window information from the header, processes the data using polars, filters for
+    abundances above 2%, and partitions the data by ORF.
 
     Args:
-        orf_file (str | Path): Path to the TSV file containing variant frequencies
+        orf_file (str | Path): Path to the tab-separated input file containing ORF abundance data
 
     Returns:
-        list[OrfDataset]: A list of OrfDataset objects, one per ORF, containing the
-            parsed dataframe and time window information
+        list[OrfDataset]: A list of OrfDataset objects, each containing:
+            - orf: Name of the ORF
+            - df: Polars DataFrame with abundance data
+            - windows: TimeWindows object with the time periods
+            - chart: Initially None, populated later with Altair chart
     """
     # parse time window information from the header line
     header = pl.read_csv(orf_file, separator="\t", n_rows=0).columns
@@ -207,9 +180,14 @@ def parse_plotting_file(
     # scan the CSV into a lazy query plan, skipping the header line that we have now parsed
     orf_df_pl = pl.scan_csv("data/VariantPMs.tsv", separator="\t", skip_rows=1)
 
+    # use the expected major lineages to generate a regex pattern for matching against each row's
+    # associated lineages
+    major_lineage_regex = "(" + "|".join(map(re.escape, MAJOR_LINEAGES)) + ")"
+
     # extend the query plan
     all_orf_abundances = (
         orf_df_pl.select(
+            "Position",
             "ORFs",
             "AA Change",
             "Associated Variants",
@@ -218,45 +196,37 @@ def parse_plotting_file(
         )
         .rename(
             {
+                "Associated Variants": "Associated Lineages",
                 "ORFs": "ORF",
                 "Abundance": timespans.previous_window,
                 "Abundance_duplicated_0": timespans.latest_window,
             },
         )
-        .with_columns(
-            pl.when(pl.col(timespans.previous_window) < 0.01)  # noqa: PLR2004
-            .then(pl.lit(0.01))
-            .otherwise(pl.col(timespans.previous_window))
-            .alias(timespans.previous_window),
+        .filter(
+            pl.any_horizontal(
+                pl.col(timespans.previous_window),
+                pl.col(timespans.latest_window),
+            ).ge(0.02),
         )
         .with_columns(
-            pl.when(pl.col(timespans.latest_window) < 0.01)  # noqa: PLR2004
-            .then(pl.lit(0.01))
-            .otherwise(pl.col(timespans.latest_window))
-            .alias(timespans.latest_window),
+            pl.col("Associated Lineages").str.extract_all(major_lineage_regex).alias("Major Lineages"),
         )
     )
 
     # split off a dataframe copy for displaying all mutations across the whole genome
     whole_genome_lf = all_orf_abundances.with_columns(
-        pl.concat_str([pl.col("ORF"), pl.col("AA Change")], separator=" ").alias("AA Change"),
+        pl.concat_str([pl.col("ORF"), pl.col("AA Change")], separator=" ").alias(
+            "AA Change",
+        ),
         pl.lit("Whole Genome").alias("ORF"),
     )
-
-    # pull out a list of the SARS-CoV-2 lineages present in this dataset, sorted in
-    # descending order by their median frequency across all the amino acid substitutions
-    # they're associated with
-    lineage_list = collate_sorted_variants(all_orf_abundances, timespans)
 
     # execute the optimized query plan with `.collect()`, and then split out one dataframe
     # per ORF with `.partition_by("ORF")`
     orf_dfs = all_orf_abundances.collect().vstack(whole_genome_lf.collect()).partition_by("ORF", as_dict=True)
 
     # return a list of OrfDataset objects
-    return (
-        lineage_list,
-        [OrfDataset(orf=str(orf_label[0]), windows=timespans, df=orf_df) for orf_label, orf_df in orf_dfs.items()],
-    )
+    return [OrfDataset(orf=str(orf_label[0]), windows=timespans, df=orf_df) for orf_label, orf_df in orf_dfs.items()]
 
 
 def render_diag_line(orf_bundle: OrfDataset) -> alt.Chart:
@@ -275,8 +245,8 @@ def render_diag_line(orf_bundle: OrfDataset) -> alt.Chart:
     """
     line_data = pl.DataFrame(
         {
-            orf_bundle.windows.previous_window: [0.01, 1],
-            orf_bundle.windows.latest_window: [0.01, 1],
+            orf_bundle.windows.previous_window: [0.0001, 1],
+            orf_bundle.windows.latest_window: [0.0001, 1],
         },
     )
     return (
@@ -288,25 +258,34 @@ def render_diag_line(orf_bundle: OrfDataset) -> alt.Chart:
         .encode(
             x=alt.X(
                 f"{orf_bundle.windows.previous_window}:Q",
-                scale=alt.Scale(type="log", domain=[0.01, 1]),
+                scale=alt.Scale(type="log", domain=[0.0001, 1]),
             ),
             y=alt.Y(
                 f"{orf_bundle.windows.latest_window}:Q",
-                scale=alt.Scale(type="log", domain=[0.01, 1]),
+                scale=alt.Scale(type="log", domain=[0.0001, 1]),
             ),
         )
     )
 
 
-def render_scatter_plot(orf_bundle: OrfDataset, lineage_list: list[str]) -> OrfDataset:
+def render_scatter_plot(orf_bundle: OrfDataset) -> OrfDataset:
     """
-    Generates an interactive scatter plot for a given ORF dataset.
+    Render a scatter plot of amino acid change frequencies between time windows for an ORF.
+
+    Creates an interactive Altair scatter plot comparing variant frequencies between two time
+    windows. The plot includes:
+    - A diagonal trend line for reference
+    - Selectable filtering by SARS-CoV-2 lineage
+    - Interactive legend highlighting
+    - Logarithmic scales
+    - Tooltips with mutation and lineage details
+    - Dynamic color-coding by amino acid change position
 
     Args:
-        orf_bundle (OrfFile): A dataclass containing the ORF data and metadata
+        orf_bundle (OrfDataset): Dataset containing the ORF data and time window information
 
     Returns:
-        OrfFile: The input OrfFile object with its chart attribute populated
+        OrfDataset: The input dataset with an added rendered Altair chart
     """
     # set the altair theme using the constant above
     alt.theme.enable(ALTAIR_THEME)
@@ -316,11 +295,24 @@ def render_scatter_plot(orf_bundle: OrfDataset, lineage_list: list[str]) -> OrfD
     lineage_param = alt.param(
         name="selected_variant",
         bind=alt.binding_select(
-            options=["All", *lineage_list],
-            name="Variant:",
+            options=["All", *MAJOR_LINEAGES],
+            name="SARS-CoV-2 Lineage: ",
         ),
         value="All",  # Default value shows all points.
     )
+
+    # Create an interaction parameter allowing the legend to be used to highlight
+    # particular mutations in the plot
+    aa_change_selection = alt.selection_point(fields=["AA Change"], bind="legend")
+
+    # collect a list of the amino-acid change's nucleotide positions in order
+    # (TODO<@Nick>: This will not work for multi-segment pathogens)
+    ordered_aa_changes = (
+        orf_bundle.df.sort("Position").select("AA Change").unique(maintain_order=True).to_series().to_list()
+    )
+
+    # construct a window box to interactively highlight portions of the plot
+    highlight_box = alt.selection_interval()
 
     # render the scatterplot base
     scatter_chart = (
@@ -329,31 +321,40 @@ def render_scatter_plot(orf_bundle: OrfDataset, lineage_list: list[str]) -> OrfD
         .encode(
             x=alt.X(
                 f"{orf_bundle.windows.previous_window}:Q",
-                scale=alt.Scale(type="log", domain=[0.01, 1]),
+                scale=alt.Scale(type="log", domain=[0.0001, 1]),
                 title=orf_bundle.windows.previous_window,
             ),
             y=alt.Y(
                 f"{orf_bundle.windows.latest_window}:Q",
-                scale=alt.Scale(type="log", domain=[0.01, 1]),
+                scale=alt.Scale(type="log", domain=[0.0001, 1]),
                 title=orf_bundle.windows.latest_window,
             ),
             # Conditionally color points: if "All" is selected or if the selected variant
-            # is found in the comma-separated "Associated Variants", use the normal color;
+            # is found in the comma-separated "Associated Lineages", use the normal color;
             # otherwise, gray them out.
             color=alt.condition(
-                "selected_variant == 'All' || indexof(split(datum['Associated Variants'], ','), selected_variant) >= 0",
-                alt.Color("AA Change:N"),
+                "selected_variant == 'All' || indexof(split(datum['Major Lineages'], ','), selected_variant) >= 0",
+                alt.Color(
+                    "AA Change:N",
+                    legend=alt.Legend(symbolLimit=1000, columns=2),
+                    scale=alt.Scale(domain=ordered_aa_changes),
+                ),
                 alt.value("lightgray"),
             ),
+            opacity=(alt.when(aa_change_selection).then(alt.value(1)).otherwise(alt.value(0.2))),
             tooltip=[
                 "AA Change",
-                "Associated Variants",
+                "Associated Lineages",
                 orf_bundle.windows.latest_window,
                 orf_bundle.windows.previous_window,
             ],
         )
         # Add the parameter to include the UI element in the chart.
         .add_params(lineage_param)
+        # Add a parameter allowing interactive selections via the legend
+        .add_params(aa_change_selection)
+        # add the highlight box
+        .add_params(highlight_box)
     )
 
     # render the diagonal line
@@ -364,14 +365,10 @@ def render_scatter_plot(orf_bundle: OrfDataset, lineage_list: list[str]) -> OrfD
 
     # set the chart to be interactive, make it auto-size to the user's screen width,
     # and make the text on the axes a little bigger
-    orf_bundle.chart = (
-        combined_chart.interactive()
-        .properties(
-            width="container",
-            height=PLOT_HEIGHT,
-        )
-        .configure_axis(labelFontSize=14, titleFontSize=16)
-    )
+    orf_bundle.chart = combined_chart.properties(
+        width="container",
+        height=PLOT_HEIGHT,
+    ).configure_axis(labelFontSize=14, titleFontSize=16)
 
     return orf_bundle
 
@@ -429,11 +426,11 @@ def main() -> None:
     assert all_orf_tsv.is_file(), f"The provided path, '{all_orf_tsv}', does not exist."
 
     # parse the file for each orf dataset into dataframes
-    lineage_list, orf_datasets = parse_plotting_file(all_orf_tsv)
+    orf_datasets = parse_plotting_file(all_orf_tsv)
 
     # use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
     # OrfDataset as well
-    final_data_bundles = [render_scatter_plot(orf_dataset, lineage_list) for orf_dataset in orf_datasets]
+    final_data_bundles = [render_scatter_plot(orf_dataset) for orf_dataset in orf_datasets]
 
     # for each fine dataset, write out the rendered plot in the requested format
     for orf_dataset in final_data_bundles:

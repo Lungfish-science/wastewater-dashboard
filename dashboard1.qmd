@@ -30,12 +30,12 @@ assert ALL_ORF_TSV.is_file(), f"The provided path, '{ALL_ORF_TSV}', does not exi
 setup_logging(3)
 
 # parse the file for each orf dataset into dataframes
-lineage_list, orf_datasets = parse_plotting_file(ALL_ORF_TSV)
+orf_datasets = parse_plotting_file(ALL_ORF_TSV)
 
 # use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
 # OrfDataset as well
 final_data_bundles = [
-    render_scatter_plot(orf_dataset, lineage_list) for orf_dataset in orf_datasets
+    render_scatter_plot(orf_dataset) for orf_dataset in orf_datasets
 ]
 
 def render_for_quarto(final_data_bundles, orf_label: str) -> None:
@@ -47,7 +47,7 @@ def render_for_quarto(final_data_bundles, orf_label: str) -> None:
     assert len(orf_dataset) == 1
     orf_dataset = orf_dataset[0]
     orf_dataset.df = orf_dataset.df.clear()
-    emptied_dataset = render_scatter_plot(orf_dataset, [])
+    emptied_dataset = render_scatter_plot(orf_dataset)
     emptied_dataset.chart.show()
   else:
     orf_dataset[0].chart.show()
