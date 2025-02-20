@@ -139,9 +139,41 @@ def setup_logging(level: int = 0) -> None:
     logger.add(sys.stderr, colorize=True, level=level_str)
 
 
+def collate_sorted_variants(
+    all_orf_lf: pl.LazyFrame,
+    timespans: TimeWindows,
+) -> list[str]:
+    # collate a list of associated variants
+    return (
+        all_orf_lf.drop("ORF", "AA Change")
+        .filter(pl.col(timespans.previous_window) >= 0.02)  # noqa: PLR2004
+        .filter(pl.col(timespans.latest_window) >= 0.02)  # noqa: PLR2004
+        .with_columns(pl.col("Associated Variants").str.split(",").alias("Associated Variants"))
+        .filter(pl.col("Associated Variants").is_not_null())
+        .explode("Associated Variants")
+        .group_by("Associated Variants")
+        .agg(
+            pl.col(timespans.previous_window).median(),
+            pl.col(timespans.latest_window).median(),
+        )
+        .sort(
+            [
+                pl.col(timespans.previous_window),
+                pl.col(timespans.latest_window),
+                pl.col("Associated Variants"),
+            ],
+            descending=[True, True, False],
+        )
+        .select("Associated Variants")
+        .collect()
+        .to_series()
+        .to_list()
+    )
+
+
 def parse_plotting_file(
     orf_file: str | Path,
-) -> list[OrfDataset]:
+) -> tuple[list[str], list[OrfDataset]]:
     """
     Parse a variant frequencies file from disk into a list of OrfDataset objects.
 
@@ -211,12 +243,20 @@ def parse_plotting_file(
         pl.lit("Whole Genome").alias("ORF"),
     )
 
+    # pull out a list of the SARS-CoV-2 lineages present in this dataset, sorted in
+    # descending order by their median frequency across all the amino acid substitutions
+    # they're associated with
+    lineage_list = collate_sorted_variants(all_orf_abundances, timespans)
+
     # execute the optimized query plan with `.collect()`, and then split out one dataframe
     # per ORF with `.partition_by("ORF")`
     orf_dfs = all_orf_abundances.collect().vstack(whole_genome_lf.collect()).partition_by("ORF", as_dict=True)
 
     # return a list of OrfDataset objects
-    return [OrfDataset(orf=str(orf_label[0]), windows=timespans, df=orf_df) for orf_label, orf_df in orf_dfs.items()]
+    return (
+        lineage_list,
+        [OrfDataset(orf=str(orf_label[0]), windows=timespans, df=orf_df) for orf_label, orf_df in orf_dfs.items()],
+    )
 
 
 def render_diag_line(orf_bundle: OrfDataset) -> alt.Chart:
@@ -258,7 +298,7 @@ def render_diag_line(orf_bundle: OrfDataset) -> alt.Chart:
     )
 
 
-def render_scatter_plot(orf_bundle: OrfDataset) -> OrfDataset:
+def render_scatter_plot(orf_bundle: OrfDataset, lineage_list: list[str]) -> OrfDataset:
     """
     Generates an interactive scatter plot for a given ORF dataset.
 
@@ -270,6 +310,17 @@ def render_scatter_plot(orf_bundle: OrfDataset) -> OrfDataset:
     """
     # set the altair theme using the constant above
     alt.theme.enable(ALTAIR_THEME)
+
+    # Create an interactive parameter for variant selection.
+    # Replace the hard-coded list with a dynamic list if needed.
+    lineage_param = alt.param(
+        name="selected_variant",
+        bind=alt.binding_select(
+            options=["All", *lineage_list],
+            name="Variant:",
+        ),
+        value="All",  # Default value shows all points.
+    )
 
     # render the scatterplot base
     scatter_chart = (
@@ -286,15 +337,23 @@ def render_scatter_plot(orf_bundle: OrfDataset) -> OrfDataset:
                 scale=alt.Scale(type="log", domain=[0.01, 1]),
                 title=orf_bundle.windows.latest_window,
             ),
-            color=alt.Color("AA Change:N"),
+            # Conditionally color points: if "All" is selected or if the selected variant
+            # is found in the comma-separated "Associated Variants", use the normal color;
+            # otherwise, gray them out.
+            color=alt.condition(
+                "selected_variant == 'All' || indexof(split(datum['Associated Variants'], ','), selected_variant) >= 0",
+                alt.Color("AA Change:N"),
+                alt.value("lightgray"),
+            ),
             tooltip=[
                 "AA Change",
                 "Associated Variants",
-                #orf_bundle.windows.previous_window,
                 orf_bundle.windows.latest_window,
                 orf_bundle.windows.previous_window,
             ],
         )
+        # Add the parameter to include the UI element in the chart.
+        .add_params(lineage_param)
     )
 
     # render the diagonal line
@@ -370,11 +429,11 @@ def main() -> None:
     assert all_orf_tsv.is_file(), f"The provided path, '{all_orf_tsv}', does not exist."
 
     # parse the file for each orf dataset into dataframes
-    orf_datasets = parse_plotting_file(all_orf_tsv)
+    lineage_list, orf_datasets = parse_plotting_file(all_orf_tsv)
 
     # use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
     # OrfDataset as well
-    final_data_bundles = [render_scatter_plot(orf_dataset) for orf_dataset in orf_datasets]
+    final_data_bundles = [render_scatter_plot(orf_dataset, lineage_list) for orf_dataset in orf_datasets]
 
     # for each fine dataset, write out the rendered plot in the requested format
     for orf_dataset in final_data_bundles:
