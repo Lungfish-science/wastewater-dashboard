@@ -156,6 +156,19 @@ def setup_logging(level: int = 0) -> None:
 
 
 def validate_date_columns(unchecked_df: pl.DataFrame) -> pl.LazyFrame:
+    """
+    Validate that all date columns in a polars DataFrame contain valid date information.
+
+    Takes an unchecked polars DataFrame and performs two validations:
+    1. Checks that date columns were parsed as expected date types
+    2. Checks that start dates precede end dates
+
+    Args:
+        unchecked_df (pl.DataFrame): DataFrame containing date columns to validate
+
+    Returns:
+        pl.LazyFrame: Validated data with an added "Time Span" column
+    """
     # get the types for the date columns to make sure everything was input and parsed correctly
     schema = unchecked_df.schema
 
@@ -215,6 +228,18 @@ def validate_date_columns(unchecked_df: pl.DataFrame) -> pl.LazyFrame:
 
 
 def reduce_to_latest_window(multi_window_lf: pl.LazyFrame) -> pl.LazyFrame:
+    """
+    Reduce a multi-window LazyFrame to the latest time window data.
+
+    Takes a LazyFrame containing mutation data across multiple time windows and extracts
+    only the data from the most recent two time windows.
+
+    Args:
+        multi_window_lf (pl.LazyFrame): LazyFrame containing mutation data across multiple time periods
+
+    Returns:
+        pl.LazyFrame: Filtered LazyFrame containing only the latest two time windows
+    """
     pre_flattened_dates = (
         multi_window_lf.select("Time Span Start", "Time Span End")
         .unique()
