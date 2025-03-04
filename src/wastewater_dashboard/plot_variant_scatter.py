@@ -322,6 +322,9 @@ def parse_plotting_file(orf_file: str | Path) -> list[OrfDataset]:
             "Time Span",
         )
         .collect()
+        # TODO(@Nick): This may need to change to support more generic Abundance columns
+        # that contain abundances for many time spans, which can then be used with the
+        # altair selector to filter which points are displayed.
         .pivot(
             values="Abundance",
             index=["Position", "ORFs", "AA Change", "Associated Variants"],
@@ -335,6 +338,8 @@ def parse_plotting_file(orf_file: str | Path) -> list[OrfDataset]:
                 "ORFs": "ORF",
             },
         )
+        # TODO(@Nick): This should be replaced with a Polars selector that finds all date-range
+        # abundance columns and applies this filter to them.
         .filter(
             pl.any_horizontal(
                 pl.col(timespans.previous_window),
@@ -390,6 +395,9 @@ def render_diag_line(orf_bundle: OrfDataset) -> alt.Chart:
             color="black",
         )
         .encode(
+            # TODO(@Nick): This will need to change, potentially to a more generic
+            # "Previous Abundance" and "Latest Abundance" pair of columns, to support
+            # browsing multiple timespan comparisons.
             x=alt.X(
                 f"{orf_bundle.windows.previous_window}:Q",
                 scale=alt.Scale(type="log", domain=[0.0001, 1]),
@@ -464,6 +472,9 @@ def render_scatter_plot(orf_bundle: OrfDataset) -> OrfDataset:
         alt.Chart(orf_bundle.df)
         .mark_circle(size=120)
         .encode(
+            # TODO(@Nick): This will need to change, potentially to a more generic
+            # "Previous Abundance" and "Latest Abundance" pair of columns, to support
+            # browsing multiple timespan comparisons.
             x=alt.X(
                 f"{orf_bundle.windows.previous_window}:Q",
                 scale=alt.Scale(type="log", domain=[0.0001, 1]),
@@ -487,6 +498,9 @@ def render_scatter_plot(orf_bundle: OrfDataset) -> OrfDataset:
                 alt.value("lightgray"),
             ),
             opacity=(alt.when(aa_change_selection).then(alt.value(1)).otherwise(alt.value(0.2))),
+            # TODO(@Nick): This will need to change, potentially to a more generic
+            # "Previous Abundance" and "Latest Abundance" pair of columns, to support
+            # browsing multiple timespan comparisons.
             tooltip=[
                 "AA Change",
                 "Associated Lineages",
