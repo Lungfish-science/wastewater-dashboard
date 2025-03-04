@@ -13,6 +13,7 @@
 
 from __future__ import annotations
 
+import datetime
 import re
 import sys
 from dataclasses import dataclass, field
@@ -99,10 +100,20 @@ class TimeWindows:
             return None
 
         # Unpack the input list into the actual fields
-        logger.debug(f"Setting the `previous_window` attribute to {timespans[0]}")
-        self.previous_window = timespans[0]
-        logger.debug(f"Setting the `latest_window` attribute to {timespans[1]}")
-        self.latest_window = timespans[1]
+        first_dates = [
+            datetime.datetime.strptime(timespan.split("--")[0], "%Y-%m-%d").astimezone(datetime.timezone.utc)
+            for timespan in timespans
+        ]
+        if first_dates[0] < first_dates[1]:
+            logger.debug(f"Setting the `previous_window` attribute to {timespans[0]}")
+            self.previous_window = timespans[0]
+            logger.debug(f"Setting the `latest_window` attribute to {timespans[1]}")
+            self.latest_window = timespans[1]
+        else:
+            logger.debug(f"Setting the `previous_window` attribute to {timespans[1]}")
+            self.previous_window = timespans[1]
+            logger.debug(f"Setting the `latest_window` attribute to {timespans[0]}")
+            self.latest_window = timespans[0]
 
 
 @dataclass
@@ -295,7 +306,10 @@ def parse_plotting_file(orf_file: str | Path) -> list[OrfDataset]:
     # associated lineages
     major_lineage_regex = "(" + "|".join(map(re.escape, MAJOR_LINEAGES)) + ")"
 
-    # extend the query plan
+    # pull out the min and max date for the comparison
+    min_date = timespans.previous_window.split("--")[0]
+    max_date = timespans.latest_window.split("--")[-1]
+
     # extend the query plan
     all_orf_abundances = (
         reduced_lf.select(
@@ -329,6 +343,7 @@ def parse_plotting_file(orf_file: str | Path) -> list[OrfDataset]:
         )
         .with_columns(
             pl.col("Associated Lineages").str.extract_all(major_lineage_regex).list.join(",").alias("Major Lineages"),
+            pl.lit(f"{min_date} to {max_date}").alias("Comparison"),
         )
     )
 
@@ -420,6 +435,17 @@ def render_scatter_plot(orf_bundle: OrfDataset) -> OrfDataset:
         value="All",  # Default value shows all points.
     )
 
+    # Make a parameter that will render a dropdown for selecting the timespan comparison
+    comparison_dropdown = alt.binding_select(
+        options=orf_bundle.df.select("Comparison").unique().to_series().to_list(),
+        name="Timespan Comparison: ",
+    )
+    timespan_selector = alt.selection_point(
+        fields=["Comparison"],
+        bind=comparison_dropdown,
+        name="Timespan Comparison: ",
+    )
+
     # Create an interaction parameter allowing the legend to be used to highlight
     # particular mutations in the plot
     aa_change_selection = alt.selection_point(fields=["AA Change"], bind="legend")
@@ -474,6 +500,9 @@ def render_scatter_plot(orf_bundle: OrfDataset) -> OrfDataset:
         .add_params(aa_change_selection)
         # add the highlight box
         .add_params(highlight_box)
+        # add the timespan comparison dropdown
+        .add_params(timespan_selector)
+        .transform_filter(timespan_selector)
     )
 
     # render the diagonal line
