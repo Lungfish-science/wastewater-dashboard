@@ -155,6 +155,87 @@ def setup_logging(level: int = 0) -> None:
     logger.add(sys.stderr, colorize=True, level=level_str)
 
 
+def validate_date_columns(unchecked_df: pl.DataFrame) -> pl.LazyFrame:
+    # get the types for the date columns to make sure everything was input and parsed correctly
+    schema = unchecked_df.schema
+
+    start_type = schema.get("Time Span Start")
+    stop_type = schema.get("Time Span End")
+    process_end_type = schema.get("Process end date")
+
+    # make sure all the columns that need to be dates were actually parsed as dates
+    assert start_type == pl.Date, (
+        f"The column 'Time Span Start' could not properly be parsed as a date and was instead parsed as a {start_type}. Please double check that the input data in this column was in YYYY-MM-DD format."
+    )
+    assert stop_type == pl.Date, (
+        f"The column 'Time Span End' could not properly be parsed as a date and was instead parsed as a {start_type}. Please double check that the input data in this column was in YYYY-MM-DD format."
+    )
+    assert process_end_type == pl.Date, (
+        f"The column 'Process end date' could not properly be parsed as a date and was instead parsed as a {start_type}. Please double check that the input data in this column was in YYYY-MM-DD format."
+    )
+
+    # run a check to see if any start dates do not precede their respective end dates
+    date_check = (
+        unchecked_df.select("Time Span Start", "Time Span End")
+        .with_columns(pl.col("Time Span Start").lt(pl.col("Time Span End")).alias("_date_check"))
+        .select("_date_check")
+        .to_series()
+        .to_list()
+    )
+
+    # to make a more helpful error message, collect the indices of the invalid dates
+    invalid_date_indices = [i for i, passing in enumerate(date_check) if not passing]
+
+    # if there were no invalid dates, return a now-validated lazyframe
+    if len(invalid_date_indices) == 0:
+        return unchecked_df.lazy().with_columns(
+            pl.concat_str(
+                [
+                    pl.col("Time Span Start").dt.to_string(),
+                    pl.col("Time Span End").dt.to_string(),
+                ],
+                separator="--",
+            ).alias("Time Span"),
+        )
+
+    # if the list of collected invalid indices isn't empty, use those indices to collect tuples of invalid
+    # date pairs, and print those invalid date pairs in the assertion message.
+    start_dates = unchecked_df.select("Time Span Start").to_series().to_list()
+    end_dates = unchecked_df.select("Time Span End").to_series().to_list()
+    invalid_dates = [
+        (start_date, end_date)
+        for i, (start_date, end_date) in enumerate(zip(start_dates, end_dates, strict=True))
+        if i in invalid_date_indices
+    ]
+    assert False not in date_check, (
+        f"One or more start dates that do not precede the end dates were encountered:\n{invalid_dates}"
+    )
+
+    return unchecked_df.lazy()
+
+
+def reduce_to_latest_window(multi_window_lf: pl.LazyFrame) -> pl.LazyFrame:
+    pre_flattened_dates = (
+        multi_window_lf.select("Time Span Start", "Time Span End")
+        .unique()
+        .top_k(2, by=["Time Span Start", "Time Span End"])
+        .collect()
+        .rows()
+    )
+
+    flattened_dates = []
+    for dates in pre_flattened_dates:
+        assert len(dates) == 2, (  # noqa: PLR2004
+            f"Invalid state has been represented in the computed latest dates: {pre_flattened_dates}"
+        )
+        flattened_dates = [*flattened_dates, *dates]
+
+    return multi_window_lf.filter(
+        pl.col("Time Span Start").is_in(flattened_dates),
+        pl.col("Time Span End").is_in(flattened_dates),
+    )
+
+
 def parse_plotting_file(orf_file: str | Path) -> list[OrfDataset]:
     """
     Parse a tab-separated file containing ORF abundance data and return a list of OrfDataset objects.
@@ -173,33 +254,46 @@ def parse_plotting_file(orf_file: str | Path) -> list[OrfDataset]:
             - windows: TimeWindows object with the time periods
             - chart: Initially None, populated later with Altair chart
     """
-    # parse time window information from the header line
-    header = pl.read_csv(orf_file, separator="\t", n_rows=0).columns
-    timespans = TimeWindows(header)
+    unchecked_df = pl.read_csv(orf_file, separator="\t", try_parse_dates=True)
+    checked_lf = validate_date_columns(unchecked_df)
+    reduced_lf = reduce_to_latest_window(checked_lf)
 
-    # scan the CSV into a lazy query plan, skipping the header line that we have now parsed
-    orf_df_pl = pl.scan_csv("data/VariantPMs.tsv", separator="\t", skip_rows=1)
+    # parse time window information and store it as a dataclass object
+    latest_timespans = checked_lf.select("Time Span").unique().top_k(2, by=["Time Span"]).collect().rows()
+    flattened_timespans = []
+    for date in latest_timespans:
+        assert len(date) == 1, f"Invalid state has been represented in the computed latest dates: {latest_timespans}"
+        flattened_timespans.append(date[0])
+    timespans = TimeWindows(flattened_timespans)
 
     # use the expected major lineages to generate a regex pattern for matching against each row's
     # associated lineages
     major_lineage_regex = "(" + "|".join(map(re.escape, MAJOR_LINEAGES)) + ")"
 
     # extend the query plan
+    # extend the query plan
     all_orf_abundances = (
-        orf_df_pl.select(
+        reduced_lf.select(
             "Position",
             "ORFs",
             "AA Change",
             "Associated Variants",
+            "Count",
             "Abundance",
-            "Abundance_duplicated_0",
+            "Time Span",
         )
+        .collect()
+        .pivot(
+            values="Abundance",
+            index=["Position", "ORFs", "AA Change", "Associated Variants"],
+            on="Time Span",
+            aggregate_function="first",
+        )
+        .lazy()
         .rename(
             {
                 "Associated Variants": "Associated Lineages",
                 "ORFs": "ORF",
-                "Abundance": timespans.previous_window,
-                "Abundance_duplicated_0": timespans.latest_window,
             },
         )
         .filter(
@@ -209,7 +303,7 @@ def parse_plotting_file(orf_file: str | Path) -> list[OrfDataset]:
             ).ge(0.02),
         )
         .with_columns(
-            pl.col("Associated Lineages").str.extract_all(major_lineage_regex).alias("Major Lineages"),
+            pl.col("Associated Lineages").str.extract_all(major_lineage_regex).list.join(",").alias("Major Lineages"),
         )
     )
 
