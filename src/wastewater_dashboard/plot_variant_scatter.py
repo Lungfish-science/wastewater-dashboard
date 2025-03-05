@@ -185,7 +185,6 @@ def validate_date_columns(unchecked_df: pl.DataFrame) -> pl.LazyFrame:
 
     start_type = schema.get("Time Span Start")
     stop_type = schema.get("Time Span End")
-    process_end_type = schema.get("Process end date")
 
     # make sure all the columns that need to be dates were actually parsed as dates
     assert start_type == pl.Date, (
@@ -193,9 +192,6 @@ def validate_date_columns(unchecked_df: pl.DataFrame) -> pl.LazyFrame:
     )
     assert stop_type == pl.Date, (
         f"The column 'Time Span End' could not properly be parsed as a date and was instead parsed as a {start_type}. Please double check that the input data in this column was in YYYY-MM-DD format."
-    )
-    assert process_end_type == pl.Date, (
-        f"The column 'Process end date' could not properly be parsed as a date and was instead parsed as a {start_type}. Please double check that the input data in this column was in YYYY-MM-DD format."
     )
 
     # run a check to see if any start dates do not precede their respective end dates
@@ -312,7 +308,8 @@ def parse_plotting_file(orf_file: str | Path) -> list[OrfDataset]:
 
     # extend the query plan
     all_orf_abundances = (
-        reduced_lf.select(
+        reduced_lf.filter(pl.col("1k+ read samples") > 1)
+        .select(
             "Position",
             "ORFs",
             "AA Change",
