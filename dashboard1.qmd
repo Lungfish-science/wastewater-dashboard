@@ -18,13 +18,13 @@ import sys
 
 from wastewater_dashboard.plot_variant_scatter import (
     parse_plotting_file,
-    render_scatter_plot,
+    render_for_quarto,
     setup_logging,
 )
 from loguru import logger
 from pathlib import Path
 
-ALL_ORF_TSV = Path("data/VariantPMs.tsv")
+ALL_ORF_TSV = Path("data/VariantPMsComp_stacked_dates.tsv")
 assert ALL_ORF_TSV.is_file(), f"The provided path, '{ALL_ORF_TSV}', does not exist."
 
 setup_logging(3)
@@ -34,24 +34,13 @@ orf_datasets = parse_plotting_file(ALL_ORF_TSV)
 
 # use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
 # OrfDataset as well
-final_data_bundles = [
-    render_scatter_plot(orf_dataset) for orf_dataset in orf_datasets
-]
+for orf_dataset in orf_datasets:
+    orf_dataset.sort_comparisons()
+    orf_dataset.render_scatter_plot()
+    assert orf_dataset.chart is not None
 
-def render_for_quarto(final_data_bundles, orf_label: str) -> None:
-  logger.debug([data.orf for data in final_data_bundles])
-  orf_dataset = [dataset for dataset in final_data_bundles if orf_label in dataset.orf]
-  logger.debug(orf_dataset)
-  if not len(orf_dataset) == 1:
-    orf_dataset = [dataset for dataset in final_data_bundles if dataset.orf == "ORF1"]
-    assert len(orf_dataset) == 1
-    orf_dataset = orf_dataset[0]
-    orf_dataset.df = orf_dataset.df.clear()
-    emptied_dataset = render_scatter_plot(orf_dataset)
-    emptied_dataset.chart.show()
-  else:
-    orf_dataset[0].chart.show()
 ```
+
 
 ##
 
@@ -60,7 +49,7 @@ def render_for_quarto(final_data_bundles, orf_label: str) -> None:
 ## Whole Genome
 
 ```{python}
-render_for_quarto(final_data_bundles, "Whole Genome")
+render_for_quarto(orf_datasets, "Whole Genome")
 ```
 
 :::{.card title="Notes on Interpretation" .flow}
@@ -72,7 +61,7 @@ We can add some explanatory narrative here.
 ## ORF1ab
 
 ```{python}
-render_for_quarto(final_data_bundles, "ORF1")
+render_for_quarto(orf_datasets, "ORF1")
 ```
 
 :::{.card title="Notes on Interpretation" .flow}
@@ -84,7 +73,7 @@ We can add some explanatory narrative here.
 ## Spike
 
 ```{python}
-render_for_quarto(final_data_bundles, "S")
+render_for_quarto(orf_datasets, "S")
 ```
 
 :::{.card title="Notes on Interpretation" .flow}
@@ -96,7 +85,7 @@ We can add some explanatory narrative here.
 ## ORF3a
 
 ```{python}
-render_for_quarto(final_data_bundles, "ORF3a")
+render_for_quarto(orf_datasets, "ORF3a")
 ```
 
 :::{.card title="Notes on Interpretation" .flow}
@@ -108,7 +97,7 @@ We can add some explanatory narrative here.
 ## E
 
 ```{python}
-render_for_quarto(final_data_bundles, "E")
+render_for_quarto(orf_datasets, "E")
 ```
 
 :::{.card title="Notes on Interpretation" .flow}
@@ -120,7 +109,7 @@ We can add some explanatory narrative here.
 ## M
 
 ```{python}
-render_for_quarto(final_data_bundles, "M")
+render_for_quarto(orf_datasets, "M")
 ```
 
 :::{.card title="Notes on Interpretation" .flow}
@@ -132,7 +121,7 @@ We can add some explanatory narrative here.
 ## ORF6
 
 ```{python}
-render_for_quarto(final_data_bundles, "ORF6")
+render_for_quarto(orf_datasets, "ORF6")
 ```
 
 :::{.card title="Notes on Interpretation" .flow}
@@ -144,7 +133,7 @@ We can add some explanatory narrative here.
 ## ORF7a
 
 ```{python}
-render_for_quarto(final_data_bundles, "ORF7a")
+render_for_quarto(orf_datasets, "ORF7a")
 ```
 
 :::{.card title="Notes on Interpretation" .flow}
@@ -156,7 +145,7 @@ We can add some explanatory narrative here.
 ## ORF7b
 
 ```{python}
-render_for_quarto(final_data_bundles, "ORF7b")
+render_for_quarto(orf_datasets, "ORF7b")
 ```
 
 :::{.card title="Notes on Interpretation" .flow}
@@ -168,7 +157,7 @@ We can add some explanatory narrative here.
 ## ORF8
 
 ```{python}
-render_for_quarto(final_data_bundles, "ORF7b")
+render_for_quarto(orf_datasets, "ORF7b")
 ```
 
 :::{.card title="Notes on Interpretation" .flow}
@@ -180,7 +169,7 @@ We can add some explanatory narrative here.
 ## N
 
 ```{python}
-render_for_quarto(final_data_bundles, "N")
+render_for_quarto(orf_datasets, "N")
 ```
 
 :::{.card title="Notes on Interpretation" .flow}
@@ -192,7 +181,7 @@ We can add some explanatory narrative here.
 ## ORF10
 
 ```{python}
-render_for_quarto(final_data_bundles, "ORF10")
+render_for_quarto(orf_datasets, "ORF10")
 ```
 
 :::{.card title="Notes on Interpretation" .flow}
