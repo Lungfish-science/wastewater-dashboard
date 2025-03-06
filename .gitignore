@@ -31,6 +31,7 @@
 !/data
 !/data/*.tsv.gz
 !/data/*.tsv
+!data/all_metadata_for_acknowledgements_05Mar25.csv
 !/data/*.txt
 
 # plots folder
