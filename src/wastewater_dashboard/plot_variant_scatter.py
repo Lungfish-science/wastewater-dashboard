@@ -216,16 +216,13 @@ class OrfDataset:
         click_selection = alt.selection_point(
             fields=["AA Change"],
             on="click",
-            empty="none",
+            empty=False,
             name="Click",
         )
 
         # Create an interaction parameter allowing the legend to be used to highlight
         # particular mutations in the plot
         aa_change_selection = alt.selection_point(fields=["AA Change"], bind="legend")
-
-        # Add zoom functionality
-        zoom = alt.selection_interval(bind="scales", name="Zoom")
 
         # construct a window box to interactively highlight portions of the plot
         highlight_box = alt.selection_interval()
@@ -235,36 +232,60 @@ class OrfDataset:
         filtered_base = alt.Chart(self.df).transform_filter(timespan_selector)
 
         # render the main scatterplot for the selected timespan
-        scatter_chart = (
-            filtered_base
-            .mark_circle(size=120)
+        scatter_chart = filtered_base.mark_circle(size=120).encode(
+            x=alt.X(
+                "Abundance in Previous Time Span:Q",
+                scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                title="Abundance in Previous Time Span",
+            ),
+            y=alt.Y(
+                "Abundance in Current Time Span:Q",
+                scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                title="Abundance in Current Time Span",
+            ),
+            # Conditionally color points: if "All" is selected or if the selected variant
+            # is found in the comma-separated "Associated Lineages", use the normal color;
+            # otherwise, gray them out.
+            color=alt.condition(
+                "selected_variant == 'All' || indexof(split(datum['Major Lineages'], ','), selected_variant) >= 0",
+                alt.Color(
+                    "AA Change:N",
+                    legend=alt.Legend(symbolLimit=1000, columns=2, title="AA Change"),
+                ),
+                alt.value("lightgray"),
+            ),
+            opacity=alt.condition(
+                aa_change_selection | click_selection,  # If point is selected in legend or clicked
+                alt.value(1),
+                alt.value(0.2),  # Otherwise show reduced opacity
+            ),
+            tooltip=[
+                "AA Change",
+                "Associated Lineages",
+                "Major Lineages",
+                "Abundance in Current Time Span",
+                "Abundance in Previous Time Span",
+                "Comparison",
+                "ORF",
+            ],
+        )
+
+        # Scatter plot for clicked mutations - NOT filtered by timespan_selector
+        # This is the key difference: we don't apply timespan_selector to this chart
+        scatter_click = (
+            alt.Chart(self.df)
+            .mark_circle(size=200)
             .encode(
                 x=alt.X(
                     "Abundance in Previous Time Span:Q",
                     scale=alt.Scale(type="log", domain=[0.0001, 1]),
-                    title="Abundance in Previous Time Span",
                 ),
                 y=alt.Y(
                     "Abundance in Current Time Span:Q",
                     scale=alt.Scale(type="log", domain=[0.0001, 1]),
-                    title="Abundance in Current Time Span",
                 ),
-                # Conditionally color points: if "All" is selected or if the selected variant
-                # is found in the comma-separated "Associated Lineages", use the normal color;
-                # otherwise, gray them out.
-                color=alt.condition(
-                    "selected_variant == 'All' || indexof(split(datum['Major Lineages'], ','), selected_variant) >= 0",
-                    alt.Color(
-                        "AA Change:N",
-                        legend=alt.Legend(symbolLimit=1000, columns=2, title="AA Change"),
-                    ),
-                    alt.value("lightgray"),
-                ),
-                opacity=alt.condition(
-                    aa_change_selection | click_selection,  # If point is selected in legend or clicked
-                    alt.value(1),
-                    alt.value(0.2)  # Otherwise show reduced opacity
-                ),
+                color=alt.value("red"),
+                opacity=alt.value(0.7),  # Show clicked mutations with consistent opacity
                 tooltip=[
                     "AA Change",
                     "Associated Lineages",
@@ -275,64 +296,39 @@ class OrfDataset:
                     "ORF",
                 ],
             )
-        )
-
-        # Scatter plot for clicked mutations - NOT filtered by timespan_selector
-        # This is the key difference: we don't apply timespan_selector to this chart
-        scatter_click = alt.Chart(self.df).mark_circle(size=200).encode(
-            x=alt.X(
-                "Abundance in Previous Time Span:Q",
-                scale=alt.Scale(type="log", domain=[0.0001, 1]),
-            ),
-            y=alt.Y(
-                "Abundance in Current Time Span:Q",
-                scale=alt.Scale(type="log", domain=[0.0001, 1]),
-            ),
-            color=alt.value("red"),
-            opacity=alt.value(0.7),  # Show clicked mutations with consistent opacity
-            tooltip=[
-                "AA Change",
-                "Associated Lineages",
-                "Major Lineages",
-                "Abundance in Current Time Span",
-                "Abundance in Previous Time Span",
-                "Comparison",
-                "ORF",
-            ],
-        ).transform_filter(click_selection)  # Only filter by click, NOT by timespan
+            .transform_filter(click_selection)
+        )  # Only filter by click, NOT by timespan
 
         # Line connecting occurrences of the clicked mutation - NOT filtered by timespan_selector
-        click_line = alt.Chart(self.df).mark_line(size=2).encode(
-            x="Abundance in Previous Time Span:Q",
-            y="Abundance in Current Time Span:Q",
-            color=alt.value("black"),
-            order=alt.Order("Grouping:Q", sort="ascending"),  # Ensures the line follows chronological order
-            opacity=alt.value(0.5),
-        ).transform_filter(click_selection)  # Only filter by click, NOT by timespan
+        click_line = (
+            alt.Chart(self.df)
+            .mark_line(size=2)
+            .encode(
+                x="Abundance in Previous Time Span:Q",
+                y="Abundance in Current Time Span:Q",
+                color=alt.value("black"),
+                order=alt.Order("Grouping:Q", sort="ascending"),  # Ensures the line follows chronological order
+                opacity=alt.value(0.5),
+            )
+            .transform_filter(click_selection)
+        )  # Only filter by click, NOT by timespan
 
         # render the diagonal line
         line_chart = render_diag_line()
 
         # Combine all charts with the correct layering and ALL parameters
-        combined_chart = alt.layer(
-            scatter_chart,
-            scatter_click,
-            click_line,
-            line_chart
-        ).properties(
-            width="container",
-            height=PLOT_HEIGHT,
-        ).add_params(
-            timespan_selector,
-            lineage_param,
-            aa_change_selection,
-            click_selection,
-            highlight_box,
-            zoom
+        combined_chart = (
+            alt.layer(scatter_chart, scatter_click, click_line, line_chart)
+            .properties(
+                width="container",
+                height=PLOT_HEIGHT,
+            )
+            .add_params(timespan_selector, lineage_param, aa_change_selection, click_selection, highlight_box)
         )
 
         # Set final chart configuration
         self.chart = combined_chart.configure_axis(labelFontSize=14, titleFontSize=16)
+
 
 @dataclass
 class GroupNode:
