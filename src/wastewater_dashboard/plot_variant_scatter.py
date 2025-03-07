@@ -71,7 +71,7 @@ MAJOR_LINEAGES = [
     "KP.3.1.1",
     "MC.10.1",
     "PA.1",
-    "LP.8.1",
+    "LP.8",
     "LF.7",
     "LB.1.3.1",
     "XEK",
@@ -255,9 +255,9 @@ class OrfDataset:
                 alt.value("lightgray"),
             ),
             opacity=alt.condition(
-                aa_change_selection | click_selection,  # If point is selected in legend or clicked
+                aa_change_selection,  # If point is selected in legend or clicked
                 alt.value(1),
-                alt.value(0.2),  # Otherwise show reduced opacity
+                alt.value(0.2),
             ),
             tooltip=[
                 "AA Change",
@@ -284,7 +284,7 @@ class OrfDataset:
                     "Abundance in Current Time Span:Q",
                     scale=alt.Scale(type="log", domain=[0.0001, 1]),
                 ),
-                color=alt.value("red"),
+                color=alt.Color("AA Change:N"),
                 opacity=alt.value(0.7),  # Show clicked mutations with consistent opacity
                 tooltip=[
                     "AA Change",
