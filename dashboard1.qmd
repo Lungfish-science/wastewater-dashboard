@@ -8,7 +8,13 @@ format:
 
 :::{.card title="Why Wastewater Monitoring?" .flow}
 
-Monitoring wastewater for viruses allows observation of viral dynamics over large populations with relatively small effort, and especially with reduced clinical testing, a more accurate view of broad trends.  We download samples with SARS-CoV-2 sequences amplified from wastewater from NCBI's Sequence Read Archive (SRA).  From the samples, we track polymorphisms of SARS-CoV-2 and their abundances, comparing the most recent two consecutive three-week periods for which samples are available.  As JN.1 is the progenitor of most currently circulating strains, polymorphisms defining JN.1 were excluded from further analysis.  Metadata on the samples included in each analysis is provided, a small number of samples are excluded that have known complexities that could distort results.  Polymorphisms that appeared above a 2% threshold in either three-week period are displayed in a scatter plot.  Changes in abundance of polymorphisms allow us to track the circulation dynamics of their associated strains and observe the appearance of novel strains or polymorphisms.  Changes are denoted relative to the ancestral Wuhan-I strain.
+Typically, monitoring a community for pathogens has relied on individuals choosing (or having the opportunity) to test for particular pathogens. But for many pathogens, including SARS-CoV-2, infected individuals shed pathogen genetic material into wastewater, which can be sampled with relatively low effort. These samples can be analyzed not only for the presence or absence of pathogens, but also the abundance of that pathogen. They can also be used with genome sequencing technology to quantify the abundance of particular mutations. By comparing across sampling periods, this can indicate which mutations are on the rise and which are on the decline, and ultimately, forecast how the pathogen is evolving and whether that evolution should be of concern. 
+
+The plot below shows the results of analyses we run each week. These analyses use all SARS-CoV-2 sequences sampled from wastewater in [NCBI]()'s [Sequence Read Archive]()--see our Acknowledgements page for the contributors of these samples and statistics for on the data itself. The vertical and horizontal axes represent the abundance of mutations aggregated across a three-week period, with the more recent period on the vertical axis and the previous period on the horizontal axis.
+
+##### Technical Notes
+
+Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference]() are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
 
 :::
 
@@ -54,7 +60,7 @@ render_for_quarto(orf_datasets, "Whole Genome")
 
 :::{.card title="Notes on Interpretation" .flow}
 
-We can add some explanatory narrative here.
+Interpretation notes for the tab on the SARS-CoV-2 genome as a whole are coming soon.
 
 :::
 
@@ -66,7 +72,7 @@ render_for_quarto(orf_datasets, "ORF1")
 
 :::{.card title="Notes on Interpretation" .flow}
 
-We can add some explanatory narrative here.
+Interpretation notes for the tab on the ORF1 gene are coming soon.
 
 :::
 
@@ -78,7 +84,7 @@ render_for_quarto(orf_datasets, "S")
 
 :::{.card title="Notes on Interpretation" .flow}
 
-We can add some explanatory narrative here.
+Interpretation notes for the tab on the S gene are coming soon.
 
 :::
 
@@ -90,7 +96,7 @@ render_for_quarto(orf_datasets, "ORF3a")
 
 :::{.card title="Notes on Interpretation" .flow}
 
-We can add some explanatory narrative here.
+Interpretation notes for the tab on the ORF3a gene are coming soon.
 
 :::
 
@@ -102,7 +108,7 @@ render_for_quarto(orf_datasets, "E")
 
 :::{.card title="Notes on Interpretation" .flow}
 
-We can add some explanatory narrative here.
+Interpretation notes for the tab on the E gene are coming soon.
 
 :::
 
@@ -114,7 +120,7 @@ render_for_quarto(orf_datasets, "M")
 
 :::{.card title="Notes on Interpretation" .flow}
 
-We can add some explanatory narrative here.
+Interpretation notes for the tab on the M gene are coming soon.
 
 :::
 
@@ -126,7 +132,7 @@ render_for_quarto(orf_datasets, "ORF6")
 
 :::{.card title="Notes on Interpretation" .flow}
 
-We can add some explanatory narrative here.
+Interpretation notes for the tab on the ORF6 gene are coming soon.
 
 :::
 
@@ -138,7 +144,7 @@ render_for_quarto(orf_datasets, "ORF7a")
 
 :::{.card title="Notes on Interpretation" .flow}
 
-We can add some explanatory narrative here.
+Interpretation notes for the tab on the ORF7a gene are coming soon.
 
 :::
 
@@ -150,19 +156,19 @@ render_for_quarto(orf_datasets, "ORF7b")
 
 :::{.card title="Notes on Interpretation" .flow}
 
-We can add some explanatory narrative here.
+Interpretation notes for the tab on the ORF7b gene are coming soon.
 
 :::
 
 ## ORF8
 
 ```{python}
-render_for_quarto(orf_datasets, "ORF7b")
+render_for_quarto(orf_datasets, "ORF8")
 ```
 
 :::{.card title="Notes on Interpretation" .flow}
 
-We can add some explanatory narrative here.
+Interpretation notes for the tab on the ORF8 gene are coming soon.
 
 :::
 
@@ -174,7 +180,7 @@ render_for_quarto(orf_datasets, "N")
 
 :::{.card title="Notes on Interpretation" .flow}
 
-We can add some explanatory narrative here.
+Interpretation notes for the tab on the N gene are coming soon.
 
 :::
 
@@ -186,17 +192,20 @@ render_for_quarto(orf_datasets, "ORF10")
 
 :::{.card title="Notes on Interpretation" .flow}
 
-We can add some explanatory narrative here.
-
 :::
 
 :::
 
 ##
 
-:::{.card title="Final Notes & Addendums" .flow}
+:::{.card title="How do I interpret these visualizations? Start here!" .flow}
 
-Coming soon!
+In general, the first points we look at in these plots are points that are closest to the upper lefthand corner of the plot, as these points represent amino acids that have very rapidly increased in frequency between the time-periods compared in our analyses. These mutations may be helpful for forecasting particular SARS-CoV-2 lineages that are likely to increase in prevalence. Given the function of the mutated amino acid, it may also indicate how the pathogen is mutating to evade pre-existing immunity or gain other functionality that is advantageous in the battle between pathogen versus host.
+
+Next, we look at points that are closest to the lower righthand corner of the plot, as these mutations are likely to have become less fit, evolutionarily speaking, at a rapid rate.
+
+From there, we click on mutations toward the upper righthand corner to see their trajectories; these mutations have very gradually increased in frequency. The closer they are to the corner, the closer they are to being present in nearly every SARS-CoV-2 wastewater sample. 
+
 
 :::
 
