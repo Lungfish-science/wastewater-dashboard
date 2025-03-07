@@ -6,9 +6,7 @@ format:
 
 # Scatter Plot Visualization {.center}
 
-:::{.card title="Preamble" .flow}
-
-##### Why Wastewater Monitoring?
+:::{.card title="Why Wastewater Monitoring?" .flow}
 
 Typically, monitoring a community for pathogens has relied on individuals choosing (or having the opportunity) to test for particular pathogens. But for many pathogens, including SARS-CoV-2, infected individuals shed pathogen genetic material into wastewater, which can be sampled with relatively low effort. These samples can be analyzed not only for the presence or absence of pathogens, but also the abundance of that pathogen. They can also be used with genome sequencing technology to quantify the abundance of particular mutations. By comparing across sampling periods, this can indicate which mutations are on the rise and which are on the decline, and ultimately, forecast how the pathogen is evolving and whether that evolution should be of concern. 
 
