@@ -61,7 +61,7 @@ ALTAIR_THEME: Literal[
 ] = "default"
 
 # The height of the plot in pixels.
-PLOT_HEIGHT = 600
+PLOT_HEIGHT = 650
 
 # The expected major lineage
 # TODO(@Nick): This will be replaced with a command line arg at some point

@@ -254,7 +254,7 @@ This searchable table displays all plotted mutations. It shows the nucleotide po
 import itables as it
 import polars as pl
 
-variant_data = pl.read_csv("./data/VariantPMs.tsv", separator="\t", skip_rows=1)
+variant_data = pl.read_csv("./data/VariantPMsLong.tsv", separator="\t")
 it.init_notebook_mode(all_interactive=True)
 it.show(variant_data, column_filters="header", classes="display compact cell-border")
 ```
