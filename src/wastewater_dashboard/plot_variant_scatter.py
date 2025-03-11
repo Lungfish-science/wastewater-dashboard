@@ -1,4 +1,4 @@
-# l!/usr/bin/env python3
+#!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.10"
 # dependencies = [
@@ -128,6 +128,7 @@ class OrfDataset:
     chart: alt.LayerChart | None = None
     default_comparison: str | None = None
     sorted_comparisons: list[str] | None = None
+    latest_group_idx: int | None = None
 
     def sort_comparisons(self) -> None:
         assert len(self.df) > 0, f"Empty dataframe encountered for {self.orf}, which cannot be sorted:\n\n{self.df}"
@@ -135,7 +136,7 @@ class OrfDataset:
         # are guaranteed to be valid because of how they were constructed and validated earlier
         # in the program
         sorted_comparisons_df = (
-            self.df.select("Comparison")
+            self.df.select("Comparison", "Grouping")
             .unique(maintain_order=True)
             .with_columns(
                 pl.col("Comparison")
@@ -148,11 +149,15 @@ class OrfDataset:
             )
             .sort("Most Recent End", descending=True)
         )
+        sorted_comparisons = sorted_comparisons_df.select("Comparison").to_series().to_list()
+        default = sorted_comparisons[0]
+        latest_group_idx = sorted_comparisons_df.filter(pl.col("Comparison").eq(default)).select("Grouping").item()
 
         # pull out the comparison strings sorted in descending order, and set the most recent
         # one to be the default displayed in the dropdown
-        self.sorted_comparisons = sorted_comparisons_df.select("Comparison").to_series().to_list()
-        self.default_comparison = sorted_comparisons_df.head(1).select("Comparison").item()
+        self.sorted_comparisons = sorted_comparisons
+        self.default_comparison = default
+        self.latest_group_idx = latest_group_idx
 
     def render_scatter_plot(self) -> None:
         """
@@ -200,19 +205,32 @@ class OrfDataset:
             value="All",  # Default value shows all points.
         )
 
+        # Create an interaction parameter allowing the legend to be used to highlight
+        # particular mutations in the plot
+        aa_change_selection = alt.selection_point(fields=["AA Change"], bind="legend")
+
+        # collect a list of the amino-acid change's nucleotide positions in order
+        # (TODO<@Nick>: This will not work for multi-segment pathogens)
+        ordered_aa_changes = (
+            self.df.sort("Position").select("AA Change").unique(maintain_order=True).to_series().to_list()
+        )
+
+        # construct a window box to interactively highlight portions of the plot
+        highlight_box = alt.selection_interval()
+
         # Make a parameter that will render a dropdown for selecting the timespan comparison
         comparison_dropdown = alt.binding_select(
             options=self.sorted_comparisons,
             name="Timespan Comparison: ",
         )
-        timespan_selector = alt.selection_point(
+        _timespan_selector = alt.selection_point(
             fields=["Comparison"],
             bind=comparison_dropdown,
             name="Timespan Comparison: ",
             value=self.default_comparison,
         )
 
-        # Click selection for AA Change (shows all occurrences across time spans)
+        # construct a click selector to allow users to click on each amino acid to see its path
         click_selection = alt.selection_point(
             fields=["AA Change"],
             on="click",
@@ -220,58 +238,61 @@ class OrfDataset:
             name="Click",
         )
 
-        # Create an interaction parameter allowing the legend to be used to highlight
-        # particular mutations in the plot
-        aa_change_selection = alt.selection_point(fields=["AA Change"], bind="legend")
-
-        # construct a window box to interactively highlight portions of the plot
-        highlight_box = alt.selection_interval()
-
-        # First create a base scatter chart filtered by timespan
-        # This is necessary to get the proper legend items for the current timespan
-        filtered_base = alt.Chart(self.df).transform_filter(timespan_selector)
-
-        # render the main scatterplot for the selected timespan
-        scatter_chart = filtered_base.mark_circle(size=120).encode(
-            x=alt.X(
-                "Abundance in Previous Time Span:Q",
-                scale=alt.Scale(type="log", domain=[0.001, 1]),
-                title="Abundance in Previous Time Span",
-            ),
-            y=alt.Y(
-                "Abundance in Current Time Span:Q",
-                scale=alt.Scale(type="log", domain=[0.001, 1]),
-                title="Abundance in Current Time Span",
-            ),
-            # Conditionally color points: if "All" is selected or if the selected variant
-            # is found in the comma-separated "Associated Lineages", use the normal color;
-            # otherwise, gray them out.
-            color=alt.condition(
-                "selected_variant == 'All' || indexof(split(datum['Major Lineages'], ','), selected_variant) >= 0",
-                alt.Color(
-                    "AA Change:N",
-                    legend=alt.Legend(symbolLimit=1000, columns=2, title="AA Change"),
-                ),
-                alt.value("lightgray"),
-            ),
-            opacity=alt.condition(
-                aa_change_selection,  # If point is selected in legend or clicked
-                alt.value(1),
-                alt.value(0.2),
-            ),
-            tooltip=[
-                "AA Change",
-                "Associated Lineages",
-                "Major Lineages",
-                "Abundance in Current Time Span",
-                "Abundance in Previous Time Span",
-                "Comparison",
-                "ORF",
-            ],
+        # X-value slider
+        assert self.latest_group_idx is not None
+        analysis_slider = alt.binding_range(
+            min=1,
+            max=self.latest_group_idx,
+            step=1,
+            name="Analysis Index: ",
+        )
+        analysis_selector = alt.selection_point(
+            name="x_select",
+            fields=["Grouping"],
+            bind=analysis_slider,
+            value=self.latest_group_idx,
         )
 
-        # Scatter plot for clicked mutations - NOT filtered by timespan_selector
-        # This is the key difference: we don't apply timespan_selector to this chart
+        # render the main scatterplot for the selected timespan
+        scatter_chart = (
+            alt.Chart(self.df)
+            .mark_circle(size=120)
+            .encode(
+                x=alt.X(
+                    "Abundance in Previous Time Span:Q",
+                    scale=alt.Scale(type="log", domain=[0.001, 1]),
+                    title="Abundance in Previous Time Span",
+                ),
+                y=alt.Y(
+                    "Abundance in Current Time Span:Q",
+                    scale=alt.Scale(type="log", domain=[0.001, 1]),
+                    title="Abundance in Current Time Span",
+                ),
+                # Conditionally color points: if "All" is selected or if the selected variant
+                # is found in the comma-separated "Associated Variants", use the normal color;
+                # otherwise, gray them out.
+                color=alt.condition(
+                    "selected_variant == 'All' || indexof(split(datum['Major Lineages'], ','), selected_variant) >= 0",
+                    alt.Color(
+                        "AA Change:N",
+                        legend=alt.Legend(symbolLimit=1000, columns=2),
+                        scale=alt.Scale(domain=ordered_aa_changes),
+                    ),
+                    alt.value("lightgray"),
+                ),
+                opacity=alt.when(aa_change_selection).then(alt.value(1)).otherwise(alt.value(0.2)),
+                tooltip=[
+                    "AA Change",
+                    "Associated Lineages",
+                    "Major Lineages",
+                    "Abundance in Current Time Span",
+                    "Abundance in Previous Time Span",
+                ],
+            )
+            .add_params(analysis_selector)
+            .transform_filter(analysis_selector)
+        )
+
         scatter_click = (
             alt.Chart(self.df)
             .mark_circle(size=200)
@@ -289,7 +310,6 @@ class OrfDataset:
                 tooltip=[
                     "AA Change",
                     "Associated Lineages",
-                    "Major Lineages",
                     "Abundance in Current Time Span",
                     "Abundance in Previous Time Span",
                     "Comparison",
@@ -316,14 +336,36 @@ class OrfDataset:
         # render the diagonal line
         line_chart = render_diag_line()
 
+        # specify the comparison to be printed in the background
+        background_comparison = (
+            alt.Chart(self.df)
+            .mark_text(x=0.001, y=1, dy=-20, align="left", fontSize=18, opacity=0.2)
+            .encode(text="Comparison:N")
+            .transform_filter(analysis_selector)
+        )
+
         # Combine all charts with the correct layering and ALL parameters
         combined_chart = (
-            alt.layer(scatter_chart, scatter_click, click_line, line_chart)
+            alt.layer(
+                background_comparison,
+                scatter_chart,
+                scatter_click,
+                click_line,
+                line_chart,
+            )
+            .configure_view(clip=False)
+            .configure_axis(labelFontSize=14, titleFontSize=14)
             .properties(
                 width="container",
                 height=PLOT_HEIGHT,
+                padding=10,
             )
-            .add_params(timespan_selector, lineage_param, aa_change_selection, click_selection, highlight_box)
+            .add_params(
+                lineage_param,
+                aa_change_selection,
+                click_selection,
+                highlight_box,
+            )
         )
 
         # Set final chart configuration
@@ -553,6 +595,12 @@ def identify_timespan_pairs(checked_lf: pl.LazyFrame) -> pl.LazyFrame:
         .explode("Time Span")
     )
 
+    # invert the group indices
+    max_group = all_groups.select("Grouping").max().collect().item()
+    all_groups = all_groups.with_columns(
+        (pl.lit(max_group) - pl.col("Grouping") + 1).alias("Grouping"),
+    )
+
     # return a lazyframe query for the input lazyframe joined to the groups dataframe
     return checked_lf.join(
         all_groups,
@@ -757,49 +805,6 @@ def parse_plotting_file(orf_file: str | Path) -> list[OrfDataset]:
 
     # return a list of OrfDataset objects
     return [OrfDataset(orf=str(orf_label[0]), df=orf_df) for orf_label, orf_df in orf_dfs.items()]
-
-
-def sort_comparisons(all_orf_abundances: pl.DataFrame) -> tuple[str, list]:
-    """
-    Sort time span comparison strings in chronological order.
-
-    Takes a DataFrame containing comparison strings in the format "YYYY-MM-DD--YYYY-MM-DD to YYYY-MM-DD--YYYY-MM-DD"
-    and returns tuple containing the most recent comparison and a list of all comparisons sorted by date.
-
-    Args:
-        all_orf_abundances (pl.DataFrame): DataFrame containing comparison strings in the format
-            "YYYY-MM-DD--YYYY-MM-DD to YYYY-MM-DD--YYYY-MM-DD"
-
-    Returns:
-        tuple[str, list]: A tuple containing:
-            - starter_comparison (str): The most recent comparison string
-            - sorted_comparisons (list): List of all comparison strings sorted by date
-    """
-    # parse the latest date in a comparison back out of the comparison strings, which
-    # are guaranteed to be valid because of how they were constructed and validated earlier
-    # in the program
-    sorted_comparisons_df = (
-        all_orf_abundances.select("Comparison")
-        .unique(maintain_order=True)
-        .with_columns(
-            pl.col("Comparison")
-            .str.split(" to ")
-            .list.first()
-            .str.split("--")
-            .list.last()
-            .str.to_date()
-            .alias("Most Recent End"),
-        )
-        .sort("Most Recent End", descending=True)
-    )
-
-    # pull out the comparison strings sorted in descending order, and set the most recent
-    # one to be the default displayed in the dropdown
-    sorted_comparisons = sorted_comparisons_df.select("Comparison").to_series().to_list()
-    starter_comparison = sorted_comparisons_df.head(1).select("Comparison").item()
-
-    # return as a tuple
-    return (starter_comparison, sorted_comparisons)
 
 
 def render_diag_line() -> alt.Chart:
