@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# l!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.10"
 # dependencies = [
@@ -235,12 +235,12 @@ class OrfDataset:
         scatter_chart = filtered_base.mark_circle(size=120).encode(
             x=alt.X(
                 "Abundance in Previous Time Span:Q",
-                scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                scale=alt.Scale(type="log", domain=[0.001, 1]),
                 title="Abundance in Previous Time Span",
             ),
             y=alt.Y(
                 "Abundance in Current Time Span:Q",
-                scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                scale=alt.Scale(type="log", domain=[0.001, 1]),
                 title="Abundance in Current Time Span",
             ),
             # Conditionally color points: if "All" is selected or if the selected variant
@@ -278,11 +278,11 @@ class OrfDataset:
             .encode(
                 x=alt.X(
                     "Abundance in Previous Time Span:Q",
-                    scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                    scale=alt.Scale(type="log", domain=[0.001, 1]),
                 ),
                 y=alt.Y(
                     "Abundance in Current Time Span:Q",
-                    scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                    scale=alt.Scale(type="log", domain=[0.001, 1]),
                 ),
                 color=alt.Color("AA Change:N"),
                 opacity=alt.value(0.7),  # Show clicked mutations with consistent opacity
@@ -601,7 +601,7 @@ def validate_pivot_groupings(lf_with_groupings: pl.LazyFrame) -> None:
     max_rows_per_group = 2
     invalid_groups = []
     for big_groups in pivot_test:
-        for df in big_groups.unique(maintain_order=True).partition_by(
+        for df in big_groups.unique().partition_by(
             [
                 "Position",
                 "ORFs",
@@ -609,16 +609,23 @@ def validate_pivot_groupings(lf_with_groupings: pl.LazyFrame) -> None:
                 "Associated Variants",
                 "Comparison",
             ],
-            maintain_order=True,
         ):
             if len(df) <= max_rows_per_group:
                 continue
             invalid_groups.append(df)
+    if len(invalid_groups) == 0:
+        return
 
     # run an assertion that no groups are invalid. This should crash the program, as
     # it indicates ambiguous or invalid input data that should not be plotted.
+    invalid_groups = [
+        group.with_columns(pl.lit(f"Invalid Group {i + 1}").alias("Invalid Group Index"))
+        for i, group in enumerate(invalid_groups)
+    ]
+
+    all_invalid_groups = pl.concat(invalid_groups)
     assert len(invalid_groups) == 0, (
-        f"Pivot groups for this plot may only contain 1 or 2 rows, but the following groups contained more. This is likely because of duplicate entries of nucleotide/amino-acid substitutions in a given time span.\n\n{invalid_groups}"
+        f"Pivot groups for this plot may only contain 1 or 2 rows, but the following groups contained more. This is likely because of duplicate entries of nucleotide/amino-acid substitutions in a given time span.\n\n{all_invalid_groups}"
     )
 
 
@@ -638,6 +645,11 @@ def transform_for_plotting(with_groupings_lf: pl.LazyFrame) -> pl.lazyframe:
         pl.lazyframe: Transformed LazyFrame with abundance columns and lineage annotations,
             filtered for plotting requirements
     """
+    # make sure groupings based on the available information will work when put into
+    # a pivot, which is to say, make sure that each grouping contains no more than 2
+    # rows.
+    validate_pivot_groupings(with_groupings_lf)
+
     # first, filter the input rows to make sure they contain enough reads, and then
     # create a column that states whether a row comes from the previous time span or the
     # current timespan. This column of two nominal values will be pivoted into the X-
@@ -803,8 +815,8 @@ def render_diag_line() -> alt.Chart:
     """
     line_data = pl.DataFrame(
         {
-            "Abundance in Previous Time Span": [0.0001, 1],
-            "Abundance in Current Time Span": [0.0001, 1],
+            "Abundance in Previous Time Span": [0.001, 1],
+            "Abundance in Current Time Span": [0.001, 1],
         },
     )
     return (
@@ -816,11 +828,11 @@ def render_diag_line() -> alt.Chart:
         .encode(
             x=alt.X(
                 "Abundance in Previous Time Span:Q",
-                scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                scale=alt.Scale(type="log", domain=[0.001, 1]),
             ),
             y=alt.Y(
                 "Abundance in Current Time Span:Q",
-                scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                scale=alt.Scale(type="log", domain=[0.001, 1]),
             ),
         )
     )
