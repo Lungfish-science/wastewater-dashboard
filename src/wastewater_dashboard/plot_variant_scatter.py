@@ -260,12 +260,12 @@ class OrfDataset:
             .encode(
                 x=alt.X(
                     "Abundance in Previous Time Span:Q",
-                    scale=alt.Scale(type="log", domain=[0.001, 1]),
+                    scale=alt.Scale(type="log", domain=[0.0001, 1]),
                     title="Abundance in Previous Time Span",
                 ),
                 y=alt.Y(
                     "Abundance in Current Time Span:Q",
-                    scale=alt.Scale(type="log", domain=[0.001, 1]),
+                    scale=alt.Scale(type="log", domain=[0.0001, 1]),
                     title="Abundance in Current Time Span",
                 ),
                 # Conditionally color points: if "All" is selected or if the selected variant
@@ -299,11 +299,11 @@ class OrfDataset:
             .encode(
                 x=alt.X(
                     "Abundance in Previous Time Span:Q",
-                    scale=alt.Scale(type="log", domain=[0.001, 1]),
+                    scale=alt.Scale(type="log", domain=[0.0001, 1]),
                 ),
                 y=alt.Y(
                     "Abundance in Current Time Span:Q",
-                    scale=alt.Scale(type="log", domain=[0.001, 1]),
+                    scale=alt.Scale(type="log", domain=[0.0001, 1]),
                 ),
                 color=alt.Color("AA Change:N"),
                 opacity=alt.value(0.7),  # Show clicked mutations with consistent opacity
@@ -339,7 +339,7 @@ class OrfDataset:
         # specify the comparison to be printed in the background
         background_comparison = (
             alt.Chart(self.df)
-            .mark_text(x=0.001, y=1, dy=-20, align="left", fontSize=18, opacity=1)
+            .mark_text(x=0.0001, y=1, dy=-20, align="left", fontSize=18, opacity=1)
             .encode(text="Comparison:N")
             .transform_filter(analysis_selector)
         )
@@ -820,8 +820,8 @@ def render_diag_line() -> alt.Chart:
     """
     line_data = pl.DataFrame(
         {
-            "Abundance in Previous Time Span": [0.001, 1],
-            "Abundance in Current Time Span": [0.001, 1],
+            "Abundance in Previous Time Span": [0.0001, 1],
+            "Abundance in Current Time Span": [0.0001, 1],
         },
     )
     return (
@@ -833,11 +833,11 @@ def render_diag_line() -> alt.Chart:
         .encode(
             x=alt.X(
                 "Abundance in Previous Time Span:Q",
-                scale=alt.Scale(type="log", domain=[0.001, 1]),
+                scale=alt.Scale(type="log", domain=[0.0001, 1]),
             ),
             y=alt.Y(
                 "Abundance in Current Time Span:Q",
-                scale=alt.Scale(type="log", domain=[0.001, 1]),
+                scale=alt.Scale(type="log", domain=[0.0001, 1]),
             ),
         )
     )
