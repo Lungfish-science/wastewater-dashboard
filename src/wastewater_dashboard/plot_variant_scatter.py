@@ -140,9 +140,9 @@ class OrfDataset:
             .unique(maintain_order=True)
             .with_columns(
                 pl.col("Comparison")
-                .str.split(" to ")
+                .str.split(" versus ")
                 .list.first()
-                .str.split("--")
+                .str.split(" to ")
                 .list.last()
                 .str.to_date()
                 .alias("Most Recent End"),
@@ -339,7 +339,7 @@ class OrfDataset:
         # specify the comparison to be printed in the background
         background_comparison = (
             alt.Chart(self.df)
-            .mark_text(x=0.001, y=1, dy=-20, align="left", fontSize=18, opacity=0.2)
+            .mark_text(x=0.001, y=1, dy=-20, align="left", fontSize=18, opacity=1)
             .encode(text="Comparison:N")
             .transform_filter(analysis_selector)
         )
@@ -464,7 +464,7 @@ def validate_date_columns(unchecked_df: pl.DataFrame) -> pl.LazyFrame:
                     pl.col("Time Span Start").dt.to_string(),
                     pl.col("Time Span End").dt.to_string(),
                 ],
-                separator="--",
+                separator=" to ",
             ).alias("Time Span"),
         )
 
@@ -588,7 +588,7 @@ def identify_timespan_pairs(checked_lf: pl.LazyFrame) -> pl.LazyFrame:
         .all()
         .with_columns(
             pl.when(pl.col("Time Span").list.len() == 2)  # noqa: PLR2004
-            .then(pl.col("Time Span").list.join(" to "))
+            .then(pl.col("Time Span").list.join(" versus "))
             .otherwise(pl.lit(None))
             .alias("Comparison"),
         )
