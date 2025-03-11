@@ -65,19 +65,9 @@ PLOT_HEIGHT = 650
 
 # The expected major lineage
 # TODO(@Nick): This will be replaced with a command line arg at some point
-MAJOR_LINEAGES = [
-    "XEC",
-    "XEC.4",
-    "KP.3.1.1",
-    "MC.10.1",
-    "PA.1",
-    "LP.8",
-    "LF.7",
-    "LB.1.3.1",
-    "XEK",
-    "XEQ",
-]
+lineages_file = pl.read_json("data/formatted_lineage_data.json")
 
+MAJOR_LINEAGES = lineages_file["lineage"].to_list()
 
 @dataclass
 class TimeWindows:
@@ -743,12 +733,22 @@ def transform_for_plotting(with_groupings_lf: pl.LazyFrame) -> pl.lazyframe:
         )
     )
 
-    # construct a regex for identifying major lineages present in each row, if any
-    major_lineage_regex = "(" + "|".join(map(re.escape, MAJOR_LINEAGES)) + ")"
-    with_major_lineages = pivot_lf.with_columns(
-        pl.col("Associated Variants").str.extract_all(major_lineage_regex).list.join(",").alias("Major Lineages"),
+
+    lineage_df = lineages_file.with_columns(
+        pl.col("mutations").str.split(",").alias("mutations")
+    ).explode("mutations")
+
+    pivot_lf = pivot_lf.with_columns(
+        pl.concat_str(
+            [
+                pl.col("ORFs"),
+                pl.col("AA Change")
+            ],
+            separator=":"
+        ).str.to_uppercase().alias("mutations")  # Apply uppercase transformation
     )
 
+    with_major_lineages = pivot_lf.collect().join(lineage_df, how="left", on="mutations")
     # return a lazyframe with a few final transformation: a filter to make sure at least
     # one of the abundance values is greater than 0.02, and some small column renames.
     return with_major_lineages.filter(
@@ -762,6 +762,7 @@ def transform_for_plotting(with_groupings_lf: pl.LazyFrame) -> pl.lazyframe:
         {
             "Associated Variants": "Associated Lineages",
             "ORFs": "ORF",
+            "mutations": "Major variants"
         },
     )
 
