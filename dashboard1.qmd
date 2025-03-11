@@ -26,7 +26,7 @@ from wastewater_dashboard.plot_variant_scatter import (
 from loguru import logger
 from pathlib import Path
 
-ALL_ORF_TSV = Path("data/VariantPMsComp_stacked_dates.tsv")
+ALL_ORF_TSV = Path("./data/VariantPMsLong.tsv")
 assert ALL_ORF_TSV.is_file(), f"The provided path, '{ALL_ORF_TSV}', does not exist."
 
 setup_logging(3)
@@ -42,7 +42,6 @@ for orf_dataset in orf_datasets:
     assert orf_dataset.chart is not None
 
 ```
-
 
 ##
 
