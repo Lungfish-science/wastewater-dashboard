@@ -13,16 +13,14 @@
 
 from __future__ import annotations
 
-import datetime
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
 import altair as alt
 import polars as pl
 from loguru import logger
-from typing_extensions import Self
 
 # A list of supported ORF sames to be used in membership checks.
 SUPPORTED_ORFS = [
@@ -67,6 +65,7 @@ PLOT_HEIGHT = 650
 LINEAGES_DF = pl.read_json("data/major_lineages.json")
 
 MAJOR_LINEAGES = LINEAGES_DF["lineage"].to_list()
+
 
 @dataclass
 class OrfDataset:
@@ -235,6 +234,7 @@ class OrfDataset:
                 opacity=alt.when(aa_change_selection).then(alt.value(1)).otherwise(alt.value(0.2)),
                 tooltip=[
                     "AA Change",
+                    "NT change",
                     "Associated Lineages",
                     "Major Lineages",
                     "Abundance in Current Time Span",
@@ -264,6 +264,7 @@ class OrfDataset:
                 opacity=alt.value(0.7),  # Show clicked mutations with consistent opacity
                 tooltip=[
                     "AA Change",
+                    "NT change",
                     "Associated Lineages",
                     "Major Lineages",
                     "Abundance in Current Time Span",
@@ -438,6 +439,7 @@ def validate_date_columns(unchecked_df: pl.DataFrame) -> pl.LazyFrame:
 
     return unchecked_df.lazy()
 
+
 def identify_timespan_pairs(checked_lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Create pairwise groupings from a time-ordered set of unique time spans.
@@ -453,7 +455,6 @@ def identify_timespan_pairs(checked_lf: pl.LazyFrame) -> pl.LazyFrame:
         pl.LazyFrame: LazyFrame with added Grouping and Comparison columns mapping pairs
             of time spans together
     """
-
 
     # peel off the unique time spans to be associated with each other
 
@@ -573,6 +574,7 @@ def validate_pivot_groupings(lf_with_groupings: pl.LazyFrame) -> None:
                 "Position",
                 "ORFs",
                 "AA Change",
+                "NT change",
                 "Associated Variants",
                 "Comparison",
             ],
@@ -648,6 +650,7 @@ def transform_for_plotting(with_groupings_lf: pl.LazyFrame, major_lineage_lf: pl
             index=[
                 "Position",
                 "ORFs",
+                "NT change",
                 "AA Change",
                 "Associated Variants",
                 "Grouping",
