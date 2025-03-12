@@ -14,7 +14,6 @@
 from __future__ import annotations
 
 import datetime
-import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -65,9 +64,10 @@ PLOT_HEIGHT = 650
 
 # The expected major lineage
 # TODO(@Nick): This will be replaced with a command line arg at some point
-lineages_file = pl.read_json("data/formatted_lineage_data.json")
+LINEAGES_DF = pl.read_json("data/major_lineages.json")
 
-MAJOR_LINEAGES = lineages_file["lineage"].to_list()
+MAJOR_LINEAGES = LINEAGES_DF["lineage"].to_list()
+
 
 @dataclass
 class TimeWindows:
@@ -277,8 +277,11 @@ class OrfDataset:
                     "Major Lineages",
                     "Abundance in Current Time Span",
                     "Abundance in Previous Time Span",
+                    "Comparison",
+                    "ORF",
                 ],
             )
+            .add_params(aa_change_selection)
             .add_params(analysis_selector)
             .transform_filter(analysis_selector)
         )
@@ -300,6 +303,7 @@ class OrfDataset:
                 tooltip=[
                     "AA Change",
                     "Associated Lineages",
+                    "Major Lineages",
                     "Abundance in Current Time Span",
                     "Abundance in Previous Time Span",
                     "Comparison",
@@ -352,7 +356,6 @@ class OrfDataset:
             )
             .add_params(
                 lineage_param,
-                aa_change_selection,
                 click_selection,
                 highlight_box,
             )
@@ -667,7 +670,7 @@ def validate_pivot_groupings(lf_with_groupings: pl.LazyFrame) -> None:
     )
 
 
-def transform_for_plotting(with_groupings_lf: pl.LazyFrame) -> pl.lazyframe:
+def transform_for_plotting(with_groupings_lf: pl.LazyFrame, major_lineage_lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Transform time-windowed mutation data for scatter plot visualization.
 
@@ -733,22 +736,25 @@ def transform_for_plotting(with_groupings_lf: pl.LazyFrame) -> pl.lazyframe:
         )
     )
 
-
-    lineage_df = lineages_file.with_columns(
-        pl.col("mutations").str.split(",").alias("mutations")
-    ).explode("mutations")
-
-    pivot_lf = pivot_lf.with_columns(
-        pl.concat_str(
-            [
-                pl.col("ORFs"),
-                pl.col("AA Change")
-            ],
-            separator=":"
-        ).str.to_uppercase().alias("mutations")  # Apply uppercase transformation
+    agg_lineages = (
+        major_lineage_lf.with_columns(
+            pl.col("mutations").str.split(",").alias("_mutations"),
+        )
+        .explode("_mutations")
+        .group_by("_mutations")
+        .agg("lineage")
+        .with_columns(pl.col("lineage").list.join(",").alias("lineage"))
+        .with_columns(
+            pl.col("_mutations")
+            .str.split_exact(pl.lit(":"), 2)
+            .struct.rename_fields(["ORFs", "AA Change"])
+            .alias("_mutations"),
+        )
+        .unnest("_mutations")
+        .rename({"lineage": "Major Lineages"})
     )
+    with_major_lineages = pivot_lf.join(agg_lineages, how="left", on=["ORFs", "AA Change"])
 
-    with_major_lineages = pivot_lf.collect().join(lineage_df, how="left", on="mutations")
     # return a lazyframe with a few final transformation: a filter to make sure at least
     # one of the abundance values is greater than 0.02, and some small column renames.
     return with_major_lineages.filter(
@@ -758,16 +764,10 @@ def transform_for_plotting(with_groupings_lf: pl.LazyFrame) -> pl.lazyframe:
                 "Abundance in Current Time Span",
             ).ge(0.02),
         ),
-    ).rename(
-        {
-            "Associated Variants": "Associated Lineages",
-            "ORFs": "ORF",
-            "mutations": "Major variants"
-        },
-    )
+    ).rename({"ORFs": "ORF", "Associated Variants": "Associated Lineages"})
 
 
-def parse_plotting_file(orf_file: str | Path) -> list[OrfDataset]:
+def parse_plotting_file(orf_file: str | Path, lineage_file: str | Path) -> list[OrfDataset]:
     """
     Parse a tab-separated file containing ORF abundance data and return a list of OrfDataset objects.
 
@@ -786,10 +786,14 @@ def parse_plotting_file(orf_file: str | Path) -> list[OrfDataset]:
             - chart: Initially None, populated later with Altair chart
     """
     unchecked_df = pl.read_csv(orf_file, separator="\t", try_parse_dates=True)
+    lineage_lf = pl.read_json(lineage_file).lazy()
     checked_lf = validate_date_columns(unchecked_df)
 
     with_groupings = identify_timespan_pairs(checked_lf)
-    all_orf_abundances = transform_for_plotting(with_groupings)
+    all_orf_abundances = transform_for_plotting(with_groupings, lineage_lf)
+
+    # write out plotting data for transparency
+    all_orf_abundances.collect().write_csv("data/transformed_variant_plotting_data.tsv", separator="\t")
 
     # split off a dataframe copy for displaying all mutations across the whole genome
     whole_genome_lf = all_orf_abundances.with_columns(
@@ -954,7 +958,7 @@ def main() -> None:
     assert all_orf_tsv.is_file(), f"The provided path, '{all_orf_tsv}', does not exist."
 
     # parse the file for each orf dataset into dataframes
-    orf_datasets = parse_plotting_file(all_orf_tsv)
+    orf_datasets = parse_plotting_file(all_orf_tsv, "data/major_lineages.json")
 
     # use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
     # OrfDataset as well
