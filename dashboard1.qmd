@@ -8,7 +8,7 @@ format:
 
 :::{.card title="Why Wastewater Monitoring?" .flow}
 
-Typically, monitoring a community for pathogens has relied on individuals choosing (or having the opportunity) to test for particular pathogens. But for many pathogens, including SARS-CoV-2, infected individuals shed pathogen genetic material into wastewater, which can be sampled with relatively low effort. These samples can be analyzed not only for the presence or absence of pathogens, but also the abundance of that pathogen. They can also be used with genome sequencing technology to quantify the abundance of particular mutations. By comparing across sampling periods, this can indicate which mutations are on the rise and which are on the decline, and ultimately, forecast how the pathogen is evolving and whether that evolution should be of concern. 
+Typically, monitoring a community for pathogens has relied on individuals choosing (or having the opportunity) to test for particular pathogens. But for many pathogens, including SARS-CoV-2, infected individuals shed pathogen genetic material into wastewater, which can be sampled with relatively low effort. These samples can be analyzed not only for the presence or absence of pathogens, but also the abundance of that pathogen. They can also be used with genome sequencing technology to quantify the abundance of particular mutations. By comparing across sampling periods, this can indicate which mutations are on the rise and which are on the decline, and ultimately, forecast how the pathogen is evolving and whether that evolution should be of concern.
 
 The plot below shows the results of analyses we run each week. These analyses use all SARS-CoV-2 sequences sampled from wastewater in [NCBI](https://www.ncbi.nlm.nih.gov/)'s [Sequence Read Archive](https://www.ncbi.nlm.nih.gov/sra)--see our Acknowledgements page for the contributors of these samples and statistics for on the data itself. The vertical and horizontal axes represent the abundance of mutations aggregated across a three-week period, with the more recent period on the vertical axis and the previous period on the horizontal axis.
 
@@ -232,7 +232,7 @@ In general, the first points we look at in these plots are points that are close
 
 Next, we look at points that are closest to the lower righthand corner of the plot, as these mutations are likely to have become less fit, evolutionarily speaking, at a rapid rate.
 
-From there, we click on mutations toward the upper righthand corner to see their trajectories; these mutations have very gradually increased in frequency. The closer they are to the corner, the closer they are to being present in nearly every SARS-CoV-2 wastewater sample. 
+From there, we click on mutations toward the upper righthand corner to see their trajectories; these mutations have very gradually increased in frequency. The closer they are to the corner, the closer they are to being present in nearly every SARS-CoV-2 wastewater sample.
 
 
 :::
@@ -254,7 +254,7 @@ This searchable table displays all plotted mutations. It shows the nucleotide po
 import itables as it
 import polars as pl
 
-variant_data = pl.read_csv("./data/VariantPMs.tsv", separator="\t", skip_rows=1)
+variant_data = pl.read_csv("./data/VariantPMsLong.tsv", separator="\t")
 it.init_notebook_mode(all_interactive=True)
 it.show(variant_data, column_filters="header", classes="display compact cell-border")
 ```
@@ -272,7 +272,10 @@ Metadata file available for all recently reviewed submissions available <a href=
 ## Project Metadata {height=800 scrolling="false"}
 
 ```{python}
-project_data = pl.read_csv("./data/weeks_meta.tsv", separator="\t", has_header=True)
+project_data = pl.read_csv("./data/found_meta.tsv", separator="\t", has_header=True, null_values=["NA", ">", "<"], schema_overrides={"Population":pl.Utf8})
+project_data = project_data.with_columns(
+    pl.col("Population").fill_null("N/A")
+)
 it.init_notebook_mode(all_interactive=True)
 it.show(project_data, column_filters="header", classes="display compact cell-border")
 ```
