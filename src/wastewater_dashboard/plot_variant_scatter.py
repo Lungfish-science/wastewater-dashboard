@@ -14,7 +14,6 @@
 from __future__ import annotations
 
 import datetime
-import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -65,56 +64,9 @@ PLOT_HEIGHT = 650
 
 # The expected major lineage
 # TODO(@Nick): This will be replaced with a command line arg at some point
-MAJOR_LINEAGES = [
-    "XEC",
-    "XEC.4",
-    "KP.3.1.1",
-    "MC.10.1",
-    "PA.1",
-    "LP.8",
-    "LF.7",
-    "LB.1.3.1",
-    "XEK",
-    "XEQ",
-]
+LINEAGES_DF = pl.read_json("data/major_lineages.json")
 
-
-@dataclass
-class TimeWindows:
-    # This field is used only for initialization.
-    _input_list: list[str]
-
-    latest_window: str = field(init=False)
-    previous_window: str = field(init=False)
-
-    def __post_init__(self) -> Self | None:
-        timespans: list[str] = []
-        for entry in self._input_list:
-            if "--" not in entry:
-                continue
-            timespans.append(entry)
-        if len(timespans) != 2:  # noqa: PLR2004
-            logger.error(
-                f"The provided input list does contain the expected date-range information, e.g., '2024-12-15--2025-01-04': {self._input_list}",
-            )
-            return None
-
-        # Unpack the input list into the actual fields
-        first_dates = [
-            datetime.datetime.strptime(timespan.split("--")[0], "%Y-%m-%d").astimezone(datetime.timezone.utc)
-            for timespan in timespans
-        ]
-        if first_dates[0] < first_dates[1]:
-            logger.debug(f"Setting the `previous_window` attribute to {timespans[0]}")
-            self.previous_window = timespans[0]
-            logger.debug(f"Setting the `latest_window` attribute to {timespans[1]}")
-            self.latest_window = timespans[1]
-        else:
-            logger.debug(f"Setting the `previous_window` attribute to {timespans[1]}")
-            self.previous_window = timespans[1]
-            logger.debug(f"Setting the `latest_window` attribute to {timespans[0]}")
-            self.latest_window = timespans[0]
-
+MAJOR_LINEAGES = LINEAGES_DF["lineage"].to_list()
 
 @dataclass
 class OrfDataset:
@@ -260,12 +212,12 @@ class OrfDataset:
             .encode(
                 x=alt.X(
                     "Abundance in Previous Time Span:Q",
-                    scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                    scale=alt.Scale(type="log", domain=[0.001, 1]),
                     title="Abundance in Previous Time Span",
                 ),
                 y=alt.Y(
                     "Abundance in Current Time Span:Q",
-                    scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                    scale=alt.Scale(type="log", domain=[0.001, 1]),
                     title="Abundance in Current Time Span",
                 ),
                 # Conditionally color points: if "All" is selected or if the selected variant
@@ -287,8 +239,11 @@ class OrfDataset:
                     "Major Lineages",
                     "Abundance in Current Time Span",
                     "Abundance in Previous Time Span",
+                    "Comparison",
+                    "ORF",
                 ],
             )
+            .add_params(aa_change_selection)
             .add_params(analysis_selector)
             .transform_filter(analysis_selector)
         )
@@ -299,17 +254,18 @@ class OrfDataset:
             .encode(
                 x=alt.X(
                     "Abundance in Previous Time Span:Q",
-                    scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                    scale=alt.Scale(type="log", domain=[0.001, 1]),
                 ),
                 y=alt.Y(
                     "Abundance in Current Time Span:Q",
-                    scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                    scale=alt.Scale(type="log", domain=[0.001, 1]),
                 ),
                 color=alt.Color("AA Change:N"),
                 opacity=alt.value(0.7),  # Show clicked mutations with consistent opacity
                 tooltip=[
                     "AA Change",
                     "Associated Lineages",
+                    "Major Lineages",
                     "Abundance in Current Time Span",
                     "Abundance in Previous Time Span",
                     "Comparison",
@@ -339,7 +295,7 @@ class OrfDataset:
         # specify the comparison to be printed in the background
         background_comparison = (
             alt.Chart(self.df)
-            .mark_text(x=0.0001, y=1, dy=-20, align="left", fontSize=18, opacity=1)
+            .mark_text(x=0.001, y=1, dy=-20, align="left", fontSize=18, opacity=1)
             .encode(text="Comparison:N")
             .transform_filter(analysis_selector)
         )
@@ -362,7 +318,6 @@ class OrfDataset:
             )
             .add_params(
                 lineage_param,
-                aa_change_selection,
                 click_selection,
                 highlight_box,
             )
@@ -483,41 +438,6 @@ def validate_date_columns(unchecked_df: pl.DataFrame) -> pl.LazyFrame:
 
     return unchecked_df.lazy()
 
-
-def reduce_to_latest_window(multi_window_lf: pl.LazyFrame) -> pl.LazyFrame:
-    """
-    Reduce a multi-window LazyFrame to the latest time window data.
-
-    Takes a LazyFrame containing mutation data across multiple time windows and extracts
-    only the data from the most recent two time windows.
-
-    Args:
-        multi_window_lf (pl.LazyFrame): LazyFrame containing mutation data across multiple time periods
-
-    Returns:
-        pl.LazyFrame: Filtered LazyFrame containing only the latest two time windows
-    """
-    pre_flattened_dates = (
-        multi_window_lf.select("Time Span Start", "Time Span End")
-        .unique()
-        .top_k(2, by=["Time Span Start", "Time Span End"])
-        .collect()
-        .rows()
-    )
-
-    flattened_dates = []
-    for dates in pre_flattened_dates:
-        assert len(dates) == 2, (  # noqa: PLR2004
-            f"Invalid state has been represented in the computed latest dates: {pre_flattened_dates}"
-        )
-        flattened_dates = [*flattened_dates, *dates]
-
-    return multi_window_lf.filter(
-        pl.col("Time Span Start").is_in(flattened_dates),
-        pl.col("Time Span End").is_in(flattened_dates),
-    )
-
-
 def identify_timespan_pairs(checked_lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Create pairwise groupings from a time-ordered set of unique time spans.
@@ -533,7 +453,12 @@ def identify_timespan_pairs(checked_lf: pl.LazyFrame) -> pl.LazyFrame:
         pl.LazyFrame: LazyFrame with added Grouping and Comparison columns mapping pairs
             of time spans together
     """
+
+
     # peel off the unique time spans to be associated with each other
+
+    checked_lf = checked_lf.sort(by="Time Span Start", descending=False)
+
     unique_timespans = checked_lf.select("Time Span").unique(maintain_order=True).collect().to_series().to_list()
 
     # construct a sort of tree, which can be used to assign indices to each "forward"
@@ -593,12 +518,6 @@ def identify_timespan_pairs(checked_lf: pl.LazyFrame) -> pl.LazyFrame:
             .alias("Comparison"),
         )
         .explode("Time Span")
-    )
-
-    # invert the group indices
-    max_group = all_groups.select("Grouping").max().collect().item()
-    all_groups = all_groups.with_columns(
-        (pl.lit(max_group) - pl.col("Grouping") + 1).alias("Grouping"),
     )
 
     # return a lazyframe query for the input lazyframe joined to the groups dataframe
@@ -677,7 +596,7 @@ def validate_pivot_groupings(lf_with_groupings: pl.LazyFrame) -> None:
     )
 
 
-def transform_for_plotting(with_groupings_lf: pl.LazyFrame) -> pl.lazyframe:
+def transform_for_plotting(with_groupings_lf: pl.LazyFrame, major_lineage_lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Transform time-windowed mutation data for scatter plot visualization.
 
@@ -743,11 +662,24 @@ def transform_for_plotting(with_groupings_lf: pl.LazyFrame) -> pl.lazyframe:
         )
     )
 
-    # construct a regex for identifying major lineages present in each row, if any
-    major_lineage_regex = "(" + "|".join(map(re.escape, MAJOR_LINEAGES)) + ")"
-    with_major_lineages = pivot_lf.with_columns(
-        pl.col("Associated Variants").str.extract_all(major_lineage_regex).list.join(",").alias("Major Lineages"),
+    agg_lineages = (
+        major_lineage_lf.with_columns(
+            pl.col("mutations").str.split(",").alias("_mutations"),
+        )
+        .explode("_mutations")
+        .group_by("_mutations")
+        .agg("lineage")
+        .with_columns(pl.col("lineage").list.join(",").alias("lineage"))
+        .with_columns(
+            pl.col("_mutations")
+            .str.split_exact(pl.lit(":"), 2)
+            .struct.rename_fields(["ORFs", "AA Change"])
+            .alias("_mutations"),
+        )
+        .unnest("_mutations")
+        .rename({"lineage": "Major Lineages"})
     )
+    with_major_lineages = pivot_lf.join(agg_lineages, how="left", on=["ORFs", "AA Change"])
 
     # return a lazyframe with a few final transformation: a filter to make sure at least
     # one of the abundance values is greater than 0.02, and some small column renames.
@@ -758,15 +690,10 @@ def transform_for_plotting(with_groupings_lf: pl.LazyFrame) -> pl.lazyframe:
                 "Abundance in Current Time Span",
             ).ge(0.02),
         ),
-    ).rename(
-        {
-            "Associated Variants": "Associated Lineages",
-            "ORFs": "ORF",
-        },
-    )
+    ).rename({"ORFs": "ORF", "Associated Variants": "Associated Lineages"})
 
 
-def parse_plotting_file(orf_file: str | Path) -> list[OrfDataset]:
+def parse_plotting_file(orf_file: str | Path, lineage_file: str | Path) -> list[OrfDataset]:
     """
     Parse a tab-separated file containing ORF abundance data and return a list of OrfDataset objects.
 
@@ -785,10 +712,14 @@ def parse_plotting_file(orf_file: str | Path) -> list[OrfDataset]:
             - chart: Initially None, populated later with Altair chart
     """
     unchecked_df = pl.read_csv(orf_file, separator="\t", try_parse_dates=True)
+    lineage_lf = pl.read_json(lineage_file).lazy()
     checked_lf = validate_date_columns(unchecked_df)
 
     with_groupings = identify_timespan_pairs(checked_lf)
-    all_orf_abundances = transform_for_plotting(with_groupings)
+    all_orf_abundances = transform_for_plotting(with_groupings, lineage_lf)
+
+    # write out plotting data for transparency
+    all_orf_abundances.collect().write_csv("data/transformed_variant_plotting_data.tsv", separator="\t")
 
     # split off a dataframe copy for displaying all mutations across the whole genome
     whole_genome_lf = all_orf_abundances.with_columns(
@@ -820,8 +751,8 @@ def render_diag_line() -> alt.Chart:
     """
     line_data = pl.DataFrame(
         {
-            "Abundance in Previous Time Span": [0.0001, 1],
-            "Abundance in Current Time Span": [0.0001, 1],
+            "Abundance in Previous Time Span": [0.001, 1],
+            "Abundance in Current Time Span": [0.001, 1],
         },
     )
     return (
@@ -833,11 +764,11 @@ def render_diag_line() -> alt.Chart:
         .encode(
             x=alt.X(
                 "Abundance in Previous Time Span:Q",
-                scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                scale=alt.Scale(type="log", domain=[0.001, 1]),
             ),
             y=alt.Y(
                 "Abundance in Current Time Span:Q",
-                scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                scale=alt.Scale(type="log", domain=[0.001, 1]),
             ),
         )
     )
@@ -953,7 +884,7 @@ def main() -> None:
     assert all_orf_tsv.is_file(), f"The provided path, '{all_orf_tsv}', does not exist."
 
     # parse the file for each orf dataset into dataframes
-    orf_datasets = parse_plotting_file(all_orf_tsv)
+    orf_datasets = parse_plotting_file(all_orf_tsv, "data/major_lineages.json")
 
     # use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
     # OrfDataset as well

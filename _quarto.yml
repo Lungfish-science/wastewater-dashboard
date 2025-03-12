@@ -55,6 +55,6 @@ format:
     css: styles.css
     toc: true
 
-execute:
-  freeze: auto
+# execute:
+#   freeze: auto
 

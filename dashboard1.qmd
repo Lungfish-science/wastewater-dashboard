@@ -15,6 +15,7 @@ The plot below shows the results of analyses we run each week. These analyses us
 :::
 
 
+
 ```{python}
 import sys
 
@@ -27,12 +28,15 @@ from loguru import logger
 from pathlib import Path
 
 ALL_ORF_TSV = Path("./data/VariantPMsLong.tsv")
+LINEAGE_JSON = Path("./data/major_lineages.json")
+
 assert ALL_ORF_TSV.is_file(), f"The provided path, '{ALL_ORF_TSV}', does not exist."
+assert LINEAGE_JSON.is_file(), f"The provided path, '{LINEAGE_JSON}', does not exist."
 
 setup_logging(3)
 
 # parse the file for each orf dataset into dataframes
-orf_datasets = parse_plotting_file(ALL_ORF_TSV)
+orf_datasets = parse_plotting_file(ALL_ORF_TSV, LINEAGE_JSON)
 
 # use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
 # OrfDataset as well
