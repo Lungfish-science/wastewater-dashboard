@@ -530,6 +530,72 @@ def identify_timespan_pairs(checked_lf: pl.LazyFrame) -> pl.LazyFrame:
     )
 
 
+def adjust_aa_changes(unadjusted_lf: pl.LazyFrame) -> pl.LazyFrame:
+    return (
+        unadjusted_lf.with_columns(
+            # For each group of amino acid changes for each comparison, assign an index.
+            # These will usually be 1 as most amino acid changes show up at most
+            # once within a time span, but if the same amino acid change can translate
+            # from multiple nucleotide changes, the indices will be higher.
+            pl.arange(0, pl.count())
+            .over(
+                [
+                    "ORFs",
+                    "AA Change",
+                    "Associated Variants",
+                    "Comparison",
+                    "Time Span Start",
+                    "Time Span End",
+                ],
+                order_by="Time Span Start",
+            )
+            .alias("_aa_change_index"),
+        )
+        # add one to the indices to make them more human readable
+        .with_columns(
+            (pl.col("_aa_change_index") + 1).alias("_aa_change_index"),
+        )
+        # beginning replacing the AA Change entry when an additional index is needed
+        .with_columns(
+            # When the amino acid change index in a group exceeds 1...
+            pl.when(
+                pl.col("_aa_change_index")
+                .max()
+                .over(
+                    [
+                        "ORFs",
+                        "AA Change",
+                        "Associated Variants",
+                        "Comparison",
+                        "Time Span Start",
+                        "Time Span End",
+                    ],
+                    order_by="Time Span Start",
+                )
+                > 1,
+            )
+            # ...rename the AA Change entry to include the index, making the entries
+            # distinguishable in the final plot
+            .then(
+                pl.concat_str(
+                    [
+                        pl.col("AA Change"),
+                        pl.lit(" ("),
+                        pl.col("_aa_change_index"),
+                        pl.lit(")"),
+                    ],
+                    separator="",
+                ),
+            )
+            # otherwise, leave the original value alone.
+            .otherwise("AA Change")
+            .alias("AA Change"),
+        )
+        # drop the temporary helper column
+        .drop("_aa_change_index")
+    )
+
+
 def validate_pivot_groupings(lf_with_groupings: pl.LazyFrame) -> None:
     """
     Validate groupings before performing the pivot operation.
@@ -599,32 +665,22 @@ def validate_pivot_groupings(lf_with_groupings: pl.LazyFrame) -> None:
 
 
 def transform_for_plotting(with_groupings_lf: pl.LazyFrame, major_lineage_lf: pl.LazyFrame) -> pl.LazyFrame:
-    """
-    Transform time-windowed mutation data for scatter plot visualization.
+    # adjust the amino acid changes so that amino acid changes resulting from different
+    # nucleotide changes (which may be present at different abundances) are labeled
+    # differently.
+    adjusted_aa_lf = adjust_aa_changes(with_groupings_lf)
 
-    Takes a LazyFrame containing mutation data with groupings between time spans, filters
-    rows for sufficient read depth, constructs columns for abundance in previous and current
-    time spans, and includes major lineage annotations.
-
-    Args:
-        with_groupings_lf (pl.LazyFrame): LazyFrame containing mutation data with time span
-            groupings
-
-    Returns:
-        pl.lazyframe: Transformed LazyFrame with abundance columns and lineage annotations,
-            filtered for plotting requirements
-    """
     # make sure groupings based on the available information will work when put into
     # a pivot, which is to say, make sure that each grouping contains no more than 2
     # rows.
-    validate_pivot_groupings(with_groupings_lf)
+    validate_pivot_groupings(adjusted_aa_lf)
 
     # first, filter the input rows to make sure they contain enough reads, and then
     # create a column that states whether a row comes from the previous time span or the
     # current timespan. This column of two nominal values will be pivoted into the X-
     # and Y-columns on the scatter plot.
     filtered_long_df = (
-        with_groupings_lf.unique()
+        adjusted_aa_lf.unique()
         .filter(pl.col("1k+ read samples") > 1)
         .with_columns(
             pl.col("Time Span Start").min().over("Comparison").alias("_min_group_date"),
