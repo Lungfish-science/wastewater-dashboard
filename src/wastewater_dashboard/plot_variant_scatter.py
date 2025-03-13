@@ -233,14 +233,16 @@ class OrfDataset:
                 ),
                 opacity=alt.when(aa_change_selection).then(alt.value(1)).otherwise(alt.value(0.2)),
                 tooltip=[
+                    "ORF",
                     "AA Change",
                     "NT change",
                     "Associated Lineages",
                     "Major Lineages",
+                    "Grouping",
+                    "Comparison",
                     "Abundance in Current Time Span",
                     "Abundance in Previous Time Span",
-                    "Comparison",
-                    "ORF",
+                    "Percent Change in Abundance",
                 ],
             )
             .add_params(aa_change_selection)
@@ -263,14 +265,16 @@ class OrfDataset:
                 color=alt.Color("AA Change:N"),
                 opacity=alt.value(0.7),  # Show clicked mutations with consistent opacity
                 tooltip=[
+                    "ORF",
                     "AA Change",
                     "NT change",
                     "Associated Lineages",
                     "Major Lineages",
+                    "Grouping",
+                    "Comparison",
                     "Abundance in Current Time Span",
                     "Abundance in Previous Time Span",
-                    "Comparison",
-                    "ORF",
+                    "Percent Change in Abundance",
                 ],
             )
             .transform_filter(click_selection)
@@ -719,6 +723,21 @@ def transform_for_plotting(with_groupings_lf: pl.LazyFrame, major_lineage_lf: pl
             pl.col("Abundance in Previous Time Span").is_not_null(),
             pl.col("Abundance in Current Time Span").is_not_null(),
         )
+        .with_columns(
+            ((pl.col("Abundance in Current Time Span") - pl.col("Abundance in Previous Time Span")) * 100)
+            .round(3)
+            .alias("Percent Change in Abundance"),
+        )
+        .with_columns(
+            pl.when(pl.col("Percent Change in Abundance") >= 0)
+            .then(
+                pl.when(pl.col("Percent Change in Abundance").eq(0))
+                .then(pl.col("Percent Change in Abundance"))
+                .otherwise(pl.concat_str([pl.lit("+"), pl.col("Percent Change in Abundance").cast(pl.String)])),
+            )
+            .otherwise(pl.col("Percent Change in Abundance").cast(pl.String))
+            .alias("Percent Change in Abundance"),
+        )
     )
 
     agg_lineages = (
@@ -738,7 +757,10 @@ def transform_for_plotting(with_groupings_lf: pl.LazyFrame, major_lineage_lf: pl
         .unnest("_mutations")
         .rename({"lineage": "Major Lineages"})
     )
-    with_major_lineages = pivot_lf.join(agg_lineages, how="left", on=["ORFs", "AA Change"])
+    with_major_lineages = pivot_lf.join(agg_lineages, how="left", on=["ORFs", "AA Change"]).with_columns(
+        pl.col("Major Lineages").fill_null("Does not define any major lineages.").alias("Major Lineages"),
+        pl.col("Associated Variants").fill_null("No associated lineages"),
+    )
 
     # return a lazyframe with a few final transformation: a filter to make sure at least
     # one of the abundance values is greater than 0.02, and some small column renames.
