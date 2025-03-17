@@ -82,7 +82,9 @@ class OrfDataset:
     latest_group_idx: int | None = None
 
     def sort_comparisons(self) -> None:
-        assert len(self.df) > 0, f"Empty dataframe encountered for {self.orf}, which cannot be sorted:\n\n{self.df}"
+        assert len(self.df) > 0, (
+            f"Empty dataframe encountered for {self.orf}, which cannot be sorted:\n\n{self.df}"
+        )
         # parse the latest date in a comparison back out of the comparison strings, which
         # are guaranteed to be valid because of how they were constructed and validated earlier
         # in the program
@@ -100,9 +102,15 @@ class OrfDataset:
             )
             .sort("Most Recent End", descending=True)
         )
-        sorted_comparisons = sorted_comparisons_df.select("Comparison").to_series().to_list()
+        sorted_comparisons = (
+            sorted_comparisons_df.select("Comparison").to_series().to_list()
+        )
         default = sorted_comparisons[0]
-        latest_group_idx = sorted_comparisons_df.filter(pl.col("Comparison").eq(default)).select("Grouping").item()
+        latest_group_idx = (
+            sorted_comparisons_df.filter(pl.col("Comparison").eq(default))
+            .select("Grouping")
+            .item()
+        )
 
         # pull out the comparison strings sorted in descending order, and set the most recent
         # one to be the default displayed in the dropdown
@@ -111,225 +119,11 @@ class OrfDataset:
         self.latest_group_idx = latest_group_idx
 
     def render_scatter_plot(self) -> None:
-        """
-        Render an interactive altair scatter plot using the data in this dataset.
-
-        This plot combines multiple interactivity features:
-        - A dropdown to select different timespan comparisons
-        - A dropdown to filter points by SARS-CoV-2 lineage
-        - Interactive highlighting via legend selection
-        - Interactive click selection to track mutations across all timespans
-        - Tooltips on hover showing detailed point metadata
-
-        The plot shows abundance values in log scale from 0.0001 to 1.0, with points
-        representing amino acid changes. Points above the diagonal line indicate
-        increasing abundance between timespans, while points below indicate decreasing
-        abundance. A legend allows identification of specific amino acid changes.
-
-        When a mutation is clicked, all occurrences of that mutation across different
-        timespans will be displayed, along with a connecting line showing its evolution,
-        regardless of the selected timespan.
-
-        Requires that `sort_comparisons()` has been called first to setup the comparison
-        dropdown options.
-
-        Returns:
-            None: Modifies the class `chart` attribute in place
-        """
-        assert self.sorted_comparisons is not None, (
-            "Be sure to run `self.sort_comparisons()` before calling this method."
-        )
-        assert self.default_comparison is not None, (
+        assert self.latest_group_idx is not None, (
             "Be sure to run `self.sort_comparisons()` before calling this method."
         )
 
-        # set the altair theme using the constant above
-        alt.theme.enable(ALTAIR_THEME)
-
-        # Create an interactive parameter for variant selection.
-        lineage_param = alt.param(
-            name="selected_variant",
-            bind=alt.binding_select(
-                options=["All", *MAJOR_LINEAGES],
-                name="SARS-CoV-2 Lineage: ",
-            ),
-            value="All",  # Default value shows all points.
-        )
-
-        # Create an interaction parameter allowing the legend to be used to highlight
-        # particular mutations in the plot
-        aa_change_selection = alt.selection_point(fields=["AA Change"], bind="legend")
-
-        # collect a list of the amino-acid change's nucleotide positions in order
-        # (TODO<@Nick>: This will not work for multi-segment pathogens)
-        ordered_aa_changes = (
-            self.df.sort("Position").select("AA Change").unique(maintain_order=True).to_series().to_list()
-        )
-
-        # construct a window box to interactively highlight portions of the plot
-        highlight_box = alt.selection_interval()
-
-        # Make a parameter that will render a dropdown for selecting the timespan comparison
-        comparison_dropdown = alt.binding_select(
-            options=self.sorted_comparisons,
-            name="Timespan Comparison: ",
-        )
-        _timespan_selector = alt.selection_point(
-            fields=["Comparison"],
-            bind=comparison_dropdown,
-            name="Timespan Comparison: ",
-            value=self.default_comparison,
-        )
-
-        # construct a click selector to allow users to click on each amino acid to see its path
-        click_selection = alt.selection_point(
-            fields=["AA Change"],
-            on="click",
-            empty=False,
-            name="Click",
-        )
-
-        # X-value slider
-        assert self.latest_group_idx is not None
-        analysis_slider = alt.binding_range(
-            min=1,
-            max=self.latest_group_idx,
-            step=1,
-            name="Analysis Index: ",
-        )
-        analysis_selector = alt.selection_point(
-            name="x_select",
-            fields=["Grouping"],
-            bind=analysis_slider,
-            value=self.latest_group_idx,
-        )
-
-        # render the main scatterplot for the selected timespan
-        scatter_chart = (
-            alt.Chart(self.df)
-            .mark_circle(size=120)
-            .encode(
-                x=alt.X(
-                    "Abundance in Previous Time Span:Q",
-                    scale=alt.Scale(type="log", domain=[0.0001, 1]),
-                    title="Abundance in Previous Time Span",
-                ),
-                y=alt.Y(
-                    "Abundance in Current Time Span:Q",
-                    scale=alt.Scale(type="log", domain=[0.0001, 1]),
-                    title="Abundance in Current Time Span",
-                ),
-                # Conditionally color points: if "All" is selected or if the selected variant
-                # is found in the comma-separated "Associated Variants", use the normal color;
-                # otherwise, gray them out.
-                color=alt.condition(
-                    "selected_variant == 'All' || indexof(split(datum['Major Lineages'], ','), selected_variant) >= 0",
-                    alt.Color(
-                        "AA Change:N",
-                        legend=alt.Legend(symbolLimit=1000, columns=2),
-                        scale=alt.Scale(domain=ordered_aa_changes),
-                    ),
-                    alt.value("lightgray"),
-                ),
-                opacity=alt.when(aa_change_selection).then(alt.value(1)).otherwise(alt.value(0.2)),
-                tooltip=[
-                    "ORF",
-                    "AA Change",
-                    "NT Change",
-                    "Associated Lineages",
-                    "Major Lineages",
-                    "Grouping",
-                    "Comparison",
-                    "Abundance in Current Time Span",
-                    "Abundance in Previous Time Span",
-                    "Percent Change in Abundance",
-                ],
-            )
-            .add_params(aa_change_selection)
-            .add_params(analysis_selector)
-            .transform_filter(analysis_selector)
-        )
-
-        scatter_click = (
-            alt.Chart(self.df)
-            .mark_circle(size=200)
-            .encode(
-                x=alt.X(
-                    "Abundance in Previous Time Span:Q",
-                    scale=alt.Scale(type="log", domain=[0.0001, 1]),
-                ),
-                y=alt.Y(
-                    "Abundance in Current Time Span:Q",
-                    scale=alt.Scale(type="log", domain=[0.0001, 1]),
-                ),
-                color=alt.Color("AA Change:N"),
-                opacity=alt.value(0.7),  # Show clicked mutations with consistent opacity
-                tooltip=[
-                    "ORF",
-                    "AA Change",
-                    "NT Change",
-                    "Associated Lineages",
-                    "Major Lineages",
-                    "Grouping",
-                    "Comparison",
-                    "Abundance in Current Time Span",
-                    "Abundance in Previous Time Span",
-                    "Percent Change in Abundance",
-                ],
-            )
-            .transform_filter(click_selection)
-        )  # Only filter by click, NOT by timespan
-
-        # Line connecting occurrences of the clicked mutation - NOT filtered by timespan_selector
-        click_line = (
-            alt.Chart(self.df)
-            .mark_line(size=2)
-            .encode(
-                x="Abundance in Previous Time Span:Q",
-                y="Abundance in Current Time Span:Q",
-                color=alt.value("black"),
-                order=alt.Order("Grouping:Q", sort="ascending"),  # Ensures the line follows chronological order
-                opacity=alt.value(0.5),
-            )
-            .transform_filter(click_selection)
-        )  # Only filter by click, NOT by timespan
-
-        # render the diagonal line
-        line_chart = render_diag_line()
-
-        # specify the comparison to be printed in the background
-        background_comparison = (
-            alt.Chart(self.df)
-            .mark_text(x=0.0001, y=1, dy=-20, align="left", fontSize=18, opacity=1)
-            .encode(text="Comparison:N")
-            .transform_filter(analysis_selector)
-        )
-
-        # Combine all charts with the correct layering and ALL parameters
-        combined_chart = (
-            alt.layer(
-                background_comparison,
-                scatter_chart,
-                scatter_click,
-                click_line,
-                line_chart,
-            )
-            .configure_view(clip=False)
-            .configure_axis(labelFontSize=14, titleFontSize=14)
-            .properties(
-                width="container",
-                height=PLOT_HEIGHT,
-                padding=10,
-            )
-            .add_params(
-                lineage_param,
-                click_selection,
-                highlight_box,
-            )
-        )
-
-        # Set final chart configuration
-        self.chart = combined_chart.configure_axis(labelFontSize=14, titleFontSize=16)
+        self.chart = render_scatter_plot(self.df, self.latest_group_idx)
 
 
 @dataclass
@@ -407,7 +201,9 @@ def validate_date_columns(unchecked_df: pl.DataFrame) -> pl.LazyFrame:
     # run a check to see if any start dates do not precede their respective end dates
     date_check = (
         unchecked_df.select("Time Span Start", "Time Span End")
-        .with_columns(pl.col("Time Span Start").lt(pl.col("Time Span End")).alias("_date_check"))
+        .with_columns(
+            pl.col("Time Span Start").lt(pl.col("Time Span End")).alias("_date_check"),
+        )
         .select("_date_check")
         .to_series()
         .to_list()
@@ -434,7 +230,9 @@ def validate_date_columns(unchecked_df: pl.DataFrame) -> pl.LazyFrame:
     end_dates = unchecked_df.select("Time Span End").to_series().to_list()
     invalid_dates = [
         (start_date, end_date)
-        for i, (start_date, end_date) in enumerate(zip(start_dates, end_dates, strict=True))
+        for i, (start_date, end_date) in enumerate(
+            zip(start_dates, end_dates, strict=True),
+        )
         if i in invalid_date_indices
     ]
     assert False not in date_check, (
@@ -464,11 +262,19 @@ def identify_timespan_pairs(checked_lf: pl.LazyFrame) -> pl.LazyFrame:
 
     checked_lf = checked_lf.sort(by="Time Span Start", descending=False)
 
-    unique_timespans = checked_lf.select("Time Span").unique(maintain_order=True).collect().to_series().to_list()
+    unique_timespans = (
+        checked_lf.select("Time Span")
+        .unique(maintain_order=True)
+        .collect()
+        .to_series()
+        .to_list()
+    )
 
     # construct a sort of tree, which can be used to assign indices to each "forward"
     # and "reverse" pairing
-    group_lookup: dict[str, GroupNode] = {span: GroupNode(span) for span in unique_timespans}
+    group_lookup: dict[str, GroupNode] = {
+        span: GroupNode(span) for span in unique_timespans
+    }
     group_index = 1
     window_size = 3
     for i, node in enumerate(group_lookup.values()):
@@ -535,6 +341,20 @@ def identify_timespan_pairs(checked_lf: pl.LazyFrame) -> pl.LazyFrame:
 
 
 def adjust_aa_changes(unadjusted_lf: pl.LazyFrame) -> pl.LazyFrame:
+    """
+    Adjust amino acid changes in a polars LazyFrame for cases where multiple nucleotide changes result in the same amino acid change.
+
+    This function adds indices to amino acid changes that appear multiple times for the same comparison and timespan
+    due to arising from different nucleotide substitutions. These indices allow these changes to be distinguished in
+    the final plot. For example, if the same amino acid change appears twice, the entries will be labeled as
+    "AA Change (1)" and "AA Change (2)".
+
+    Args:
+        unadjusted_lf (pl.LazyFrame): LazyFrame containing amino acid change data that may need adjustment
+
+    Returns:
+        pl.LazyFrame: LazyFrame with adjusted amino acid change labels, where duplicates include index numbers
+    """
     return (
         unadjusted_lf.with_columns(
             # For each group of amino acid changes for each comparison, assign an index.
@@ -622,7 +442,9 @@ def validate_pivot_groupings(lf_with_groupings: pl.LazyFrame) -> None:
     # partition the input lazyframe that contains groupings into a list of dataframes,
     # one per comparison.
     pivot_test = (
-        lf_with_groupings.with_columns(pl.col("Time Span Start").min().over("Comparison").alias("_min_group_date"))
+        lf_with_groupings.with_columns(
+            pl.col("Time Span Start").min().over("Comparison").alias("_min_group_date"),
+        )
         .with_columns(
             pl.when(pl.col("Time Span Start").eq(pl.col("_min_group_date")))
             .then(pl.lit("Abundance in Previous Time Span"))
@@ -658,7 +480,9 @@ def validate_pivot_groupings(lf_with_groupings: pl.LazyFrame) -> None:
     # run an assertion that no groups are invalid. This should crash the program, as
     # it indicates ambiguous or invalid input data that should not be plotted.
     invalid_groups = [
-        group.with_columns(pl.lit(f"Invalid Group {i + 1}").alias("Invalid Group Index"))
+        group.with_columns(
+            pl.lit(f"Invalid Group {i + 1}").alias("Invalid Group Index"),
+        )
         for i, group in enumerate(invalid_groups)
     ]
 
@@ -668,7 +492,150 @@ def validate_pivot_groupings(lf_with_groupings: pl.LazyFrame) -> None:
     )
 
 
-def transform_for_plotting(with_groupings_lf: pl.LazyFrame, major_lineage_lf: pl.LazyFrame) -> pl.LazyFrame:
+def pivot_abundance_groupings(filtered_long_df: pl.DataFrame) -> pl.LazyFrame:
+    """
+    Pivot groupings of abundance data and calculate the percentage change between time spans.
+
+    This function takes a pivoted DataFrame containing abundance information and creates a
+    LazyFrame with abundance comparisons. The pivoted output shows:
+    - The abundance in the previous time span
+    - The abundance in the current time span
+    - The percent change in abundance between time spans (calculated and rounded to 3 decimals)
+
+    The percent changes are formatted to include a '+' prefix for increases,
+    and both the raw abundances and changes are filtered to ensure sufficient data quality.
+
+    Args:
+        filtered_long_df (pl.DataFrame): DataFrame containing validated abundance data with time span groupings
+
+    Returns:
+        pl.LazyFrame: LazyFrame with pivoted abundance data and calculated percent changes
+    """
+    return (
+        filtered_long_df.pivot(
+            values="Abundance",
+            index=[
+                "Position",
+                "ORFs",
+                "NT Change",
+                "AA Change",
+                "Associated Variants",
+                "Grouping",
+                "Comparison",
+            ],
+            on="Which Time Span",
+        )
+        .lazy()
+        .filter(
+            pl.col("Abundance in Previous Time Span").is_not_null(),
+            pl.col("Abundance in Current Time Span").is_not_null(),
+        )
+        .with_columns(
+            (
+                (
+                    pl.col("Abundance in Current Time Span")
+                    - pl.col("Abundance in Previous Time Span")
+                )
+                * 100
+            )
+            .round(3)
+            .alias("Percent Change in Abundance"),
+        )
+        .with_columns(
+            pl.when(pl.col("Percent Change in Abundance") >= 0)
+            .then(
+                pl.when(pl.col("Percent Change in Abundance").eq(0))
+                .then(pl.col("Percent Change in Abundance"))
+                .otherwise(
+                    pl.concat_str(
+                        [
+                            pl.lit("+"),
+                            pl.col("Percent Change in Abundance").cast(pl.String),
+                        ],
+                    ),
+                ),
+            )
+            .otherwise(pl.col("Percent Change in Abundance").cast(pl.String))
+            .alias("Percent Change in Abundance"),
+        )
+    )
+
+
+def label_major_lineages(
+    pivot_lf: pl.LazyFrame, major_lineage_lf: pl.LazyFrame
+) -> pl.LazyFrame:
+    """
+    Labels mutations according to the major lineages they are associated with.
+
+    Takes a pivoted LazyFrame with amino acid mutation abundances and joins it with major lineage
+    metadata to label each mutation according to whether it is associated with any major lineages
+    in circulation. Mutations not associated with any major lineages are labeled as such.
+
+    Args:
+        pivot_lf (pl.LazyFrame): A pivoted LazyFrame containing abundance data for AA mutations
+        major_lineage_lf (pl.LazyFrame): A LazyFrame containing major lineage metadata
+
+    Returns:
+        pl.LazyFrame: The input pivoted LazyFrame joined with major lineage information and filled
+                     null values for mutations not associated with any lineages
+    """
+    agg_lineages = (
+        major_lineage_lf.with_columns(
+            pl.col("mutations").str.split(",").alias("_mutations"),
+        )
+        .explode("_mutations")
+        .group_by("_mutations")
+        .agg("lineage")
+        .with_columns(pl.col("lineage").list.join(",").alias("lineage"))
+        .with_columns(
+            pl.col("_mutations")
+            .str.split_exact(pl.lit(":"), 2)
+            .struct.rename_fields(["ORFs", "AA Change"])
+            .alias("_mutations"),
+        )
+        .unnest("_mutations")
+        .rename({"lineage": "Major Lineages"})
+    )
+    return pivot_lf.join(
+        agg_lineages,
+        how="left",
+        on=["ORFs", "AA Change"],
+    ).with_columns(
+        pl.col("Major Lineages")
+        .fill_null("Does not define any major lineages.")
+        .alias("Major Lineages"),
+        pl.col("Associated Variants").fill_null("No associated lineages"),
+    )
+
+
+def transform_for_plotting(
+    with_groupings_lf: pl.LazyFrame,
+    major_lineage_lf: pl.LazyFrame,
+) -> pl.LazyFrame:
+    """
+    Transforms data into a format suitable for plotting scatter plots of amino acid changes.
+
+    Takes raw ORF dataframes with groupings and performs several transformations to prepare
+    data for visualization:
+    1. Adjusts amino acid changes to handle multiple nucleotide changes
+    2. Validates pivot groupings contain no more than 2 rows
+    3. Filters for rows with sufficient reads (1k+)
+    4. Pivots data to create columns for previous vs current abundance
+    5. Calculates percent change in abundance
+    6. Joins with major lineage data
+    7. Filters for abundances >= 0.02%
+
+    Args:
+        with_groupings_lf (pl.LazyFrame): LazyFrame containing ORF data with groupings
+        major_lineage_lf (pl.LazyFrame): LazyFrame containing major lineage metadata
+
+    Returns:
+        pl.LazyFrame: Transformed data ready for scatter plot visualization with columns:
+            - Position, ORF, NT Change, AA Change, Associated Lineages
+            - Abundance in Previous/Current Time Span
+            - Percent Change in Abundance
+            - Major Lineages
+    """
     # adjust the amino acid changes so that amino acid changes resulting from different
     # nucleotide changes (which may be present at different abundances) are labeled
     # differently.
@@ -704,63 +671,11 @@ def transform_for_plotting(with_groupings_lf: pl.LazyFrame, major_lineage_lf: pl
     # current time span. Sometimes, a substitution will have dropped out (become frequency
     # 0 and thus be omitted from the input table), in which case one of these abundance
     # columns will be empty. These rows can be safely filtered out.
-    pivot_lf = (
-        filtered_long_df.pivot(
-            values="Abundance",
-            index=[
-                "Position",
-                "ORFs",
-                "NT Change",
-                "AA Change",
-                "Associated Variants",
-                "Grouping",
-                "Comparison",
-            ],
-            on="Which Time Span",
-        )
-        .lazy()
-        .filter(
-            pl.col("Abundance in Previous Time Span").is_not_null(),
-            pl.col("Abundance in Current Time Span").is_not_null(),
-        )
-        .with_columns(
-            ((pl.col("Abundance in Current Time Span") - pl.col("Abundance in Previous Time Span")) * 100)
-            .round(3)
-            .alias("Percent Change in Abundance"),
-        )
-        .with_columns(
-            pl.when(pl.col("Percent Change in Abundance") >= 0)
-            .then(
-                pl.when(pl.col("Percent Change in Abundance").eq(0))
-                .then(pl.col("Percent Change in Abundance"))
-                .otherwise(pl.concat_str([pl.lit("+"), pl.col("Percent Change in Abundance").cast(pl.String)])),
-            )
-            .otherwise(pl.col("Percent Change in Abundance").cast(pl.String))
-            .alias("Percent Change in Abundance"),
-        )
-    )
+    pivot_lf = pivot_abundance_groupings(filtered_long_df)
 
-    agg_lineages = (
-        major_lineage_lf.with_columns(
-            pl.col("mutations").str.split(",").alias("_mutations"),
-        )
-        .explode("_mutations")
-        .group_by("_mutations")
-        .agg("lineage")
-        .with_columns(pl.col("lineage").list.join(",").alias("lineage"))
-        .with_columns(
-            pl.col("_mutations")
-            .str.split_exact(pl.lit(":"), 2)
-            .struct.rename_fields(["ORFs", "AA Change"])
-            .alias("_mutations"),
-        )
-        .unnest("_mutations")
-        .rename({"lineage": "Major Lineages"})
-    )
-    with_major_lineages = pivot_lf.join(agg_lineages, how="left", on=["ORFs", "AA Change"]).with_columns(
-        pl.col("Major Lineages").fill_null("Does not define any major lineages.").alias("Major Lineages"),
-        pl.col("Associated Variants").fill_null("No associated lineages"),
-    )
+    # aggregate major lineage information that can be used to label amino acid substitutions
+    # according to whether they are markers for some of the most prevalent current lineages.
+    with_major_lineages = label_major_lineages(pivot_lf, major_lineage_lf)
 
     # return a lazyframe with a few final transformation: a filter to make sure at least
     # one of the abundance values is greater than 0.02, and some small column renames.
@@ -774,7 +689,10 @@ def transform_for_plotting(with_groupings_lf: pl.LazyFrame, major_lineage_lf: pl
     ).rename({"ORFs": "ORF", "Associated Variants": "Associated Lineages"})
 
 
-def parse_plotting_file(orf_file: str | Path, lineage_file: str | Path) -> list[OrfDataset]:
+def parse_plotting_file(
+    orf_file: str | Path,
+    lineage_file: str | Path,
+) -> list[OrfDataset]:
     """
     Parse a tab-separated file containing ORF abundance data and return a list of OrfDataset objects.
 
@@ -800,7 +718,10 @@ def parse_plotting_file(orf_file: str | Path, lineage_file: str | Path) -> list[
     all_orf_abundances = transform_for_plotting(with_groupings, lineage_lf)
 
     # write out plotting data for transparency
-    all_orf_abundances.collect().write_csv("data/transformed_variant_plotting_data.tsv", separator="\t")
+    all_orf_abundances.collect().write_csv(
+        "data/transformed_variant_plotting_data.tsv",
+        separator="\t",
+    )
 
     # split off a dataframe copy for displaying all mutations across the whole genome
     whole_genome_lf = all_orf_abundances.with_columns(
@@ -812,11 +733,18 @@ def parse_plotting_file(orf_file: str | Path, lineage_file: str | Path) -> list[
 
     # execute the optimized query plan with `.collect()`, and then split out one dataframe
     # per ORF with `.partition_by("ORF")`
-    orf_dfs = all_orf_abundances.collect().vstack(whole_genome_lf.collect()).partition_by("ORF", as_dict=True)
+    orf_dfs = (
+        all_orf_abundances.collect()
+        .vstack(whole_genome_lf.collect())
+        .partition_by("ORF", as_dict=True)
+    )
     assert all(len(orf_df) > 0 for _, orf_df in orf_dfs.items())
 
     # return a list of OrfDataset objects
-    return [OrfDataset(orf=str(orf_label[0]), df=orf_df) for orf_label, orf_df in orf_dfs.items()]
+    return [
+        OrfDataset(orf=str(orf_label[0]), df=orf_df)
+        for orf_label, orf_df in orf_dfs.items()
+    ]
 
 
 def render_diag_line() -> alt.Chart:
@@ -855,27 +783,300 @@ def render_diag_line() -> alt.Chart:
     )
 
 
-def render_scatter_plot(orf_bundle: OrfDataset) -> OrfDataset:
+def render_base_layer(
+    orf_df: pl.DataFrame,
+    ordered_aa_changes: list[str],
+    aa_change_selection: alt.Parameter,
+    analysis_selector: alt.Parameter,
+) -> alt.Chart:
     """
-    Render a scatter plot for an OrfDataset.
+    Create the base layer for an amino acid scatterplot.
 
-    First ensures comparisons are sorted, then renders an interactive scatter plot visualizing
-    the abundances of mutations between two time periods. This function modifies the OrfDataset
-    in place by setting its scatter_plot attribute.
+    Renders the main scatter plot layer showing abundance changes between timepoints. Points are colored
+    by amino acid change and can be filtered/highlighted through:
+    - AA change legend selection
+    - Analysis timepoint selector
+    - Lineage dropdown selection
 
-    The plot shows abundance values in log scale from 0.0001 to 1.0, with points
-    representing amino acid changes. Points above the diagonal line indicate
-    increasing abundance between timespans, while points below indicate decreasing
-    abundance.
+    The plot uses logarithmic scales on both axes from 0.0001 to 1.
 
     Args:
-        orf_bundle (OrfDataset): OrfDataset containing the data to plot
+        orf_df (pl.DataFrame): DataFrame containing ORF abundance data
+        ordered_aa_changes (list[str]): List of amino acid changes sorted by genome position
+        aa_change_selection (alt.Parameter): Parameter for legend-based AA change selection
+        analysis_selector (alt.Parameter): Parameter for timepoint selection via slider
 
     Returns:
-        OrfDataset: The input OrfDataset with its chart attribute populated
+        alt.Chart: Base scatter plot layer with encodings for point position, color, opacity and tooltips
     """
-    orf_bundle.render_scatter_plot()
-    return orf_bundle
+    return (
+        alt.Chart(orf_df)
+        .mark_circle(size=120)
+        .encode(
+            x=alt.X(
+                "Abundance in Previous Time Span:Q",
+                scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                title="Abundance in Previous Time Span",
+            ),
+            y=alt.Y(
+                "Abundance in Current Time Span:Q",
+                scale=alt.Scale(type="log", domain=[0.0001, 1]),
+                title="Abundance in Current Time Span",
+            ),
+            # Conditionally color points: if "All" is selected or if the selected variant
+            # is found in the comma-separated "Associated Variants", use the normal color;
+            # otherwise, gray them out.
+            color=alt.condition(
+                "selected_variant == 'All' || indexof(split(datum['Major Lineages'], ','), selected_variant) >= 0",
+                alt.Color(
+                    "AA Change:N",
+                    legend=alt.Legend(symbolLimit=1000, columns=2),
+                    scale=alt.Scale(domain=ordered_aa_changes),
+                ),
+                alt.value("lightgray"),
+            ),
+            opacity=alt.when(aa_change_selection)
+            .then(alt.value(1))
+            .otherwise(alt.value(0.2)),
+            tooltip=[
+                "ORF",
+                "AA Change",
+                "NT Change",
+                "Associated Lineages",
+                "Major Lineages",
+                "Grouping",
+                "Comparison",
+                "Abundance in Current Time Span",
+                "Abundance in Previous Time Span",
+                "Percent Change in Abundance",
+            ],
+        )
+        .add_params(aa_change_selection)
+        .add_params(analysis_selector)
+        .transform_filter(analysis_selector)
+    )
+
+
+def render_click_layer(
+    orf_df: pl.DataFrame,
+    click_selection: alt.Parameter,
+) -> alt.Chart:
+    """
+    Create a scatter plot layer that highlights clicked mutations.
+
+    This layer renders points for mutations that have been clicked on by the user. It uses
+    the same x/y encoding as the base layer, but shows clicked mutations with consistent
+    opacity (0.7) regardless of other filtering. This allows users to track specific
+    mutations of interest over time.
+
+    Args:
+        orf_df (pl.DataFrame): DataFrame containing ORF abundance data
+        click_selection (alt.Parameter): Parameter for tracking clicked mutations
+
+    Returns:
+        alt.Chart: Scatter plot layer showing only clicked mutations with highlights
+    """
+    return (
+        alt.Chart(orf_df)
+        .mark_circle(size=200)
+        .encode(
+            x=alt.X(
+                "Abundance in Previous Time Span:Q",
+                scale=alt.Scale(type="log", domain=[0.0001, 1]),
+            ),
+            y=alt.Y(
+                "Abundance in Current Time Span:Q",
+                scale=alt.Scale(type="log", domain=[0.0001, 1]),
+            ),
+            color=alt.Color("AA Change:N"),
+            opacity=alt.value(0.7),  # Show clicked mutations with consistent opacity
+            tooltip=[
+                "ORF",
+                "AA Change",
+                "NT Change",
+                "Associated Lineages",
+                "Major Lineages",
+                "Grouping",
+                "Comparison",
+                "Abundance in Current Time Span",
+                "Abundance in Previous Time Span",
+                "Percent Change in Abundance",
+            ],
+        )
+        .transform_filter(click_selection)
+    )
+
+
+def render_line_click_layer(
+    orf_df: pl.DataFrame,
+    click_selection: alt.Parameter,
+) -> alt.Chart:
+    """
+    Create a line layer connecting points for clicked mutations over time.
+
+    This layer renders lines connecting multiple occurrences of any clicked mutations across
+    different timepoints. The lines follow chronological order based on the Grouping field
+    to show the abundance trajectory over time. Lines are rendered in black with 50% opacity
+    to allow overlaps to be visible.
+
+    Args:
+        orf_df (pl.DataFrame): DataFrame containing ORF abundance data with timepoint groupings
+        click_selection (alt.Parameter): Parameter tracking which mutations have been clicked
+
+    Returns:
+        alt.Chart: Line plot layer showing abundance trajectories for clicked mutations
+    """
+    return (
+        alt.Chart(orf_df)
+        .mark_line(size=2)
+        .encode(
+            x="Abundance in Previous Time Span:Q",
+            y="Abundance in Current Time Span:Q",
+            color=alt.value("black"),
+            order=alt.Order(
+                "Grouping:Q",
+                sort="ascending",
+            ),  # Ensures the line follows chronological order
+            opacity=alt.value(0.5),
+        )
+        .transform_filter(click_selection)
+    )
+
+
+def render_scatter_plot(orf_df: pl.DataFrame, latest_group_idx: int) -> alt.LayerChart:
+    """
+    Create the base layers and render a scatter plot showing the abundance of amino acid mutations
+    between time spans.
+
+    This function takes ORF data and combines several layers into a final Altair chart:
+    1. A text layer showing the comparison being displayed
+    2. A base scatter plot layer colored by AA change with interactive filtering
+    3. A click layer highlighting selected mutations
+    4. A line layer showing trajectories of clicked mutations
+    5. A diagonal reference line
+
+    The resulting chart includes interactive elements:
+    - Variant selection dropdown
+    - Legend-based AA change filtering
+    - Time span analysis slider
+    - Click selection of individual mutations
+    - Box selection for highlighting regions
+
+    Args:
+        orf_df (pl.DataFrame): DataFrame containing ORF abundance data
+        latest_group_idx (int): Index of the most recent grouping to set as default selected timespan
+
+    Returns:
+        alt.LayerChart: Multi-layer Altair chart with interactive controls and filters
+    """
+    # set the altair theme using the constant above
+    alt.theme.enable(ALTAIR_THEME)
+
+    # Create an interactive parameter for variant selection.
+    lineage_param = alt.param(
+        name="selected_variant",
+        bind=alt.binding_select(
+            options=["All", *MAJOR_LINEAGES],
+            name="SARS-CoV-2 Lineage: ",
+        ),
+        value="All",  # Default value shows all points.
+    )
+
+    # Create an interaction parameter allowing the legend to be used to highlight
+    # particular mutations in the plot
+    aa_change_selection = alt.selection_point(fields=["AA Change"], bind="legend")
+
+    # collect a list of the amino-acid change's nucleotide positions in order
+    # (TODO<@Nick>: This will not work for multi-segment pathogens)
+    ordered_aa_changes = (
+        orf_df.sort("Position")
+        .select("AA Change")
+        .unique(maintain_order=True)
+        .to_series()
+        .to_list()
+    )
+
+    # construct a window box to interactively highlight portions of the plot
+    highlight_box = alt.selection_interval()
+
+    # X-value slider to allow users to scrub through our analyses over time
+    analysis_slider = alt.binding_range(
+        min=1,
+        max=latest_group_idx,
+        step=1,
+        name="Analysis Index: ",
+    )
+    analysis_selector = alt.selection_point(
+        name="x_select",
+        fields=["Grouping"],
+        bind=analysis_slider,
+        value=latest_group_idx,
+    )
+
+    # construct a click selector to allow users to click on each amino acid to see its path
+    click_selection = alt.selection_point(
+        fields=["AA Change"],
+        on="click",
+        empty=False,
+        name="Click",
+    )
+
+    # render the main scatterplot for the selected timespan
+    base_layer = render_base_layer(
+        orf_df,
+        ordered_aa_changes,
+        aa_change_selection,
+        analysis_selector,
+    )
+
+    # render a layer that allows users to click the individual points
+    scatter_click_layer = render_click_layer(
+        orf_df,
+        click_selection,
+    )  # Only filter by click, NOT by timespan
+
+    # Line connecting occurrences of the clicked mutation - NOT filtered by timespan_selector
+    line_click_layer = render_line_click_layer(
+        orf_df,
+        click_selection,
+    )  # Only filter by click, NOT by timespan
+
+    # render the diagonal line
+    diag_line_layer = render_diag_line()
+
+    # specify the comparison to be printed in the background
+    comparison_layer = (
+        alt.Chart(orf_df)
+        .mark_text(x=0.0001, y=1, dy=-20, align="left", fontSize=18, opacity=1)
+        .encode(text="Comparison:N")
+        .transform_filter(analysis_selector)
+    )
+
+    # Combine all charts with the correct layering and ALL parameters
+    combined_chart = (
+        alt.layer(
+            comparison_layer,
+            base_layer,
+            scatter_click_layer,
+            line_click_layer,
+            diag_line_layer,
+        )
+        .configure_view(clip=False)
+        .configure_axis(labelFontSize=14, titleFontSize=14)
+        .properties(
+            width="container",
+            height=PLOT_HEIGHT,
+            padding=10,
+        )
+        .add_params(
+            lineage_param,
+            click_selection,
+            highlight_box,
+        )
+    )
+
+    # Set final chart configuration
+    return combined_chart.configure_axis(labelFontSize=14, titleFontSize=16)
 
 
 def write_rendered_plot(orf_dataset: OrfDataset, output_dir: str | Path) -> None:
@@ -926,10 +1127,14 @@ def render_for_quarto(compiled_datasets: list[OrfDataset], orf_label: str) -> No
     Returns:
         None: Displays the chart directly
     """
-    current_bundle = [dataset for dataset in compiled_datasets if dataset.orf == orf_label]
+    current_bundle = [
+        dataset for dataset in compiled_datasets if dataset.orf == orf_label
+    ]
 
     if len(current_bundle) != 1:
-        fallback_bundle = [dataset for dataset in compiled_datasets if dataset.orf == "ORF1"]
+        fallback_bundle = [
+            dataset for dataset in compiled_datasets if dataset.orf == "ORF1"
+        ]
         assert len(fallback_bundle) == 1
         unwrapped = fallback_bundle[0]
 
@@ -937,7 +1142,8 @@ def render_for_quarto(compiled_datasets: list[OrfDataset], orf_label: str) -> No
         dummy_dataset.sort_comparisons()
         dummy_dataset.df = dummy_dataset.df.clone().clear()
 
-        emptied_dataset = render_scatter_plot(dummy_dataset)
+        dummy_dataset.render_scatter_plot()
+        emptied_dataset = dummy_dataset
         assert emptied_dataset.chart is not None
         emptied_dataset.chart.show()
     else:
