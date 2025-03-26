@@ -1,1 +1,1 @@
-Sitemap: https://inkfishmedical.github.io/wastewater-dashboard/sitemap.xml
+Sitemap: https://Lungfish-science.github.io/wastewater-dashboard/sitemap.xml
