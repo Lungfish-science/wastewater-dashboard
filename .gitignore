@@ -32,7 +32,7 @@
 !/data/*.tsv.gz
 !/data/*.tsv
 !/data/*.json
-!data/all_metadata_for_acknowledgements_05Mar25.csv
+!data/all_metadata_for_acknowledgements_*.csv
 !/data/*.txt
 
 # plots folder
