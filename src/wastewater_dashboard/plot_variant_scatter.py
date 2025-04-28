@@ -1048,7 +1048,7 @@ def render_scatter_plot(orf_df: pl.DataFrame, latest_group_idx: int) -> alt.Laye
     comparison_layer = (
         alt.Chart(orf_df)
         .mark_text(x=0.0001, y=1, dy=-20, align="left", fontSize=18, opacity=1)
-        .encode(text="Comparison:N")
+        .encode(text="max(Comparison):N")
         .transform_filter(analysis_selector)
     )
 

@@ -4,7 +4,7 @@ project:
 
 website:
   title: "𓆞 lung.fish Data Explorer"
-  repo-url: https://github.com/inkfishmedical/wastewater-dashboard
+  repo-url: https://github.com/Lungfish-science/wastewater-dashboard
   navbar:
     right:
       - href: index.qmd
@@ -19,31 +19,31 @@ website:
         menu:
           - text: "Report a Bug"
             icon: "bug"
-            href: "https://github.com/inkfishmedical/wastewater-dashboard/issues"
+            href: "https://github.com/Lungfish-science/wastewater-dashboard/issues"
           - text: "Ask a Question"
             icon: "chat-right-text"
-            href: "https://github.com/inkfishmedical/wastewater-dashboard/discussions"
+            href: "https://github.com/Lungfish-science/wastewater-dashboard/discussions"
     tools:
       - icon: github
         menu:
           - text: Source Code
-            href:  https://github.com/inkfishmedical/wastewater-dashboard
+            href:  https://github.com/Lungfish-science/wastewater-dashboard
           - text: Report a Bug
-            href:  https://github.com/inkfishmedical/wastewater-dashboard/issues
+            href:  https://github.com/Lungfish-science/wastewater-dashboard/issues
     collapse: true
     collapse-below: lg
     toggle-position: right
   back-to-top-navigation: true
   page-navigation: true
   reader-mode: true
-  page-footer: 
-    left: "Copyright 2025, lung.fish" 
+  page-footer:
+    left: "Copyright 2025, lung.fish"
     center:
       - text: "About"
         href: about.qmd
       - text: "License"
-        href: https://github.com/inkfishmedical/wastewater-dashboard/blob/main/LICENSE
-    right: 
+        href: https://github.com/Lungfish-science/wastewater-dashboard/blob/main/LICENSE
+    right:
       - icon: github
         href: https://github.com/inkfishmedical
 
@@ -57,4 +57,3 @@ format:
 
 # execute:
 #   freeze: auto
-
