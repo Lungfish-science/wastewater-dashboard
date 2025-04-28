@@ -9,7 +9,7 @@ format:
 
 from wastewater_dashboard.acknowledgements import convert_table_to_greatable
 
-table = convert_table_to_greatable("data/all_metadata_for_acknowledgements_05Mar25.csv")
+table = convert_table_to_greatable("data/all_metadata_for_acknowledgements_15Apr25.csv")
 
 table.show()
 
