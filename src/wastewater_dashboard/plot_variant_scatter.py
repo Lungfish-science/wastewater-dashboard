@@ -102,14 +102,10 @@ class OrfDataset:
             )
             .sort("Most Recent End", descending=True)
         )
-        sorted_comparisons = (
-            sorted_comparisons_df.select("Comparison").to_series().to_list()
-        )
+        sorted_comparisons = sorted_comparisons_df.select("Comparison").to_series().to_list()
         default = sorted_comparisons[0]
         latest_group_idx = (
-            sorted_comparisons_df.filter(pl.col("Comparison").eq(default))
-            .select("Grouping")
-            .item()
+            sorted_comparisons_df.filter(pl.col("Comparison").eq(default)).select("Grouping").item()
         )
 
         # pull out the comparison strings sorted in descending order, and set the most recent
@@ -263,18 +259,12 @@ def identify_timespan_pairs(checked_lf: pl.LazyFrame) -> pl.LazyFrame:
     checked_lf = checked_lf.sort(by="Time Span Start", descending=False)
 
     unique_timespans = (
-        checked_lf.select("Time Span")
-        .unique(maintain_order=True)
-        .collect()
-        .to_series()
-        .to_list()
+        checked_lf.select("Time Span").unique(maintain_order=True).collect().to_series().to_list()
     )
 
     # construct a sort of tree, which can be used to assign indices to each "forward"
     # and "reverse" pairing
-    group_lookup: dict[str, GroupNode] = {
-        span: GroupNode(span) for span in unique_timespans
-    }
+    group_lookup: dict[str, GroupNode] = {span: GroupNode(span) for span in unique_timespans}
     group_index = 1
     window_size = 3
     for i, node in enumerate(group_lookup.values()):
@@ -373,31 +363,12 @@ def adjust_aa_changes(unadjusted_lf: pl.LazyFrame) -> pl.LazyFrame:
                 ],
                 order_by="Time Span Start",
             )
-            .alias("_aa_change_index"),
-        )
-        # add one to the indices to make them more human readable
-        .with_columns(
-            (pl.col("_aa_change_index") + 1).alias("_aa_change_index"),
+            .alias("__aa_change_index"),
         )
         # beginning replacing the AA Change entry when an additional index is needed
         .with_columns(
             # When the amino acid change index in a group exceeds 1...
-            pl.when(
-                pl.col("_aa_change_index")
-                .max()
-                .over(
-                    [
-                        "ORFs",
-                        "AA Change",
-                        "Associated Variants",
-                        "Comparison",
-                        "Time Span Start",
-                        "Time Span End",
-                    ],
-                    order_by="Time Span Start",
-                )
-                > 1,
-            )
+            pl.when(pl.col("__aa_change_index") > 0)
             # ...rename the AA Change entry to include the index, making the entries
             # distinguishable in the final plot
             .then(
@@ -405,18 +376,17 @@ def adjust_aa_changes(unadjusted_lf: pl.LazyFrame) -> pl.LazyFrame:
                     [
                         pl.col("AA Change"),
                         pl.lit(" ("),
-                        pl.col("_aa_change_index"),
+                        pl.col("__aa_change_index"),
                         pl.lit(")"),
                     ],
                     separator="",
                 ),
             )
             # otherwise, leave the original value alone.
-            .otherwise("AA Change")
+            .otherwise(pl.col("AA Change"))
             .alias("AA Change"),
         )
-        # drop the temporary helper column
-        .drop("_aa_change_index")
+        .drop("__aa_change_index")
     )
 
 
@@ -561,9 +531,7 @@ def pivot_abundance_groupings(filtered_long_df: pl.DataFrame) -> pl.LazyFrame:
     )
 
 
-def label_major_lineages(
-    pivot_lf: pl.LazyFrame, major_lineage_lf: pl.LazyFrame
-) -> pl.LazyFrame:
+def label_major_lineages(pivot_lf: pl.LazyFrame, major_lineage_lf: pl.LazyFrame) -> pl.LazyFrame:
     """
     Labels mutations according to the major lineages they are associated with.
 
@@ -741,10 +709,7 @@ def parse_plotting_file(
     assert all(len(orf_df) > 0 for _, orf_df in orf_dfs.items())
 
     # return a list of OrfDataset objects
-    return [
-        OrfDataset(orf=str(orf_label[0]), df=orf_df)
-        for orf_label, orf_df in orf_dfs.items()
-    ]
+    return [OrfDataset(orf=str(orf_label[0]), df=orf_df) for orf_label, orf_df in orf_dfs.items()]
 
 
 def render_diag_line() -> alt.Chart:
@@ -835,9 +800,7 @@ def render_base_layer(
                 ),
                 alt.value("lightgray"),
             ),
-            opacity=alt.when(aa_change_selection)
-            .then(alt.value(1))
-            .otherwise(alt.value(0.2)),
+            opacity=alt.when(aa_change_selection).then(alt.value(1)).otherwise(alt.value(0.2)),
             tooltip=[
                 "ORF",
                 "AA Change",
@@ -1127,14 +1090,10 @@ def render_for_quarto(compiled_datasets: list[OrfDataset], orf_label: str) -> No
     Returns:
         None: Displays the chart directly
     """
-    current_bundle = [
-        dataset for dataset in compiled_datasets if dataset.orf == orf_label
-    ]
+    current_bundle = [dataset for dataset in compiled_datasets if dataset.orf == orf_label]
 
     if len(current_bundle) != 1:
-        fallback_bundle = [
-            dataset for dataset in compiled_datasets if dataset.orf == "ORF1"
-        ]
+        fallback_bundle = [dataset for dataset in compiled_datasets if dataset.orf == "ORF1"]
         assert len(fallback_bundle) == 1
         unwrapped = fallback_bundle[0]
 
