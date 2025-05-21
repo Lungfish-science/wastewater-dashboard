@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>𓆞 lung.fish Data Explorer</title>
+<title>dashboard2 – 𓆞 lung.fish Data Explorer</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,7 +23,7 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -67,15 +67,12 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
-
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -93,7 +90,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -167,137 +164,189 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#pathogen-abundance-by-city" id="toc-pathogen-abundance-by-city" class="nav-link active" data-scroll-target="#pathogen-abundance-by-city">Pathogen Abundance By City</a></li>
+  <li><a href="#pathogen-abundance-across-cities" id="toc-pathogen-abundance-across-cities" class="nav-link" data-scroll-target="#pathogen-abundance-across-cities">Pathogen Abundance Across Cities</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
 
 
-<div id="hero-banner" class="column-screen page-columns page-full">
-<div class="grid column-page">
-<div class="headline g-col-lg-6 g-col-12 g-col-md-12">
-<div class="h1">
-<p>Dashboard Gallery</p>
+<section id="pathogen-abundance-by-city" class="level2">
+<h2 class="anchored" data-anchor-id="pathogen-abundance-by-city">Pathogen Abundance By City</h2>
+<!-- Dropdowns for city and pathogen -->
+<label for="city">City:</label>
+<select id="city">
+  <option value="Chicago_IL" selected="">Chicago</option>
+  <option value="Boston_MA">Boston</option>
+  <option value="Columbia_MO">Columbia, MO</option>
+  <option value="Riverside_CA">Riverside, CA</option>
+</select>
+
+<!-- SVG viewer container -->
+<div id="city-resp-svg-container" style="margin-top:20px;">
+  <img id="city-resp-svg-viewer" src="" alt="City Respiratory SVG" width="100%" style="max-height: 800px;">
 </div>
-<p>Welcome to the <strong>lung.fish</strong> initiative’s public health data explorer, a growing collection of dashboards driven by environmental monitoring data:</p>
-<ul>
-<li><a href="./dashboard1.html">SARS-CoV-2 Wastewater Monitoring</a></li>
-<li><a href="./dashboard2.html">Multi-Pathogen Wastewater Report Cards</a></li>
-</ul>
+<div id="city-enteric-svg-container" style="margin-top:20px;">
+  <img id="city-enteric-svg-viewer" src="" alt="City Enteric SVG" width="100%" style="max-height: 800px;">
 </div>
-<div id="d1cba11c" class="cell g-col-lg-6 g-col-12 g-col-md-12" data-execution_count="1">
-<div class="cell-output cell-output-display">
-<div id="gallery-carousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
-<div class="carousel-indicators">
-<button type="button" data-bs-target="#gallery-carousel" data-bs-slide-to="0" aria-label="Slide 1" class="active" aria-current="true"></button>
-<button type="button" data-bs-target="#gallery-carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-</div>
-<div class="carousel-inner">
-<div class="carousel-item active" data-bs-interval="5000">  <a href="./dashboard1.html"><img src="assets/wastewater-screenshot.png" class="d-block mx-auto border" alt="SARS-CoV-2 Variant Monitoring through Targeted Wastewater Sequencing"></a>  <div class="carousel-caption d-none d-md-block">      <p class="fw-light">SARS-CoV-2 Variant Monitoring through Targeted Wastewater Sequencing</p>  </div></div>
-<div class="carousel-item" data-bs-interval="5000">  <a href="./dashboard2.html"><img src="assets/dashboard2.png" class="d-block mx-auto border" alt="Multi-Pathogen Wastewater Report Cards"></a>  <div class="carousel-caption d-none d-md-block">      <p class="fw-light">Multi-Pathogen Wastewater Report Cards</p>  </div></div>
-</div>
-<button class="carousel-control-prev" type="button" data-bs-target="#gallery-carousel" data-bs-slide="prev">  <span class="carousel-control-prev-icon" aria-hidden="true"></span>  <span class="visually-hidden">Previous</span></button>
-<button class="carousel-control-next" type="button" data-bs-target="#gallery-carousel" data-bs-slide="next">  <span class="carousel-control-next-icon" aria-hidden="true"></span>  <span class="visually-hidden">Next</span></button>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div id="gallery" class="column-page">
-
-</div>
-<style>
-
-#hero-banner {
-  padding-top: 30px;
-  background-color: rgb(237,243,249);
+ 
+<script>
+const getSvgUrlByCity = (city) => {
+  const respiratory_url = `https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/%40files/heatmaps/by_city/${city}/respiratory.svg`;
+  const enteric_url = `https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/%40files/heatmaps/by_city/${city}/diarrheal.svg`;
+  return [respiratory_url, enteric_url];
 }
 
-#quarto-content main { 
-  margin-top: 0;
-  padding-top: 0;
+const updateCitySvgViewer = () => {
+  const city = document.getElementById("city").value;
+  const [respiratory_url, enteric_url] = getSvgUrlByCity(city);
+  document.getElementById("city-resp-svg-viewer").src = respiratory_url;
+  document.getElementById("city-enteric-svg-viewer").src = enteric_url;
 }
 
-html {
-  scroll-behavior: smooth;
+const cities = ["Chicago_IL", "Boston_MA", "Columbia_MO", "Riverside_CA"];
+
+// After updating, pre-load all SVGs into the browser cache so that the viewer is
+// initially slow but later fast
+function preloadCitySvgs(cities) {
+  for (const city of cities) {
+    const [resp_url, ent_url] = getSvgUrlByCity(city);
+    const img1 = new Image();
+    img1.src = resp_url;
+    const img2 = new Image();
+    img2.src = ent_url;
+  }
 }
 
-.headline {
-  font-size: 1.25em;
-  font-weight: 300;
-  padding-bottom: 1em;
-}
+// Hook up event listeners
+document.getElementById("city").addEventListener("change", updateCitySvgViewer);
 
-.headline p {
-  margin: 0;
-  padding-bottom: 0.2rem;
-}
-
-.headline a {
-  text-decoration: none;
-}
-
-.headline ul li {
-  margin-bottom: 0.3em;
-}
-
-.carousel.card {
-  padding-top: 2em;
-}
-
-.carousel img {
-  width: 70%;
-  margin-bottom: 110px;
-}
-
-.carousel-control-prev-icon, .carousel-control-next-icon {
-  margin-bottom: 110px;
-}
-
-.carousel-caption {
-  padding-top: 1em;
-}
-
-.touch {
-  
-}
-</style>
-<section id="lung.fish-is-a-consortium-of-academic-research-laboratories-and-public-health-organizations-whose-mission-is-to-advance-environmental-monitoring-as-a-means-of-detecting-forecasting-and-containing-pathogen-outbreaks." class="level4">
-<h4 class="anchored" data-anchor-id="lung.fish-is-a-consortium-of-academic-research-laboratories-and-public-health-organizations-whose-mission-is-to-advance-environmental-monitoring-as-a-means-of-detecting-forecasting-and-containing-pathogen-outbreaks."><strong>lung.fish</strong> is a consortium of academic research laboratories and public health organizations whose mission is to advance environmental monitoring as a means of detecting, forecasting, and containing pathogen outbreaks.</h4>
+</script>
 <hr>
 </section>
-<section id="our-vision" class="level3" style="text-align: center">
-<h3 style="text-align: center" class="anchored" data-anchor-id="our-vision">Our Vision</h3>
-<div class="grid">
-<div class="g-col-6">
-<section id="environmental-monitoring" class="level4">
-<h4 class="anchored" data-anchor-id="environmental-monitoring">Environmental Monitoring</h4>
-<p>We believe environmental monitoring combined with sequencing has potential to be the next big idea in public health. We sequence genetic material from sources as diverse as air, wastewater, groundwater, and seawater to identify and forecast pathogen outbreaks.</p>
-</section>
-<section id="open-data" class="level4">
-<h4 class="anchored" data-anchor-id="open-data">Open Data</h4>
-<p>We believe science progresses fastest in the open. Our projects comply with rigorous standards for data availability, including submission to public repositories like the <a href="https://www.ncbi.nlm.nih.gov/sra">Sequence Read Archive</a>.</p>
-</section>
+<section id="pathogen-abundance-across-cities" class="level2">
+<h2 class="anchored" data-anchor-id="pathogen-abundance-across-cities">Pathogen Abundance Across Cities</h2>
+<label for="pathogen">Pathogen:</label>
+<select id="pathogen">
+  <option value="SARS_CoV_2" selected="">SARS-CoV-2</option>
+  <option value="Monkeypox_virus">Mpox</option>
+  <option value="Measles">Measles</option>
+  <option value="Mumps">Mumps</option>
+  <option value="Aichivirus">Aichivirus</option>
+  <option value="Astrovirus_MLB">Astrovirus MLB</option>
+  <option value="Astrovirus_VA">Astrovirus VA</option>
+  <option value="Bovine_viral_diarrhea">Bovine Viral Diarrhea</option>
+  <option value="Classical_human_astrovirus">Classical Human Astrovirus</option>
+  <option value="Coronavirus_229E">Coronavirus 229E</option>
+  <option value="Coronavirus_HKU1">Coronavirus HKU1</option>
+  <option value="Coronavirus_NL63">Coronavirus NL63</option>
+  <option value="Coronavirus_OC43">Coronavirus OC43</option>
+  <option value="Coxsackievirus_A">Coxsackievirus A</option>
+  <option value="Enterovirus">Enterovirus</option>
+  <option value="Enterovirus_A71">Enterovirus A71</option>
+  <option value="H1_Influenza_A_estimated_">H1 Influenza A (estimated)</option>
+  <option value="H3_Influenza_A_estimated_">H3 Influenza A (estimated)</option>
+  <option value="H5_Influenza_A_estimated_">H5 Influenza A (estimated)</option>
+  <option value="Hepatitis_A">Hepatitis A</option>
+  <option value="Human_adenovirus_F40">Human Adenovirus F40</option>
+  <option value="Human_adenovirus_F41">Human Adenovirus F41</option>
+  <option value="Human_bocavirus">Human Bocavirus</option>
+  <option value="Human_echovirus">Human Echovirus</option>
+  <option value="Human_mastadenovirus_A">Human Mastadenovirus A</option>
+  <option value="Human_mastadenovirus_B">Human Mastadenovirus B</option>
+  <option value="Human_mastadenovirus_C">Human Mastadenovirus C</option>
+  <option value="Human_mastadenovirus_D">Human Mastadenovirus D</option>
+  <option value="Human_mastadenovirus_F">Human Mastadenovirus F</option>
+  <option value="Human_picobirnavirus">Human Picobirnavirus</option>
+  <option value="Infectious_bronchitis">Infectious Bronchitis</option>
+  <option value="Influenza_A_total_">Influenza A (total)</option>
+  <option value="Influenza_B">Influenza B</option>
+  <option value="Influenza_C">Influenza C</option>
+  <option value="Metapneumovirus">Metapneumovirus</option>
+  <option value="Norovirus_genogroup_I">Norovirus Genogroup I</option>
+  <option value="Norovirus_genogroup_II">Norovirus Genogroup II</option>
+  <option value="Norovirus_genogroup_IV">Norovirus Genogroup IV</option>
+  <option value="Oropouche">Oropouche</option>
+  <option value="Parainfluenza_1">Parainfluenza 1</option>
+  <option value="Parainfluenza_2">Parainfluenza 2</option>
+  <option value="Parainfluenza_3">Parainfluenza 3</option>
+  <option value="Parainfluenza_4">Parainfluenza 4</option>
+  <option value="Parechovirus_A">Parechovirus A</option>
+  <option value="PRRSV">PRRSV</option>
+  <option value="Rhinovirus_A_estimated_">Rhinovirus A (estimated)</option>
+  <option value="Rhinovirus_B_estimated_">Rhinovirus B (estimated)</option>
+  <option value="Rhinovirus_C_estimated_">Rhinovirus C (estimated)</option>
+  <option value="Rhinovirus_total_">Rhinovirus (total)</option>
+  <option value="Rotavirus_A">Rotavirus A</option>
+  <option value="Rotavirus_B">Rotavirus B</option>
+  <option value="Rotavirus_C">Rotavirus C</option>
+  <option value="RSV_A">RSV A</option>
+  <option value="RSV_B">RSV B</option>
+  <option value="Rubella">Rubella</option>
+  <option value="Sapporo_virus">Sapporo Virus</option>
+  <option value="West_Nile">West Nile</option>
+</select>
+
+<!-- SVG viewer container -->
+<div id="pathogen-svg-container" style="margin-top:20px;">
+  <img id="pathogen-svg-viewer" src="" alt="Pathogen SVG" width="100%" style="max-height: 800px;">
 </div>
-<div class="g-col-6">
-<section id="scientific-reproducibility" class="level4">
-<h4 class="anchored" data-anchor-id="scientific-reproducibility">Scientific Reproducibility</h4>
-<p>Without reproducability, science can never progress. In line with our commitment to data availability, we go to great lengths to make our analyses reproducible and transparent. We believe code will be read many more times that it will be written, which is no less true for research software.</p>
-</section>
-<section id="open-source" class="level4">
-<h4 class="anchored" data-anchor-id="open-source">Open Source</h4>
-<p>All our projects are open source with a permissive license, making it more likely that our data and methods will be re-used by future scientists. Open source also gives us tools for managing contributions from across our team and from collaborators.</p>
-</section>
-</div>
-</div>
-<hr>
-<section id="interested-in-collaborating" class="level4">
-<h4 class="anchored" data-anchor-id="interested-in-collaborating">Interested in collaborating?</h4>
-<p><a href="./docs/get-started/index.qmd" class="btn-action-primary btn-action btn btn-success btn-lg" role="button">Get In Touch</a></p>
 
 
-</section>
+<script>
+const pathogens = Array.from(
+  document.querySelectorAll("#pathogen option"),
+  option => option.value
+);
+console.log(pathogens);
+
+const getSvgUrlByVirus = (pathogen) => {
+  // Define your base URL
+  const baseUrl = "https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/%40files/heatmaps/by_virus";
+  // Format: baseURL/city-pathogen.svg
+  return `${baseUrl}/${pathogen}.svg`;
+}
+
+const updatePathogenSvg = () => {
+  const pathogen = document.getElementById("pathogen").value;
+  const svgUrl = getSvgUrlByVirus(pathogen);
+  document.getElementById("pathogen-svg-viewer").src = svgUrl;
+}
+
+const updatePathogenSvgViewer = () => {
+  const virus = document.getElementById("pathogen").value;
+  const virus_url = getSvgUrlByVirus(virus);
+  document.getElementById("pathogen-svg-viewer").src = virus_url ;
+}
+
+function preloadPathogenSvgs(pathogens) {
+  for (const pathogen of pathogens) {
+    const url = getSvgUrlByCity(pathogen);
+    const img = new Image();
+    img.src = url ;
+  }
+}
+
+document.getElementById("pathogen").addEventListener("change", updatePathogenSvg);
+
+window.onload = () => {
+  updateCitySvgViewer();
+  updatePathogenSvgViewer();
+  preloadCitySvgs(cities);
+  preloadPathogenSvgs(pathogens);
+};
+</script>
+
+
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
