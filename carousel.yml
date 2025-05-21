@@ -3,10 +3,6 @@
   image: "assets/wastewater-screenshot.png"
   link: "dashboard1.qmd"
 
-- caption: "SARS-CoV-2 Variant Monitoring through Targeted Wastewater Sequencing"
-  image: "assets/wastewater-screenshot.png"
-  link: "dashboard1.qmd"
-
-- caption: "SARS-CoV-2 Variant Monitoring through Targeted Wastewater Sequencing"
-  image: "assets/wastewater-screenshot.png"
-  link: "dashboard1.qmd"
+- caption: "Multi-Pathogen Wastewater Report Cards"
+  image: "assets/dashboard2.png"
+  link: "dashboard2.qmd"

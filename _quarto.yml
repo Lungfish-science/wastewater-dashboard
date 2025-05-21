@@ -14,6 +14,8 @@ website:
         menu:
           - href: dashboard1.qmd
             text: Wastewater Dashboard
+          - href: dashboard2.qmd
+            text: Virus Report Cards
       - acknowledgements.qmd
       - text: "Help"
         menu:

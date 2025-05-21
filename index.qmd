@@ -12,6 +12,7 @@ Dashboard Gallery
 Welcome to the **lung.fish** initiative's public health data explorer, a growing collection of dashboards driven by environmental monitoring data:
 
 -   [SARS-CoV-2 Wastewater Monitoring](dashboard1.qmd)
+-   [Multi-Pathogen Wastewater Report Cards](dashboard2.qmd)
 
 :::
 
