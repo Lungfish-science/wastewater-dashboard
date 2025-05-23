@@ -242,6 +242,18 @@ From there, we click on mutations toward the upper righthand corner to see their
 
 :::
 
+## Disclaimer
+
+:::{.card title="DISCLAIMER" .flow}
+
+The raw data published on this dashboard has been obtained from deidentified and aggregated materials collected in accordance with the law and ethical guidelines governing the research studies.  This data is made available for informational purposes only.  This data set has not been independently verified, validated, or peer reviewed.  It may contain errors, omissions, or artifacts inherent to the methods used in data collection and processing and is provided as is without any warranty of accuracy or completeness. 
+
+This data is neither intended for clinical or diagnostic purposes nor should it be used for making public policy.  Users must not rely on this dataset to inform health care decisions, public health strategies, or regulatory actions.  Any conclusions drawn from this data are the sole responsibility of the user.
+
+By accessing or using this data, you assume all risks and acknowledge these limitations.  You further agree to use this data responsibly, in compliance with all applicable legal and ethical standards. 
+
+:::
+
 # Variant Data Browser
 
 ##
@@ -266,6 +278,18 @@ it.init_notebook_mode(all_interactive=True)
 it.show(variant_data, column_filters="header", classes="display compact cell-border")
 ```
 
+## Disclaimer
+
+:::{.card title="DISCLAIMER" .flow}
+
+The raw data published on this dashboard has been obtained from deidentified and aggregated materials collected in accordance with the law and ethical guidelines governing the research studies.  This data is made available for informational purposes only.  This data set has not been independently verified, validated, or peer reviewed.  It may contain errors, omissions, or artifacts inherent to the methods used in data collection and processing and is provided as is without any warranty of accuracy or completeness. 
+
+This data is neither intended for clinical or diagnostic purposes nor should it be used for making public policy.  Users must not rely on this dataset to inform health care decisions, public health strategies, or regulatory actions.  Any conclusions drawn from this data are the sole responsibility of the user.
+
+By accessing or using this data, you assume all risks and acknowledge these limitations.  You further agree to use this data responsibly, in compliance with all applicable legal and ethical standards. 
+
+:::
+
 # Project Metadata Browser
 
 ##
@@ -286,3 +310,15 @@ project_data = project_data.with_columns(
 it.init_notebook_mode(all_interactive=True)
 it.show(project_data, column_filters="header", classes="display compact cell-border")
 ```
+
+## Disclaimer
+
+:::{.card title="DISCLAIMER" .flow}
+
+The raw data published on this dashboard has been obtained from deidentified and aggregated materials collected in accordance with the law and ethical guidelines governing the research studies.  This data is made available for informational purposes only.  This data set has not been independently verified, validated, or peer reviewed.  It may contain errors, omissions, or artifacts inherent to the methods used in data collection and processing and is provided as is without any warranty of accuracy or completeness. 
+
+This data is neither intended for clinical or diagnostic purposes nor should it be used for making public policy.  Users must not rely on this dataset to inform health care decisions, public health strategies, or regulatory actions.  Any conclusions drawn from this data are the sole responsibility of the user.
+
+By accessing or using this data, you assume all risks and acknowledge these limitations.  You further agree to use this data responsibly, in compliance with all applicable legal and ethical standards. 
+
+:::

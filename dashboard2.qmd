@@ -1,70 +1,21 @@
 ---
-toc: true
+toc: false
+page-layout: full
 ---
 
-## Pathogen Abundance By City
+
+# LungFish Pathogen Report Cards
+
+::: {.grid}
+
+::: {.g-col-7}
+
+## Abundance Across Cities
 
 ```{=html}
-<!-- Dropdowns for city and pathogen -->
-<label for="city">City:</label>
-<select id="city">
-  <option value="Chicago_IL" selected>Chicago</option>
-  <option value="Boston_MA">Boston</option>
-  <option value="Columbia_MO">Columbia, MO</option>
-  <option value="Riverside_CA">Riverside, CA</option>
-</select>
-
-<!-- SVG viewer container -->
-<div id="city-resp-svg-container" style="margin-top:20px;">
-  <img id="city-resp-svg-viewer" src="" alt="City Respiratory SVG" width="100%" style="max-height: 800px;">
-</div>
-<div id="city-enteric-svg-container" style="margin-top:20px;">
-  <img id="city-enteric-svg-viewer" src="" alt="City Enteric SVG" width="100%" style="max-height: 800px;">
-</div>
- 
-<script>
-const getSvgUrlByCity = (city) => {
-  const respiratory_url = `https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/%40files/heatmaps/by_city/${city}/respiratory.svg`;
-  const enteric_url = `https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/%40files/heatmaps/by_city/${city}/diarrheal.svg`;
-  return [respiratory_url, enteric_url];
-}
-
-const updateCitySvgViewer = () => {
-  const city = document.getElementById("city").value;
-  const [respiratory_url, enteric_url] = getSvgUrlByCity(city);
-  document.getElementById("city-resp-svg-viewer").src = respiratory_url;
-  document.getElementById("city-enteric-svg-viewer").src = enteric_url;
-}
-
-const cities = ["Chicago_IL", "Boston_MA", "Columbia_MO", "Riverside_CA"];
-
-// After updating, pre-load all SVGs into the browser cache so that the viewer is
-// initially slow but later fast
-function preloadCitySvgs(cities) {
-  for (const city of cities) {
-    const [resp_url, ent_url] = getSvgUrlByCity(city);
-    const img1 = new Image();
-    img1.src = resp_url;
-    const img2 = new Image();
-    img2.src = ent_url;
-  }
-}
-
-// Hook up event listeners
-document.getElementById("city").addEventListener("change", updateCitySvgViewer);
-
-</script>
-```
-
-----
-
-## Pathogen Abundance Across Cities
-
-```{=html}
-<label for="pathogen">Pathogen:</label>
+<label for="pathogen">Select pathogen:</label>
 <select id="pathogen">
   <option value="SARS_CoV_2" selected>SARS-CoV-2</option>
-  <option value="Monkeypox_virus">Mpox</option>
   <option value="Aichivirus">Aichivirus</option>
   <option value="Astrovirus_MLB">Astrovirus MLB</option>
   <option value="Astrovirus_VA">Astrovirus VA</option>
@@ -124,13 +75,13 @@ document.getElementById("city").addEventListener("change", updateCitySvgViewer);
   <img id="pathogen-svg-viewer" src="" alt="Pathogen SVG" width="100%" style="max-height: 800px;">
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <script>
 const pathogens = Array.from(
   document.querySelectorAll("#pathogen option"),
   option => option.value
 );
-console.log(pathogens);
 
 const getSvgUrlByVirus = (pathogen) => {
   // Define your base URL
@@ -151,14 +102,92 @@ const updatePathogenSvgViewer = () => {
   document.getElementById("pathogen-svg-viewer").src = virus_url ;
 }
 
-function preloadPathogenSvgs(pathogens) {
+const preloadPathogenSvgs = (pathogens) => {
   for (const pathogen of pathogens) {
-    const url = getSvgUrlByCity(pathogen);
+    const url = getSvgUrlByVirus(pathogen);
     const img = new Image();
     img.src = url ;
   }
 }
 
+document.getElementById("pathogen").addEventListener("change", updatePathogenSvg);
+</script>
+```
+
+## Abundance By City
+
+```{=html}
+<!-- Dropdowns for city and pathogen -->
+<label for="city">Select city:</label>
+<select id="city">
+  <option value="Chicago_IL" selected>Chicago</option>
+  <option value="Boston_MA">Boston</option>
+  <option value="Columbia_MO">Columbia, MO</option>
+  <option value="Riverside_CA">Riverside, CA</option>
+</select>
+
+<!-- SVG viewer container -->
+<div id="city-resp-svg-container" style="margin-top:20px;">
+  <img id="city-resp-svg-viewer" src="" alt="City Respiratory SVG" width="100%" style="max-height: 800px;">
+</div>
+<div id="city-enteric-svg-container" style="margin-top:20px;">
+  <img id="city-enteric-svg-viewer" src="" alt="City Enteric SVG" width="100%" style="max-height: 800px;">
+</div>
+ 
+<script>
+const getSvgUrlByCity = (city) => {
+  const respiratory_url = `https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/%40files/heatmaps/by_city/${city}/respiratory.svg`;
+  const enteric_url = `https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/%40files/heatmaps/by_city/${city}/diarrheal.svg`;
+  return [respiratory_url, enteric_url];
+}
+
+const cities = ["Chicago_IL", "Boston_MA", "Columbia_MO", "Riverside_CA"];
+
+// After updating, pre-load all SVGs into the browser cache so that the viewer is
+// initially slow but later fast
+const preloadCitySvgs = (cities) => {
+  for (const city of cities) {
+    const [resp_url, ent_url] = getSvgUrlByCity(city);
+    const img1 = new Image();
+    img1.src = resp_url;
+    const img2 = new Image();
+    img2.src = ent_url;
+  }
+}
+
+const updateCityMarkdown = (city) => {
+  const baseUrl = "https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/@files/heatmaps/by_city";
+  const markdownUrl = `${baseUrl}/${city}/discussion.md`;
+  console.log(markdownUrl);
+
+  const container = document.getElementById("city-markdown-container");
+  container.innerHTML = "<em>Loading city-specific report...</em>";
+
+  fetch(markdownUrl)
+    .then(res => {
+      if (!res.ok) throw new Error(`Failed to fetch report for ${city}`);
+      return res.text();
+    })
+    .then(md => {
+      container.innerHTML = marked.parse(md);
+    })
+    .catch(err => {
+      console.error(err);
+      container.innerHTML = `<p style="color: red;">Unable to load report for ${city}.</p>`;
+    });
+}
+
+const updateCitySvgViewer = () => {
+  const city = document.getElementById("city").value;
+  const [respiratory_url, enteric_url] = getSvgUrlByCity(city);
+  document.getElementById("city-resp-svg-viewer").src = respiratory_url;
+  document.getElementById("city-enteric-svg-viewer").src = enteric_url;
+
+  updateCityMarkdown(city);
+}
+
+// Hook up event listeners
+document.getElementById("city").addEventListener("change", updateCitySvgViewer);
 document.getElementById("pathogen").addEventListener("change", updatePathogenSvg);
 
 window.onload = () => {
@@ -167,7 +196,37 @@ window.onload = () => {
   preloadCitySvgs(cities);
   preloadPathogenSvgs(pathogens);
 };
+
 </script>
 ```
 
+:::
+
+::: {.g-col-5}
+
+## Discussion
+
+```{=html}
+<div id="city-markdown-container" style="padding-left: 1em; max-width: 45ch;">
+  <em>Loading city-specific report...</em>
+</div>
+
+
+```
+
+:::
+
+:::
+
+----
+
+::: {}
+
+_DISCLAIMER: The raw data published on this dashboard has been obtained from deidentified and aggregated materials collected in accordance with the law and ethical guidelines governing the research studies.  This data is made available for informational purposes only.  This data set has not been independently verified, validated, or peer reviewed.  It may contain errors, omissions, or artifacts inherent to the methods used in data collection and processing and is provided as is without any warranty of accuracy or completeness._ 
+
+_This data is neither intended for clinical or diagnostic purposes nor should it be used for making public policy.  Users must not rely on this dataset to inform health care decisions, public health strategies, or regulatory actions.  Any conclusions drawn from this data are the sole responsibility of the user._
+
+_By accessing or using this data, you assume all risks and acknowledge these limitations.  You further agree to use this data responsibly, in compliance with all applicable legal and ethical standards._ 
+
+:::
 
