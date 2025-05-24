@@ -12,6 +12,7 @@ toc: true
   <option value="Boston_MA">Boston</option>
   <option value="Columbia_MO">Columbia, MO</option>
   <option value="Riverside_CA">Riverside, CA</option>
+  <option value="Boise_ID">Boise, ID</option>
 </select>
 
 <!-- SVG viewer container -->
