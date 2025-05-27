@@ -169,8 +169,8 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#pathogen-abundance-by-city" id="toc-pathogen-abundance-by-city" class="nav-link active" data-scroll-target="#pathogen-abundance-by-city">Pathogen Abundance By City</a></li>
-  <li><a href="#pathogen-abundance-across-cities" id="toc-pathogen-abundance-across-cities" class="nav-link" data-scroll-target="#pathogen-abundance-across-cities">Pathogen Abundance Across Cities</a></li>
+  <li><a href="#pathogen-abundance-across-cities" id="toc-pathogen-abundance-across-cities" class="nav-link active" data-scroll-target="#pathogen-abundance-across-cities">Pathogen Abundance Across Cities</a></li>
+  <li><a href="#pathogen-abundance-by-city" id="toc-pathogen-abundance-by-city" class="nav-link" data-scroll-target="#pathogen-abundance-by-city">Pathogen Abundance By City</a></li>
   </ul>
 </nav>
     </div>
@@ -180,60 +180,6 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="pathogen-abundance-by-city" class="level2">
-<h2 class="anchored" data-anchor-id="pathogen-abundance-by-city">Pathogen Abundance By City</h2>
-<!-- Dropdowns for city and pathogen -->
-<label for="city">City:</label>
-<select id="city">
-  <option value="Chicago_IL" selected="">Chicago</option>
-  <option value="Boston_MA">Boston</option>
-  <option value="Columbia_MO">Columbia, MO</option>
-  <option value="Riverside_CA">Riverside, CA</option>
-  <option value="Boise_ID">Boise, ID</option>
-</select>
-
-<!-- SVG viewer container -->
-<div id="city-resp-svg-container" style="margin-top:20px;">
-  <img id="city-resp-svg-viewer" src="" alt="City Respiratory SVG" width="100%" style="max-height: 800px;">
-</div>
-<div id="city-enteric-svg-container" style="margin-top:20px;">
-  <img id="city-enteric-svg-viewer" src="" alt="City Enteric SVG" width="100%" style="max-height: 800px;">
-</div>
-
-<script>
-const getSvgUrlByCity = (city) => {
-  const respiratory_url = `https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/%40files/heatmaps/by_city/${city}/respiratory.svg`;
-  const enteric_url = `https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/%40files/heatmaps/by_city/${city}/diarrheal.svg`;
-  return [respiratory_url, enteric_url];
-}
-
-const updateCitySvgViewer = () => {
-  const city = document.getElementById("city").value;
-  const [respiratory_url, enteric_url] = getSvgUrlByCity(city);
-  document.getElementById("city-resp-svg-viewer").src = respiratory_url;
-  document.getElementById("city-enteric-svg-viewer").src = enteric_url;
-}
-
-const cities = ["Chicago_IL", "Boston_MA", "Columbia_MO", "Riverside_CA"];
-
-// After updating, pre-load all SVGs into the browser cache so that the viewer is
-// initially slow but later fast
-function preloadCitySvgs(cities) {
-  for (const city of cities) {
-    const [resp_url, ent_url] = getSvgUrlByCity(city);
-    const img1 = new Image();
-    img1.src = resp_url;
-    const img2 = new Image();
-    img2.src = ent_url;
-  }
-}
-
-// Hook up event listeners
-document.getElementById("city").addEventListener("change", updateCitySvgViewer);
-
-</script>
-<hr>
-</section>
 <section id="pathogen-abundance-across-cities" class="level2">
 <h2 class="anchored" data-anchor-id="pathogen-abundance-across-cities">Pathogen Abundance Across Cities</h2>
 <label for="pathogen">Pathogen:</label>
@@ -341,6 +287,60 @@ window.onload = () => {
   preloadCitySvgs(cities);
   preloadPathogenSvgs(pathogens);
 };
+</script>
+<hr>
+</section>
+<section id="pathogen-abundance-by-city" class="level2">
+<h2 class="anchored" data-anchor-id="pathogen-abundance-by-city">Pathogen Abundance By City</h2>
+<!-- Dropdowns for city and pathogen -->
+<label for="city">City:</label>
+<select id="city">
+  <option value="Chicago_IL" selected="">Chicago</option>
+  <option value="Boston_MA">Boston</option>
+  <option value="Columbia_MO">Columbia, MO</option>
+  <option value="Riverside_CA">Riverside, CA</option>
+  <option value="Boise_ID">Boise, ID</option>
+</select>
+
+<!-- SVG viewer container -->
+<div id="city-resp-svg-container" style="margin-top:20px;">
+  <img id="city-resp-svg-viewer" src="" alt="City Respiratory SVG" width="100%" style="max-height: 800px;">
+</div>
+<div id="city-enteric-svg-container" style="margin-top:20px;">
+  <img id="city-enteric-svg-viewer" src="" alt="City Enteric SVG" width="100%" style="max-height: 800px;">
+</div>
+
+<script>
+const getSvgUrlByCity = (city) => {
+  const respiratory_url = `https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/%40files/heatmaps/by_city/${city}/respiratory.svg`;
+  const enteric_url = `https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/%40files/heatmaps/by_city/${city}/diarrheal.svg`;
+  return [respiratory_url, enteric_url];
+}
+
+const updateCitySvgViewer = () => {
+  const city = document.getElementById("city").value;
+  const [respiratory_url, enteric_url] = getSvgUrlByCity(city);
+  document.getElementById("city-resp-svg-viewer").src = respiratory_url;
+  document.getElementById("city-enteric-svg-viewer").src = enteric_url;
+}
+
+const cities = ["Chicago_IL", "Boston_MA", "Columbia_MO", "Riverside_CA"];
+
+// After updating, pre-load all SVGs into the browser cache so that the viewer is
+// initially slow but later fast
+function preloadCitySvgs(cities) {
+  for (const city of cities) {
+    const [resp_url, ent_url] = getSvgUrlByCity(city);
+    const img1 = new Image();
+    img1.src = resp_url;
+    const img2 = new Image();
+    img2.src = ent_url;
+  }
+}
+
+// Hook up event listeners
+document.getElementById("city").addEventListener("change", updateCitySvgViewer);
+
 </script>
 
 
