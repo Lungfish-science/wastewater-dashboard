@@ -22,9 +22,6 @@ toc: true
   <option value="Enterovirus_B">Enterovirus B</option>
   <option value="Enterovirus_C">Enterovirus C</option>
   <option value="Enterovirus_D68">Enterovirus D68</option>
-  <option value="H1_Influenza_A">H1 Influenza A</option>
-  <option value="H3_Influenza_A">H3 Influenza A</option>
-  <option value="H5_Influenza_A">H5 Influenza A</option>
   <option value="Hepatitis_A">Hepatitis A</option>
   <option value="Human_adenovirus_F40">Human Adenovirus F40</option>
   <option value="Human_adenovirus_F41">Human Adenovirus F41</option>
@@ -36,6 +33,9 @@ toc: true
   <option value="Human_mastadenovirus_F">Human Mastadenovirus F</option>
   <option value="Human_picobirnavirus">Human Picobirnavirus</option>
   <option value="Infectious_bronchitis">Infectious Bronchitis</option>
+  <option value="Influenza_A_H1N1">Influenza A H1N1</option>
+  <option value="Influenza_A_H3N2">Influenza A H3N2</option>
+  <option value="Influenza_A_H5N1">Influenza A H5N1</option>
   <option value="Influenza_A_total_">Influenza A (total)</option>
   <option value="Influenza_B">Influenza B</option>
   <option value="Influenza_C">Influenza C</option>
