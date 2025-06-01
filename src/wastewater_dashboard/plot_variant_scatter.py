@@ -19,8 +19,6 @@ from pathlib import Path
 from typing import Literal
 
 import altair as alt
-from datetime import date
-import pandas as pd
 import polars as pl
 from loguru import logger
 
@@ -1019,53 +1017,29 @@ def render_scatter_plot(orf_df: pl.DataFrame, latest_group_idx: int) -> alt.Laye
 
     # Combine all charts with the correct layering and ALL parameters
     combined_chart = (
-            alt.layer(
-                comparison_layer,
-                base_layer,
-                scatter_click_layer,
-                line_click_layer,
-                diag_line_layer,
-            )
-            .configure_view(clip=False)
-            .configure_axis(labelFontSize=14, titleFontSize=14)
-            .properties(
-                width="container",
-                height=PLOT_HEIGHT,
-                padding=10,
-            )
-            .add_params(
-                lineage_param,
-                click_selection,
-                highlight_box,
-            )
+        alt.layer(
+            comparison_layer,
+            base_layer,
+            scatter_click_layer,
+            line_click_layer,
+            diag_line_layer,
         )
-
-        # ─── New: add a small footer‐text layer with today’s date ────────────────────────
-    today_str = date.today().isoformat()
-    # create a single‐row DataFrame with x/y coordinates (we know our axes go from 0.0001 to 1)
-    footer_df = pd.DataFrame({
-        "text": [f"Last updated: {today_str}"],
-        "x": [1],            # place at right edge
-        "y": [0.0001],       # place at bottom of y‐axis
-    })
-    footer_layer = (
-        alt.Chart(footer_df)
-        .mark_text(
-            align="right",      # right‐align
-            baseline="bottom",  # stick to bottom edge
-            dy=10,              # nudge a few pixels downward
-            fontSize=10,
-            color="gray",
+        .configure_view(clip=False)
+        .configure_axis(labelFontSize=14, titleFontSize=14)
+        .properties(
+            width="container",
+            height=PLOT_HEIGHT,
+            padding=10,
         )
-        .encode(
-            x=alt.X("x:Q", scale=alt.Scale(domain=[0.0001, 1]), axis=None),
-            y=alt.Y("y:Q", scale=alt.Scale(domain=[0.0001, 1]), axis=None),
-            text="text:N",
+        .add_params(
+            lineage_param,
+            click_selection,
+            highlight_box,
         )
     )
 
-    # layer the footer on top of the combined chart
-    return (combined_chart + footer_layer).configure_axis(labelFontSize=14, titleFontSize=16)
+    # Set final chart configuration
+    return combined_chart.configure_axis(labelFontSize=14, titleFontSize=16)
 
 
 def write_rendered_plot(orf_dataset: OrfDataset, output_dir: str | Path) -> None:
