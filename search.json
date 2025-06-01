@@ -7,6 +7,27 @@
     "text": "Dashboard Gallery\n\nWelcome to the lung.fish initiative’s public health data explorer, a growing collection of dashboards driven by environmental monitoring data:\n\nSARS-CoV-2 Wastewater Monitoring\nMulti-Pathogen Wastewater Report Cards\n\n\n\n\n\n\n\n\n\n\n          SARS-CoV-2 Variant Monitoring through Targeted Wastewater Sequencing  \n          Multi-Pathogen Wastewater Report Cards  \n\n    Previous\n    Next\n\n\n\n\n\n\n\n\n\n\nlung.fish is a consortium of academic research laboratories and public health organizations whose mission is to advance environmental monitoring as a means of detecting, forecasting, and containing pathogen outbreaks.\n\n\n\nOur Vision\n\n\n\nEnvironmental Monitoring\nWe believe environmental monitoring combined with sequencing has potential to be the next big idea in public health. We sequence genetic material from sources as diverse as air, wastewater, groundwater, and seawater to identify and forecast pathogen outbreaks.\n\n\nOpen Data\nWe believe science progresses fastest in the open. Our projects comply with rigorous standards for data availability, including submission to public repositories like the Sequence Read Archive.\n\n\n\n\nScientific Reproducibility\nWithout reproducability, science can never progress. In line with our commitment to data availability, we go to great lengths to make our analyses reproducible and transparent. We believe code will be read many more times that it will be written, which is no less true for research software.\n\n\nOpen Source\nAll our projects are open source with a permissive license, making it more likely that our data and methods will be re-used by future scientists. Open source also gives us tools for managing contributions from across our team and from collaborators.\n\n\n\n\n\nInterested in collaborating?\nGet In Touch\n\n\n\n\n\n Back to top"
   },
   {
+    "objectID": "dashboard2.html",
+    "href": "dashboard2.html",
+    "title": "𓆞 lung.fish Data Explorer",
+    "section": "",
+    "text": "Pathogen:\n\n  SARS-CoV-2\n  Aichivirus\n  Astrovirus MLB\n  Astrovirus VA\n  Bovine Viral Diarrhea\n  Classical Human Astrovirus\n  Coronavirus 229E\n  Coronavirus HKU1\n  Coronavirus NL63\n  Coronavirus OC43\n  Enterovirus A71\n  Enterovirus Other A\n  Enterovirus B\n  Enterovirus C\n  Enterovirus D68\n  Hepatitis A\n  Human Adenovirus F40\n  Human Adenovirus F41\n  Human Bocavirus\n  Human Mastadenovirus A\n  Human Mastadenovirus B\n  Human Mastadenovirus C\n  Human Mastadenovirus D\n  Human Mastadenovirus F\n  Human Picobirnavirus\n  Infectious Bronchitis\n  Influenza A H1N1\n  Influenza A H3N2\n  Influenza A H5N1\n  Influenza A (total)\n  Influenza B\n  Influenza C\n  Metapneumovirus\n  Norovirus Genogroup I\n  Norovirus Genogroup II\n  Norovirus Genogroup IV\n  Oropouche\n  Parainfluenza 1\n  Parainfluenza 2\n  Parainfluenza 3\n  Parainfluenza 4\n  Parechovirus A\n  PRRSV\n  Rhinovirus A\n  Rhinovirus B\n  Rhinovirus C\n  Rhinovirus (total)\n  Rotavirus A\n  Rotavirus B\n  Rotavirus C\n  RSV A\n  RSV B\n  Sapporo Virus\n  West Nile"
+  },
+  {
+    "objectID": "dashboard2.html#pathogen-abundance-across-cities",
+    "href": "dashboard2.html#pathogen-abundance-across-cities",
+    "title": "𓆞 lung.fish Data Explorer",
+    "section": "",
+    "text": "Pathogen:\n\n  SARS-CoV-2\n  Aichivirus\n  Astrovirus MLB\n  Astrovirus VA\n  Bovine Viral Diarrhea\n  Classical Human Astrovirus\n  Coronavirus 229E\n  Coronavirus HKU1\n  Coronavirus NL63\n  Coronavirus OC43\n  Enterovirus A71\n  Enterovirus Other A\n  Enterovirus B\n  Enterovirus C\n  Enterovirus D68\n  Hepatitis A\n  Human Adenovirus F40\n  Human Adenovirus F41\n  Human Bocavirus\n  Human Mastadenovirus A\n  Human Mastadenovirus B\n  Human Mastadenovirus C\n  Human Mastadenovirus D\n  Human Mastadenovirus F\n  Human Picobirnavirus\n  Infectious Bronchitis\n  Influenza A H1N1\n  Influenza A H3N2\n  Influenza A H5N1\n  Influenza A (total)\n  Influenza B\n  Influenza C\n  Metapneumovirus\n  Norovirus Genogroup I\n  Norovirus Genogroup II\n  Norovirus Genogroup IV\n  Oropouche\n  Parainfluenza 1\n  Parainfluenza 2\n  Parainfluenza 3\n  Parainfluenza 4\n  Parechovirus A\n  PRRSV\n  Rhinovirus A\n  Rhinovirus B\n  Rhinovirus C\n  Rhinovirus (total)\n  Rotavirus A\n  Rotavirus B\n  Rotavirus C\n  RSV A\n  RSV B\n  Sapporo Virus\n  West Nile"
+  },
+  {
+    "objectID": "dashboard2.html#pathogen-abundance-by-city",
+    "href": "dashboard2.html#pathogen-abundance-by-city",
+    "title": "𓆞 lung.fish Data Explorer",
+    "section": "Pathogen Abundance By City",
+    "text": "Pathogen Abundance By City\n\nCity:\n\n  Chicago\n  Boston\n  Columbia, MO\n  Riverside, CA\n  Boise, ID"
+  },
+  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
@@ -26,26 +47,5 @@
     "title": "About",
     "section": "📊 Open Data for All",
     "text": "📊 Open Data for All\nWe believe in the power of open science. To learn about the legal licenses, please reach out to us directly!"
-  },
-  {
-    "objectID": "dashboard2.html",
-    "href": "dashboard2.html",
-    "title": "𓆞 lung.fish Data Explorer",
-    "section": "",
-    "text": "Pathogen:\n\n  SARS-CoV-2\n  Aichivirus\n  Astrovirus MLB\n  Astrovirus VA\n  Bovine Viral Diarrhea\n  Classical Human Astrovirus\n  Coronavirus 229E\n  Coronavirus HKU1\n  Coronavirus NL63\n  Coronavirus OC43\n  Enterovirus A71\n  Enterovirus Other A\n  Enterovirus B\n  Enterovirus C\n  Enterovirus D68\n  H1 Influenza A\n  H3 Influenza A\n  H5 Influenza A\n  Hepatitis A\n  Human Adenovirus F40\n  Human Adenovirus F41\n  Human Bocavirus\n  Human Mastadenovirus A\n  Human Mastadenovirus B\n  Human Mastadenovirus C\n  Human Mastadenovirus D\n  Human Mastadenovirus F\n  Human Picobirnavirus\n  Infectious Bronchitis\n  Influenza A (total)\n  Influenza B\n  Influenza C\n  Metapneumovirus\n  Norovirus Genogroup I\n  Norovirus Genogroup II\n  Norovirus Genogroup IV\n  Oropouche\n  Parainfluenza 1\n  Parainfluenza 2\n  Parainfluenza 3\n  Parainfluenza 4\n  Parechovirus A\n  PRRSV\n  Rhinovirus A\n  Rhinovirus B\n  Rhinovirus C\n  Rhinovirus (total)\n  Rotavirus A\n  Rotavirus B\n  Rotavirus C\n  RSV A\n  RSV B\n  Sapporo Virus\n  West Nile"
-  },
-  {
-    "objectID": "dashboard2.html#pathogen-abundance-across-cities",
-    "href": "dashboard2.html#pathogen-abundance-across-cities",
-    "title": "𓆞 lung.fish Data Explorer",
-    "section": "",
-    "text": "Pathogen:\n\n  SARS-CoV-2\n  Aichivirus\n  Astrovirus MLB\n  Astrovirus VA\n  Bovine Viral Diarrhea\n  Classical Human Astrovirus\n  Coronavirus 229E\n  Coronavirus HKU1\n  Coronavirus NL63\n  Coronavirus OC43\n  Enterovirus A71\n  Enterovirus Other A\n  Enterovirus B\n  Enterovirus C\n  Enterovirus D68\n  H1 Influenza A\n  H3 Influenza A\n  H5 Influenza A\n  Hepatitis A\n  Human Adenovirus F40\n  Human Adenovirus F41\n  Human Bocavirus\n  Human Mastadenovirus A\n  Human Mastadenovirus B\n  Human Mastadenovirus C\n  Human Mastadenovirus D\n  Human Mastadenovirus F\n  Human Picobirnavirus\n  Infectious Bronchitis\n  Influenza A (total)\n  Influenza B\n  Influenza C\n  Metapneumovirus\n  Norovirus Genogroup I\n  Norovirus Genogroup II\n  Norovirus Genogroup IV\n  Oropouche\n  Parainfluenza 1\n  Parainfluenza 2\n  Parainfluenza 3\n  Parainfluenza 4\n  Parechovirus A\n  PRRSV\n  Rhinovirus A\n  Rhinovirus B\n  Rhinovirus C\n  Rhinovirus (total)\n  Rotavirus A\n  Rotavirus B\n  Rotavirus C\n  RSV A\n  RSV B\n  Sapporo Virus\n  West Nile"
-  },
-  {
-    "objectID": "dashboard2.html#pathogen-abundance-by-city",
-    "href": "dashboard2.html#pathogen-abundance-by-city",
-    "title": "𓆞 lung.fish Data Explorer",
-    "section": "Pathogen Abundance By City",
-    "text": "Pathogen Abundance By City\n\nCity:\n\n  Chicago\n  Boston\n  Columbia, MO\n  Riverside, CA\n  Boise, ID"
   }
 ]
