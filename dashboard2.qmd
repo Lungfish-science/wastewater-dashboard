@@ -1,6 +1,5 @@
 ---
-toc: false
-page-layout: full
+toc: true
 ---
 
 ## Pathogen Abundance Across Cities
@@ -69,13 +68,13 @@ page-layout: full
   <img id="pathogen-svg-viewer" src="" alt="Pathogen SVG" width="100%" style="max-height: 800px;">
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <script>
 const pathogens = Array.from(
   document.querySelectorAll("#pathogen option"),
   option => option.value
 );
+console.log(pathogens);
 
 const getSvgUrlByVirus = (pathogen) => {
   // Define your base URL
@@ -96,92 +95,14 @@ const updatePathogenSvgViewer = () => {
   document.getElementById("pathogen-svg-viewer").src = virus_url ;
 }
 
-const preloadPathogenSvgs = (pathogens) => {
+function preloadPathogenSvgs(pathogens) {
   for (const pathogen of pathogens) {
-    const url = getSvgUrlByVirus(pathogen);
+    const url = getSvgUrlByCity(pathogen);
     const img = new Image();
     img.src = url ;
   }
 }
 
-document.getElementById("pathogen").addEventListener("change", updatePathogenSvg);
-</script>
-```
-
-## Abundance By City
-
-```{=html}
-<!-- Dropdowns for city and pathogen -->
-<label for="city">Select city:</label>
-<select id="city">
-  <option value="Chicago_IL" selected>Chicago</option>
-  <option value="Boston_MA">Boston</option>
-  <option value="Columbia_MO">Columbia, MO</option>
-  <option value="Riverside_CA">Riverside, CA</option>
-</select>
-
-<!-- SVG viewer container -->
-<div id="city-resp-svg-container" style="margin-top:20px;">
-  <img id="city-resp-svg-viewer" src="" alt="City Respiratory SVG" width="100%" style="max-height: 800px;">
-</div>
-<div id="city-enteric-svg-container" style="margin-top:20px;">
-  <img id="city-enteric-svg-viewer" src="" alt="City Enteric SVG" width="100%" style="max-height: 800px;">
-</div>
- 
-<script>
-const getSvgUrlByCity = (city) => {
-  const respiratory_url = `https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/%40files/heatmaps/by_city/${city}/respiratory.svg`;
-  const enteric_url = `https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/%40files/heatmaps/by_city/${city}/diarrheal.svg`;
-  return [respiratory_url, enteric_url];
-}
-
-const cities = ["Chicago_IL", "Boston_MA", "Columbia_MO", "Riverside_CA"];
-
-// After updating, pre-load all SVGs into the browser cache so that the viewer is
-// initially slow but later fast
-const preloadCitySvgs = (cities) => {
-  for (const city of cities) {
-    const [resp_url, ent_url] = getSvgUrlByCity(city);
-    const img1 = new Image();
-    img1.src = resp_url;
-    const img2 = new Image();
-    img2.src = ent_url;
-  }
-}
-
-const updateCityMarkdown = (city) => {
-  const baseUrl = "https://dholk.primate.wisc.edu/_webdav/dho/projects/lungfish/InfinitePath/public/@files/heatmaps/by_city";
-  const markdownUrl = `${baseUrl}/${city}/discussion.md`;
-  console.log(markdownUrl);
-
-  const container = document.getElementById("city-markdown-container");
-  container.innerHTML = "<em>Loading city-specific report...</em>";
-
-  fetch(markdownUrl)
-    .then(res => {
-      if (!res.ok) throw new Error(`Failed to fetch report for ${city}`);
-      return res.text();
-    })
-    .then(md => {
-      container.innerHTML = marked.parse(md);
-    })
-    .catch(err => {
-      console.error(err);
-      container.innerHTML = `<p style="color: red;">Unable to load report for ${city}.</p>`;
-    });
-}
-
-const updateCitySvgViewer = () => {
-  const city = document.getElementById("city").value;
-  const [respiratory_url, enteric_url] = getSvgUrlByCity(city);
-  document.getElementById("city-resp-svg-viewer").src = respiratory_url;
-  document.getElementById("city-enteric-svg-viewer").src = enteric_url;
-
-  updateCityMarkdown(city);
-}
-
-// Hook up event listeners
-document.getElementById("city").addEventListener("change", updateCitySvgViewer);
 document.getElementById("pathogen").addEventListener("change", updatePathogenSvg);
 
 window.onload = () => {
@@ -190,10 +111,10 @@ window.onload = () => {
   preloadCitySvgs(cities);
   preloadPathogenSvgs(pathogens);
 };
-
 </script>
 ```
-----
+
+---
 
 ## Pathogen Abundance By City
 
