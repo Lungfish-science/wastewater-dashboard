@@ -113,7 +113,8 @@ window.onload = () => {
 };
 </script>
 ```
-----
+
+---
 
 ## Pathogen Abundance By City
 
