@@ -24,7 +24,8 @@ from loguru import logger
 
 # A list of supported ORF sames to be used in membership checks.
 SUPPORTED_ORFS = [
-    "ORF1",
+    "ORF1a",
+    "ORF1b",
     "S",
     "ORF3a",
     "E",
@@ -1081,7 +1082,7 @@ def render_for_quarto(compiled_datasets: list[OrfDataset], orf_label: str) -> No
 
     This function is used by Quarto output to display charts for specific ORFs.
     If the requested ORF does not exist, it will display an empty chart using
-    ORF1 as a template.
+    ORF1a as a template.
 
     Args:
         compiled_datasets (list[OrfDataset]): List of OrfDataset objects containing charts
@@ -1093,7 +1094,7 @@ def render_for_quarto(compiled_datasets: list[OrfDataset], orf_label: str) -> No
     current_bundle = [dataset for dataset in compiled_datasets if dataset.orf == orf_label]
 
     if len(current_bundle) != 1:
-        fallback_bundle = [dataset for dataset in compiled_datasets if dataset.orf == "ORF1"]
+        fallback_bundle = [dataset for dataset in compiled_datasets if dataset.orf == "ORF1a"]
         assert len(fallback_bundle) == 1
         unwrapped = fallback_bundle[0]
 
