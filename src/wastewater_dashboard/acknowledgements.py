@@ -8,7 +8,7 @@ from great_tables import GT, nanoplot_options
 from loguru import logger
 
 
-def convert_table_to_greatable(df_path: Path) -> GT:
+def convert_table_to_greatable(df_path: Path, last_updated: str) -> GT:
     """
     Converts a Polars DataFrame to an aggregated form with metadata per study_accession.
 
@@ -147,7 +147,7 @@ def convert_table_to_greatable(df_path: Path) -> GT:
     # This step comes last
     submitters = (
         GT(aggregated_df, rowname_col="Study Title")
-        .tab_header(title="Sequence Read Archive SARS-CoV-2 Wastewater Submissions", subtitle=f"Last Updated: 2025-06-01")
+        .tab_header(title="Sequence Read Archive SARS-CoV-2 Wastewater Submissions", subtitle=last_updated)
         .tab_spanner(label="Dates", columns=[
             "Earliest Submission",
             "Most Recent Submission"])
