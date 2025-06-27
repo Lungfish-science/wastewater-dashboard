@@ -285,7 +285,7 @@ it.show(variant_data, column_filters="header", classes="display compact cell-bor
 
 :::{.card title="Wastewater Monitoring Project Metadata" .flow}
 
-Metadata file available for all recently reviewed submissions available <a href="data/weeks_meta.tsv" download="weeks_meta.tsv">here</a>.
+Metadata file available for all recently reviewed submissions available <a href="data/found_meta.tsv" download="found_meta.tsv">here</a>.
 
 :::
 

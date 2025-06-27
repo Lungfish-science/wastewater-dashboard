@@ -14,7 +14,7 @@ website:
         menu:
           - href: dashboard1.qmd
             text: Wastewater Dashboard
-          - href: dashboard2.qmd
+          - href: https://dholab.github.io/public_viz/
             text: Virus Report Cards
       - acknowledgements.qmd
       - text: "Help"
