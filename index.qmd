@@ -12,7 +12,7 @@ Dashboard Gallery
 Welcome to the **lung.fish** initiative's public health data explorer, a growing collection of dashboards driven by environmental monitoring data:
 
 -   [SARS-CoV-2 Wastewater Monitoring](dashboard1.qmd)
--   [Multi-Pathogen Wastewater Report Cards](dashboard2.qmd)
+-   [Multi-Pathogen Wastewater Report Cards](https://dholab.github.io/public_viz/)
 
 :::
 
@@ -50,7 +50,7 @@ display(HTML(html_output))
   background-color: rgb(237,243,249);
 }
 
-#quarto-content main { 
+#quarto-content main {
   margin-top: 0;
   padding-top: 0;
 }
@@ -96,7 +96,7 @@ html {
 }
 
 .touch {
-  
+
 }
 </style>
 ```

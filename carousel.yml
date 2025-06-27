@@ -4,5 +4,5 @@
   link: "dashboard1.qmd"
 
 - caption: "Multi-Pathogen Wastewater Report Cards"
-  image: "assets/dashboard2.png"
-  link: "dashboard2.qmd"
+  image: "assets/report_cards.png"
+  link: "https://dholab.github.io/public_viz/"
