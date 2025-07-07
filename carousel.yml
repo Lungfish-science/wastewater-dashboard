@@ -6,3 +6,11 @@
 - caption: "Multi-Pathogen Wastewater Report Cards"
   image: "assets/report_cards.png"
   link: "https://dholab.github.io/public_viz/001-make-by-city-and-by-virus-dashboards/index.html"
+
+- caption: "Rhinovirus Serotypes in Wastewater"
+  image: "assets/rhinovirus.png"
+  link: https://dholab.github.io/public_viz/004-rhinovirus-serotypes-dashboards/
+
+- caption: "BioMarkX Results for Dane County, WI Schools"
+  image: "assets/biomarkx.png"
+  link: https://dholab.github.io/public_viz/003-dane-county-school-biomark-x-dashboards/

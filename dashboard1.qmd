@@ -2,6 +2,7 @@
 format:
   dashboard:
     scrolling: true
+    css: styles.css
 ---
 
 # Scatter Plot Visualization {.center}

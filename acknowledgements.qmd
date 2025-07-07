@@ -3,6 +3,7 @@ title: "Acknowledgements"
 format:
   dashboard:
     scrolling: true
+    css: styles.css
 ---
 
 ```{python}

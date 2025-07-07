@@ -1,1 +1,46 @@
 /* css styles */
+
+/* Make the footer's center column wider for the disclaimer */
+.nav-footer {
+  display: flex;
+  align-items: center; /* Changed from flex-start to center */
+  gap: 2rem;
+  padding: 1.5rem 0;
+}
+
+.nav-footer-center {
+  flex: 1 1 60%; /* Take up 60% of the footer width */
+  max-width: 900px; /* Set a reasonable max width */
+  margin: 0 2rem; /* Add some margin on sides */
+}
+
+.nav-footer-left,
+.nav-footer-right {
+  flex: 0 0 auto; /* Don't grow or shrink */
+  min-width: 150px; /* Ensure minimum width */
+}
+
+/* Ensure disclaimer text is readable and matches other footer text */
+.nav-footer-center p {
+  text-align: justify;
+  font-size: 0.75rem; /* Smaller to match other footer items */
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+  /* font-style: italic; */
+}
+
+/* Make sure the footer items on the right are properly aligned */
+.nav-footer-right .footer-items {
+  text-align: right;
+}
+
+/* Remove default margins for better centering */
+.nav-footer-left p,
+.nav-footer-right p {
+  margin: 0;
+}
+
+/* Remove extra padding from footer links */
+.nav-footer-right .nav-link {
+  padding: 0;
+}
