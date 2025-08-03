@@ -20,6 +20,8 @@ website:
             text: Rhinovirus Serotypes
           - href: https://dholab.github.io/public_viz/003-dane-county-school-biomark-x-dashboards/
             text: Air Sampling in Dane County, WI Schools
+          - href: https://dholab.github.io/public_viz/005-12s-species/
+            text: Species Frequency Dashboard
       - acknowledgements.qmd
       - text: "Help"
         menu:

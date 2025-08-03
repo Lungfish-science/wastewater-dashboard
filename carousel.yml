@@ -14,3 +14,7 @@
 - caption: "BioMarkX Results for Dane County, WI Schools"
   image: "assets/biomarkx.png"
   link: https://dholab.github.io/public_viz/003-dane-county-school-biomark-x-dashboards/
+
+- caption: "Species Frquency Dashboard"
+  image: "assets/species_db.png"
+  link: https://dholab.github.io/public_viz/005-12s-species/
