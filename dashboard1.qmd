@@ -286,14 +286,14 @@ it.show(variant_data, column_filters="header", classes="display compact cell-bor
 
 :::{.card title="Wastewater Monitoring Project Metadata" .flow}
 
-Metadata file available for all recently reviewed submissions available <a href="data/found_meta.tsv" download="found_meta.tsv">here</a>.
+Metadata file available for all recently reviewed submissions available <a href="data/found_meta.tsv.gz" download="found_meta.tsv.gz">here</a>.
 
 :::
 
 ## Project Metadata {height=800 scrolling="false"}
 
 ```{python}
-project_data = pl.read_csv("./data/found_meta.tsv", separator="\t", has_header=True, null_values=["NA", ">", "<"], schema_overrides={"Population":pl.Utf8})
+project_data = pl.read_csv("./data/found_meta.tsv.gz", separator="\t", has_header=True, null_values=["NA", ">", "<"], schema_overrides={"Population":pl.Utf8})
 project_data = project_data.with_columns(
     pl.col("Population").fill_null("N/A")
 )
