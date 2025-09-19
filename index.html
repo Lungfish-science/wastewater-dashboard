@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.8.24">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -23,7 +23,7 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -32,14 +32,15 @@ ul.task-list li input[type="checkbox"] {
 <meta name="quarto:offset" content="./">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-9a43e5fd13daa2bb7418a175aee6cf58.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-ddf734464ff9da71bcad3588a5c8a97f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -67,7 +68,7 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
@@ -82,6 +83,8 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    </a>
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">𓆞 lung.fish Data Explorer</span>
     </a>
@@ -124,6 +127,10 @@ ul.task-list li input[type="checkbox"] {
         <li>
     <a class="dropdown-item" href="https://dholab.github.io/public_viz/005-12s-species/">
  <span class="dropdown-text">Species Frequency Dashboard</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://dholab.github.io/public_viz/006-cryptic-lineages/index.html">
+ <span class="dropdown-text">SARS-CoV-2 Cryptic Lineages</span></a>
   </li>  
     </ul>
   </li>
@@ -199,9 +206,10 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="https://dholab.github.io/public_viz/004-rhinovirus-serotypes-dashboards/">Rhinovirus Serotypes in Wastewater</a></li>
 <li><a href="https://dholab.github.io/public_viz/003-dane-county-school-biomark-x-dashboards/">Air Sampling Results for Dane County, WI Schools</a></li>
 <li><a href="https://dholab.github.io/public_viz/005-12s-species/">Species Frequency Dashboard</a></li>
+<li><a href="https://dholab.github.io/public_viz/006-cryptic-lineages/index.html">SARS-CoV-2 Cryptic Lineages</a></li>
 </ul>
 </div>
-<div id="d3e10b4e" class="cell g-col-lg-6 g-col-12 g-col-md-12" data-execution_count="1">
+<div id="35445df1" class="cell g-col-lg-6 g-col-12 g-col-md-12" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div id="gallery-carousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
 <div class="carousel-indicators">
@@ -210,6 +218,7 @@ ul.task-list li input[type="checkbox"] {
 <button type="button" data-bs-target="#gallery-carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
 <button type="button" data-bs-target="#gallery-carousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
 <button type="button" data-bs-target="#gallery-carousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
+<button type="button" data-bs-target="#gallery-carousel" data-bs-slide-to="5" aria-label="Slide 6"></button>
 </div>
 <div class="carousel-inner">
 <div class="carousel-item active" data-bs-interval="5000">  <a href="./dashboard1.html"><img src="assets/wastewater-screenshot.png" class="d-block mx-auto border" alt="SARS-CoV-2 Variant Monitoring through Targeted Wastewater Sequencing"></a>  <div class="carousel-caption d-none d-md-block">      <p class="fw-light">SARS-CoV-2 Variant Monitoring through Targeted Wastewater Sequencing</p>  </div></div>
@@ -217,6 +226,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="carousel-item" data-bs-interval="5000">  <a href="https://dholab.github.io/public_viz/004-rhinovirus-serotypes-dashboards/"><img src="assets/rhinovirus.png" class="d-block mx-auto border" alt="Rhinovirus Serotypes in Wastewater"></a>  <div class="carousel-caption d-none d-md-block">      <p class="fw-light">Rhinovirus Serotypes in Wastewater</p>  </div></div>
 <div class="carousel-item" data-bs-interval="5000">  <a href="https://dholab.github.io/public_viz/003-dane-county-school-biomark-x-dashboards/"><img src="assets/biomarkx.png" class="d-block mx-auto border" alt="BioMarkX Results for Dane County, WI Schools"></a>  <div class="carousel-caption d-none d-md-block">      <p class="fw-light">BioMarkX Results for Dane County, WI Schools</p>  </div></div>
 <div class="carousel-item" data-bs-interval="5000">  <a href="https://dholab.github.io/public_viz/005-12s-species/"><img src="assets/species_db.png" class="d-block mx-auto border" alt="Species Frquency Dashboard"></a>  <div class="carousel-caption d-none d-md-block">      <p class="fw-light">Species Frquency Dashboard</p>  </div></div>
+<div class="carousel-item" data-bs-interval="5000">  <a href="https://dholab.github.io/public_viz/006-cryptic-lineages"><img src="assets/SARS-CoV-2_crpytics.png" class="d-block mx-auto border" alt="SARS-CoV-2 Cryptic Lineages"></a>  <div class="carousel-caption d-none d-md-block">      <p class="fw-light">SARS-CoV-2 Cryptic Lineages</p>  </div></div>
 </div>
 <button class="carousel-control-prev" type="button" data-bs-target="#gallery-carousel" data-bs-slide="prev">  <span class="carousel-control-prev-icon" aria-hidden="true"></span>  <span class="visually-hidden">Previous</span></button>
 <button class="carousel-control-next" type="button" data-bs-target="#gallery-carousel" data-bs-slide="next">  <span class="carousel-control-next-icon" aria-hidden="true"></span>  <span class="visually-hidden">Next</span></button>
@@ -373,13 +383,14 @@ html {
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
