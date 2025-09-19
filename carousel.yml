@@ -18,3 +18,7 @@
 - caption: "Species Frquency Dashboard"
   image: "assets/species_db.png"
   link: https://dholab.github.io/public_viz/005-12s-species/
+
+- caption: "SARS-CoV-2 Cryptic Lineages"
+  image: "assets/SARS-CoV-2_crpytics.png"
+  link: https://dholab.github.io/public_viz/006-cryptic-lineages

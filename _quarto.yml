@@ -22,6 +22,9 @@ website:
             text: Air Sampling in Dane County, WI Schools
           - href: https://dholab.github.io/public_viz/005-12s-species/
             text: Species Frequency Dashboard
+          - href: https://dholab.github.io/public_viz/006-cryptic-lineages/index.html
+            text: SARS-CoV-2 Cryptic Lineages
+
       - acknowledgements.qmd
       - text: "Help"
         menu:
