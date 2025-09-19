@@ -16,6 +16,7 @@ Welcome to the **lung.fish** initiative's public health data explorer, a growing
 -   [Rhinovirus Serotypes in Wastewater](https://dholab.github.io/public_viz/004-rhinovirus-serotypes-dashboards/)
 -   [Air Sampling Results for Dane County, WI Schools](https://dholab.github.io/public_viz/003-dane-county-school-biomark-x-dashboards/)
 -   [Species Frequency Dashboard](https://dholab.github.io/public_viz/005-12s-species/)
+-   [SARS-CoV-2 Cryptic Lineages](https://dholab.github.io/public_viz/006-cryptic-lineages/index.html)
 
 :::
 
