@@ -61,9 +61,14 @@ ALTAIR_THEME: Literal[
 # The height of the plot in pixels.
 PLOT_HEIGHT = 650
 
+# Expected location of data files, independent of which directory quarto decides it's
+# rendering in for a given cell
+# TODO(@Nick): This is better than absolute paths but still brittle
+DATA_DIR = Path.cwd() / "data" if Path.cwd().name != "dashboards" else Path.cwd().parent / "data"
+
 # The expected major lineage
 # TODO(@Nick): This will be replaced with a command line arg at some point
-LINEAGES_DF = pl.read_json("data/major_lineages.json")
+LINEAGES_DF = pl.read_json(DATA_DIR / "major_lineages.json")
 
 MAJOR_LINEAGES = LINEAGES_DF["lineage"].to_list()
 
@@ -688,7 +693,7 @@ def parse_plotting_file(
 
     # write out plotting data for transparency
     all_orf_abundances.collect().write_csv(
-        "data/transformed_variant_plotting_data.tsv",
+        DATA_DIR / "transformed_variant_plotting_data.tsv",
         separator="\t",
     )
 

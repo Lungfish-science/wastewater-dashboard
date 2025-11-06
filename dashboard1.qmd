@@ -27,8 +27,8 @@ from wastewater_dashboard.plot_variant_scatter import (
 from loguru import logger
 from pathlib import Path
 
-ALL_ORF_TSV = Path("./data/VariantPMsLong.tsv")
-LINEAGE_JSON = Path("./data/major_lineages.json")
+ALL_ORF_TSV = Path.cwd() / "data" /  "VariantPMsLong.tsv"
+LINEAGE_JSON = Path.cwd() / "data" / "major_lineages.json"
 
 assert ALL_ORF_TSV.is_file(), f"The provided path, '{ALL_ORF_TSV}', does not exist."
 assert LINEAGE_JSON.is_file(), f"The provided path, '{LINEAGE_JSON}', does not exist."
@@ -286,7 +286,7 @@ it.show(variant_data, column_filters="header", classes="display compact cell-bor
 
 :::{.card title="Wastewater Monitoring Project Metadata" .flow}
 
-Metadata file available for all recently reviewed submissions available <a href="data/found_meta.tsv.gz" download="found_meta.tsv.gz">here</a>.
+Metadata file available for all recently reviewed submissions available <a href="../data/found_meta.tsv.gz" download="found_meta.tsv.gz">here</a>.
 
 :::
 
