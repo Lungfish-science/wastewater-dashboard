@@ -10,7 +10,7 @@ format:
 
 from wastewater_dashboard.acknowledgements import convert_table_to_greatable
 
-table = convert_table_to_greatable("data/all_metadata_for_acknowledgements_2025-12-03.csv", "Last Updated: 2025-12-03")
+table = convert_table_to_greatable("data/all_metadata_for_acknowledgements_2026-02-18.csv", "Last Updated: 2026-02-18")
 
 table.show()
 
