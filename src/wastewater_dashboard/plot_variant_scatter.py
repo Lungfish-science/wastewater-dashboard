@@ -22,6 +22,9 @@ import altair as alt
 import polars as pl
 from loguru import logger
 
+# Disable the row limit for the default data transformer to handle large datasets
+alt.data_transformers.disable_max_rows()
+
 # A list of supported ORF sames to be used in membership checks.
 SUPPORTED_ORFS = [
     "ORF1a",
