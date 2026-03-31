@@ -1,26 +1,5 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "Welcome to the lung.fish project’s public health data explorer, a growing collection of dashboards driven by environmental monitoring data. The lung.fish initiative focuses on improving environmental sampling and promoting open data sharing by publishing data and experiments in public repositories."
-  },
-  {
-    "objectID": "about.html#our-mission",
-    "href": "about.html#our-mission",
-    "title": "About",
-    "section": "🌍 Our Mission",
-    "text": "🌍 Our Mission\nWe aim to:\n\nEnhance environmental data collection methods.\nFacilitate more accessible and transparent sharing of environmental data.\nFoster collaboration in the scientific community for better ecological understanding."
-  },
-  {
-    "objectID": "about.html#open-data-for-all",
-    "href": "about.html#open-data-for-all",
-    "title": "About",
-    "section": "📊 Open Data for All",
-    "text": "📊 Open Data for All\nWe believe in the power of open science. To learn about the legal licenses, please reach out to us directly!"
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "𓆞 lung.fish Data Explorer",
@@ -47,5 +26,26 @@
     "title": "𓆞 lung.fish Data Explorer",
     "section": "Pathogen Abundance By City",
     "text": "Pathogen Abundance By City\n\nCity:\n\n  Chicago\n  Boston\n  Columbia, MO\n  Riverside, CA\n  Boise, ID"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "Welcome to the lung.fish project’s public health data explorer, a growing collection of dashboards driven by environmental monitoring data. The lung.fish initiative focuses on improving environmental sampling and promoting open data sharing by publishing data and experiments in public repositories."
+  },
+  {
+    "objectID": "about.html#our-mission",
+    "href": "about.html#our-mission",
+    "title": "About",
+    "section": "🌍 Our Mission",
+    "text": "🌍 Our Mission\nWe aim to:\n\nEnhance environmental data collection methods.\nFacilitate more accessible and transparent sharing of environmental data.\nFoster collaboration in the scientific community for better ecological understanding."
+  },
+  {
+    "objectID": "about.html#open-data-for-all",
+    "href": "about.html#open-data-for-all",
+    "title": "About",
+    "section": "📊 Open Data for All",
+    "text": "📊 Open Data for All\nWe believe in the power of open science. To learn about the legal licenses, please reach out to us directly!"
   }
 ]
