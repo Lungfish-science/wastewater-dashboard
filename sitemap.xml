@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://Lungfish-science.github.io/wastewater-dashboard/dashboard2.html</loc>
-    <lastmod>2026-06-10T21:56:39.903Z</lastmod>
+    <loc>https://Lungfish-science.github.io/wastewater-dashboard/index.html</loc>
+    <lastmod>2026-06-25T15:48:30.489Z</lastmod>
   </url>
   <url>
     <loc>https://Lungfish-science.github.io/wastewater-dashboard/about.html</loc>
-    <lastmod>2026-06-10T21:56:39.890Z</lastmod>
+    <lastmod>2026-06-25T15:48:30.261Z</lastmod>
   </url>
   <url>
     <loc>https://Lungfish-science.github.io/wastewater-dashboard/acknowledgements.html</loc>
-    <lastmod>2026-06-10T21:56:39.890Z</lastmod>
+    <lastmod>2026-06-25T15:48:30.261Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Lungfish-science.github.io/wastewater-dashboard/dashboard2.html</loc>
+    <lastmod>2026-06-25T15:48:30.275Z</lastmod>
   </url>
   <url>
     <loc>https://Lungfish-science.github.io/wastewater-dashboard/dashboard1.html</loc>
-    <lastmod>2026-06-10T21:56:39.903Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Lungfish-science.github.io/wastewater-dashboard/index.html</loc>
-    <lastmod>2026-06-10T21:56:40.114Z</lastmod>
+    <lastmod>2026-06-25T15:48:30.275Z</lastmod>
   </url>
 </urlset>
