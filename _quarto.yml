@@ -4,6 +4,9 @@ project:
 
 website:
   title: "𓆞 lung.fish Data Explorer"
+  # The site is served under the lung.fish custom domain, not the
+  # Lungfish-science.github.io address Quarto infers from the publish target.
+  site-url: https://lung.fish/wastewater-dashboard
   repo-url: https://github.com/Lungfish-science/wastewater-dashboard
   navbar:
     right:
@@ -72,6 +75,7 @@ format:
       - brand
     css: styles.css
     toc: true
+    canonical-url: true
 
 # execute:
 #   freeze: auto
