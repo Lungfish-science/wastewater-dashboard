@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://Lungfish-science.github.io/wastewater-dashboard/acknowledgements.html</loc>
-    <lastmod>2026-09-02T18:50:57.214Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Lungfish-science.github.io/wastewater-dashboard/index.html</loc>
-    <lastmod>2026-09-02T18:50:57.465Z</lastmod>
-  </url>
-  <url>
     <loc>https://Lungfish-science.github.io/wastewater-dashboard/about.html</loc>
-    <lastmod>2026-09-02T18:50:57.214Z</lastmod>
-  </url>
-  <url>
-    <loc>https://Lungfish-science.github.io/wastewater-dashboard/dashboard2.html</loc>
-    <lastmod>2026-09-02T18:50:57.230Z</lastmod>
+    <lastmod>2026-09-10T14:00:44.072Z</lastmod>
   </url>
   <url>
     <loc>https://Lungfish-science.github.io/wastewater-dashboard/dashboard1.html</loc>
-    <lastmod>2026-09-02T18:50:57.230Z</lastmod>
+    <lastmod>2026-09-10T14:00:44.085Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Lungfish-science.github.io/wastewater-dashboard/dashboard2.html</loc>
+    <lastmod>2026-09-10T14:00:44.085Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Lungfish-science.github.io/wastewater-dashboard/index.html</loc>
+    <lastmod>2026-09-10T14:00:44.307Z</lastmod>
+  </url>
+  <url>
+    <loc>https://Lungfish-science.github.io/wastewater-dashboard/acknowledgements.html</loc>
+    <lastmod>2026-09-10T14:00:44.072Z</lastmod>
   </url>
 </urlset>
