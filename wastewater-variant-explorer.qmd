@@ -12,14 +12,17 @@ format:
 
 # Scatter Plot Visualization {.center}
 
-:::{.card title="Why Wastewater Monitoring?" .flow}
+:::{.card title="Summary" .flow .dashboard-section}
 
-Typically, monitoring a community for pathogens has relied on individuals choosing (or having the opportunity) to test for particular pathogens. But for many pathogens, including SARS-CoV-2, infected individuals shed pathogen genetic material into wastewater, which can be sampled with relatively low effort. These samples can be analyzed not only for the presence or absence of pathogens, but also the abundance of that pathogen. They can also be used with genome sequencing technology to quantify the abundance of particular mutations. By comparing across sampling periods, this can indicate which mutations are on the rise and which are on the decline, and ultimately, forecast how the pathogen is evolving and whether that evolution should be of concern.
+This explorer tracks changes in SARS-CoV-2 mutations found in publicly available wastewater sequences. Each point compares the abundance of an amino-acid change across two three-week sampling periods, with the earlier period on the horizontal axis and the later period on the vertical axis. Explore the whole genome or an individual gene region, then use the plot controls to compare periods and highlight mutations associated with a lineage.
 
-The plot below shows the results of analyses we run each week. These analyses use all SARS-CoV-2 sequences sampled from wastewater in [NCBI](https://www.ncbi.nlm.nih.gov/)'s [Sequence Read Archive](https://www.ncbi.nlm.nih.gov/sra)--see our Acknowledgements page for the contributors of these samples and statistics for on the data itself. The vertical and horizontal axes represent the abundance of mutations aggregated across a three-week period, with the more recent period on the vertical axis and the previous period on the horizontal axis.
+<dl class="dashboard-facts">
+  <div><dt>Sample type</dt><dd>Wastewater</dd></div>
+  <div><dt>Data source</dt><dd><a href="https://www.ncbi.nlm.nih.gov/sra">NCBI Sequence Read Archive</a></dd></div>
+  <div><dt>Comparison</dt><dd>Three-week sampling periods</dd></div>
+</dl>
 
 :::
-
 
 ```{python}
 import sys
@@ -54,6 +57,12 @@ for orf_dataset in orf_datasets:
 
 ##
 
+::::: {.card title="Compare mutation abundances" .flow .dashboard-section}
+
+Choose a genome region. Below the plot, use the time slider and lineage filter. Select legend entries to highlight mutations; click points to explore trajectories. On narrow screens, scroll the plot horizontally.
+
+:::: {.plot-scroll tabindex="0" role="region" aria-label="Mutation scatter plots"}
+
 ::: {.panel-tabset}
 
 ## Whole Genome
@@ -62,29 +71,11 @@ for orf_dataset in orf_datasets:
 render_for_quarto(orf_datasets, "Whole Genome")
 ```
 
-:::{.card title="Notes on Interpretation" .flow}
-
-##### Technical Notes
-
-Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
-
-
-:::
-
 ## ORF1a
 
 ```{python}
 render_for_quarto(orf_datasets, "ORF1a")
 ```
-
-:::{.card title="Notes on Interpretation" .flow}
-
-##### Technical Notes
-
-Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
-
-
-:::
 
 ## ORF1b
 
@@ -92,29 +83,11 @@ Astute viewers may notice that many mutations relative to the standard [SARS-CoV
 render_for_quarto(orf_datasets, "ORF1b")
 ```
 
-:::{.card title="Notes on Interpretation" .flow}
-
-##### Technical Notes
-
-Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
-
-
-:::
-
 ## Spike
 
 ```{python}
 render_for_quarto(orf_datasets, "S")
 ```
-
-:::{.card title="Notes on Interpretation" .flow}
-
-##### Technical Notes
-
-Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
-
-
-:::
 
 ## ORF3a
 
@@ -122,29 +95,11 @@ Astute viewers may notice that many mutations relative to the standard [SARS-CoV
 render_for_quarto(orf_datasets, "ORF3a")
 ```
 
-:::{.card title="Notes on Interpretation" .flow}
-
-##### Technical Notes
-
-Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
-
-
-:::
-
 ## E
 
 ```{python}
 render_for_quarto(orf_datasets, "E")
 ```
-
-:::{.card title="Notes on Interpretation" .flow}
-
-##### Technical Notes
-
-Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
-
-
-:::
 
 ## M
 
@@ -152,29 +107,11 @@ Astute viewers may notice that many mutations relative to the standard [SARS-CoV
 render_for_quarto(orf_datasets, "M")
 ```
 
-:::{.card title="Notes on Interpretation" .flow}
-
-##### Technical Notes
-
-Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
-
-
-:::
-
 ## ORF6
 
 ```{python}
 render_for_quarto(orf_datasets, "ORF6")
 ```
-
-:::{.card title="Notes on Interpretation" .flow}
-
-##### Technical Notes
-
-Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
-
-
-:::
 
 ## ORF7a
 
@@ -182,29 +119,11 @@ Astute viewers may notice that many mutations relative to the standard [SARS-CoV
 render_for_quarto(orf_datasets, "ORF7a")
 ```
 
-:::{.card title="Notes on Interpretation" .flow}
-
-##### Technical Notes
-
-Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
-
-
-:::
-
 ## ORF7b
 
 ```{python}
 render_for_quarto(orf_datasets, "ORF7b")
 ```
-
-:::{.card title="Notes on Interpretation" .flow}
-
-##### Technical Notes
-
-Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
-
-
-:::
 
 ## ORF8
 
@@ -212,29 +131,11 @@ Astute viewers may notice that many mutations relative to the standard [SARS-CoV
 render_for_quarto(orf_datasets, "ORF8")
 ```
 
-:::{.card title="Notes on Interpretation" .flow}
-
-##### Technical Notes
-
-Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
-
-
-:::
-
 ## N
 
 ```{python}
 render_for_quarto(orf_datasets, "N")
 ```
-
-:::{.card title="Notes on Interpretation" .flow}
-
-##### Technical Notes
-
-Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
-
-
-:::
 
 ## ORF10
 
@@ -242,15 +143,17 @@ Astute viewers may notice that many mutations relative to the standard [SARS-CoV
 render_for_quarto(orf_datasets, "ORF10")
 ```
 
-##### Technical Notes
-
-Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
-
 :::
+
+::::
+
+**Reading the plot:** The horizontal axis shows abundance in the earlier period; the vertical axis shows abundance in the later period. Points above the dashed diagonal increased in abundance; points below it decreased. Sampling and filtering affect which mutations appear; see the technical notes below.
+
+:::::
 
 ##
 
-:::{.card title="How do I interpret these visualizations? Start here!" .flow}
+:::{.card title="Interpretation and context" .flow .dashboard-section}
 
 In general, the first points we look at in these plots are points that are closest to the upper lefthand corner of the plot, as these points represent amino acids that have very rapidly increased in frequency between the time-periods compared in our analyses. These mutations may be helpful for forecasting particular SARS-CoV-2 lineages that are likely to increase in prevalence. Given the function of the mutated amino acid, it may also indicate how the pathogen is mutating to evade pre-existing immunity or gain other functionality that is advantageous in the battle between pathogen versus host.
 
@@ -258,6 +161,17 @@ Next, we look at points that are closest to the lower righthand corner of the pl
 
 From there, we click on mutations toward the upper righthand corner to see their trajectories; these mutations have very gradually increased in frequency. The closer they are to the corner, the closer they are to being present in nearly every SARS-CoV-2 wastewater sample.
 
+<h3>Technical notes</h3>
+
+Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
+
+<h3>Why wastewater monitoring?</h3>
+
+Typically, monitoring a community for pathogens has relied on individuals choosing (or having the opportunity) to test for particular pathogens. But for many pathogens, including SARS-CoV-2, infected individuals shed pathogen genetic material into wastewater, which can be sampled with relatively low effort. These samples can be analyzed not only for the presence or absence of pathogens, but also the abundance of that pathogen. They can also be used with genome sequencing technology to quantify the abundance of particular mutations. By comparing across sampling periods, this can indicate which mutations are on the rise and which are on the decline, and ultimately, forecast how the pathogen is evolving and whether that evolution should be of concern.
+
+The plot above shows the results of analyses we run each week. These analyses use all SARS-CoV-2 sequences sampled from wastewater in [NCBI](https://www.ncbi.nlm.nih.gov/)'s [Sequence Read Archive](https://www.ncbi.nlm.nih.gov/sra). The vertical and horizontal axes represent the abundance of mutations aggregated across a three-week period, with the more recent period on the vertical axis and the previous period on the horizontal axis.
+
+See [Acknowledgements](acknowledgements.qmd) for the contributors of these samples and statistics on their submissions.
 
 :::
 
