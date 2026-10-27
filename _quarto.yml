@@ -53,8 +53,8 @@ website:
 format:
   html:
     theme:
-      - cosmo
-      - brand
+      - default
+      - lungfish.scss
     css: styles.css
     toc: true
 

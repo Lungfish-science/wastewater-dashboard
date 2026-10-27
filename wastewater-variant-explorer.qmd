@@ -5,6 +5,7 @@ aliases:
   - dashboard1.html
 format:
   dashboard:
+    theme: [default, lungfish.scss]
     scrolling: true
     css: styles.css
 ---
