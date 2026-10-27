@@ -1,4 +1,8 @@
 ---
+pagetitle: "SARS-CoV-2 Wastewater Variant Explorer"
+aliases:
+  - index.html
+  - dashboard1.html
 format:
   dashboard:
     scrolling: true

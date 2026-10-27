@@ -3,11 +3,7 @@
 # project root exceptions
 !.gitignore
 !_quarto.yml
-!carousel.yml
-!about.qmd
-!index.qmd
-!setup.qmd
-!dashboard*.qmd
+!wastewater-variant-explorer.qmd
 !acknowledgements.qmd
 !styles.css
 !pyproject.toml
@@ -40,12 +36,6 @@
 !/plots/*.html
 !/plots/*.png
 !/plots/*.svg
-
-# assets folder
-!/assets
-!/assets/*.png
-!/assets/*.svg
-
 
 /.quarto/
 
