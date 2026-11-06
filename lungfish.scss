@@ -1,0 +1,61 @@
+/*-- scss:defaults --*/
+$body-bg: #f7f5f0;
+$body-color: #163139;
+$primary: #00323d;
+$link-color: #aa430b;
+$border-color: #d6d2c9;
+$font-family-sans-serif: Arial, sans-serif;
+$headings-font-family: Georgia, serif;
+$headings-font-weight: 400;
+$navbar-bg: #00323d;
+$navbar-fg: #ffffff;
+$navbar-hl: #f98545;
+$card-bg: #ffffff;
+$card-cap-bg: #ffffff;
+$border-radius: 4px;
+
+/*-- scss:rules --*/
+.card-header {
+  background: $card-bg;
+  font-family: $headings-font-family;
+  font-size: 1.2rem;
+}
+
+.quarto-dashboard .bslib-card {
+  background: $card-bg;
+}
+
+.nav-tabs {
+  --bs-nav-link-color: #{$body-color};
+  --bs-nav-link-hover-color: #{$link-color};
+  --bs-nav-tabs-link-active-color: #{$link-color};
+  --bs-nav-tabs-link-active-bg: #{$card-bg};
+}
+
+a { text-underline-offset: 3px; }
+
+:focus-visible {
+  outline: 2px solid $link-color;
+  outline-offset: 3px;
+}
+
+#quarto-header :focus-visible {
+  outline-color: $navbar-hl;
+}
+
+#quarto-header .dropdown-menu :focus-visible {
+  outline-color: $link-color;
+}
+
+.navbar-brand {
+  white-space: normal;
+}
+
+.navbar-title {
+  white-space: normal;
+}
+
+.gt_table {
+  min-width: 1050px;
+  font-variant-numeric: tabular-nums;
+}
