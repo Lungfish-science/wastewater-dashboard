@@ -1,0 +1,221 @@
+---
+pagetitle: "SARS-CoV-2 Wastewater Variant Explorer"
+aliases:
+  - index.html
+  - dashboard1.html
+format:
+  dashboard:
+    theme: [default, lungfish.scss]
+    scrolling: true
+    css: styles.css
+---
+
+# Scatter Plot Visualization {.center}
+
+:::{.card title="Summary" .flow .dashboard-section}
+
+This explorer tracks changes in SARS-CoV-2 mutations found in publicly available wastewater sequences. Each point compares the abundance of an amino-acid change across two three-week sampling periods, with the earlier period on the horizontal axis and the later period on the vertical axis. Explore the whole genome or an individual gene region, then use the plot controls to compare periods and highlight mutations associated with a lineage.
+
+<dl class="dashboard-facts">
+  <div><dt>Sample type</dt><dd>Wastewater</dd></div>
+  <div><dt>Data source</dt><dd><a href="https://www.ncbi.nlm.nih.gov/sra">NCBI Sequence Read Archive</a></dd></div>
+  <div><dt>Comparison</dt><dd>Three-week sampling periods</dd></div>
+</dl>
+
+:::
+
+```{python}
+import sys
+
+from wastewater_dashboard.plot_variant_scatter import (
+    parse_plotting_file,
+    render_for_quarto,
+    setup_logging,
+)
+from loguru import logger
+from pathlib import Path
+
+ALL_ORF_TSV = Path.cwd() / "data" /  "VariantPMsLong.tsv"
+LINEAGE_JSON = Path.cwd() / "data" / "major_lineages.json"
+
+assert ALL_ORF_TSV.is_file(), f"The provided path, '{ALL_ORF_TSV}', does not exist."
+assert LINEAGE_JSON.is_file(), f"The provided path, '{LINEAGE_JSON}', does not exist."
+
+setup_logging(3)
+
+# parse the file for each orf dataset into dataframes
+orf_datasets = parse_plotting_file(ALL_ORF_TSV, LINEAGE_JSON)
+
+# use the parsed dataframes wrapped in OrfDataset objects to render each plot, wrapping that in
+# OrfDataset as well
+for orf_dataset in orf_datasets:
+    orf_dataset.sort_comparisons()
+    orf_dataset.render_scatter_plot()
+    assert orf_dataset.chart is not None
+
+```
+
+##
+
+::::: {.card title="Compare mutation abundances" .flow .dashboard-section}
+
+Choose a genome region. Below the plot, use the time slider and lineage filter. Select legend entries to highlight mutations; click points to explore trajectories. On narrow screens, scroll the plot horizontally.
+
+:::: {.plot-scroll tabindex="0" role="region" aria-label="Mutation scatter plots"}
+
+::: {.panel-tabset}
+
+## Whole Genome
+
+```{python}
+render_for_quarto(orf_datasets, "Whole Genome")
+```
+
+## ORF1a
+
+```{python}
+render_for_quarto(orf_datasets, "ORF1a")
+```
+
+## ORF1b
+
+```{python}
+render_for_quarto(orf_datasets, "ORF1b")
+```
+
+## Spike
+
+```{python}
+render_for_quarto(orf_datasets, "S")
+```
+
+## ORF3a
+
+```{python}
+render_for_quarto(orf_datasets, "ORF3a")
+```
+
+## E
+
+```{python}
+render_for_quarto(orf_datasets, "E")
+```
+
+## M
+
+```{python}
+render_for_quarto(orf_datasets, "M")
+```
+
+## ORF6
+
+```{python}
+render_for_quarto(orf_datasets, "ORF6")
+```
+
+## ORF7a
+
+```{python}
+render_for_quarto(orf_datasets, "ORF7a")
+```
+
+## ORF7b
+
+```{python}
+render_for_quarto(orf_datasets, "ORF7b")
+```
+
+## ORF8
+
+```{python}
+render_for_quarto(orf_datasets, "ORF8")
+```
+
+## N
+
+```{python}
+render_for_quarto(orf_datasets, "N")
+```
+
+## ORF10
+
+```{python}
+render_for_quarto(orf_datasets, "ORF10")
+```
+
+:::
+
+::::
+
+**Reading the plot:** The horizontal axis shows abundance in the earlier period; the vertical axis shows abundance in the later period. Points above the dashed diagonal increased in abundance; points below it decreased. Sampling and filtering affect which mutations appear; see the technical notes below.
+
+:::::
+
+##
+
+:::{.card title="Interpretation and context" .flow .dashboard-section}
+
+In general, the first points we look at in these plots are points that are closest to the upper lefthand corner of the plot, as these points represent amino acids that have very rapidly increased in frequency between the time-periods compared in our analyses. These mutations may be helpful for forecasting particular SARS-CoV-2 lineages that are likely to increase in prevalence. Given the function of the mutated amino acid, it may also indicate how the pathogen is mutating to evade pre-existing immunity or gain other functionality that is advantageous in the battle between pathogen versus host.
+
+Next, we look at points that are closest to the lower righthand corner of the plot, as these mutations are likely to have become less fit, evolutionarily speaking, at a rapid rate.
+
+From there, we click on mutations toward the upper righthand corner to see their trajectories; these mutations have very gradually increased in frequency. The closer they are to the corner, the closer they are to being present in nearly every SARS-CoV-2 wastewater sample.
+
+<h3>Technical notes</h3>
+
+Astute viewers may notice that many mutations relative to the standard [SARS-CoV-2 reference](https://www.ncbi.nlm.nih.gov/nuccore/1798174254) are omitted. This is because virtually every SARS-CoV-2 lineage that's currently circulating descends from the lineage [JN.1](https://cov-spectrum.org/explore/World/AllSamples/Past6M/variants?nextcladePangoLineage=JN.1*&). To remove noise from the plot, we omit JN.1-defining mutations so viewers can focus on mutations that are not yet fixed and may thus be informative for forecasting. This caveat aside, this visualization follows the convention of calling all mutations relative to the ancestral Wuhan-I strain of SARS-CoV-2. Note also that we filter mutations so that they are only displayed if they appear at or above a 2% frequency in either of the periods compared.
+
+<h3>Why wastewater monitoring?</h3>
+
+Typically, monitoring a community for pathogens has relied on individuals choosing (or having the opportunity) to test for particular pathogens. But for many pathogens, including SARS-CoV-2, infected individuals shed pathogen genetic material into wastewater, which can be sampled with relatively low effort. These samples can be analyzed not only for the presence or absence of pathogens, but also the abundance of that pathogen. They can also be used with genome sequencing technology to quantify the abundance of particular mutations. By comparing across sampling periods, this can indicate which mutations are on the rise and which are on the decline, and ultimately, forecast how the pathogen is evolving and whether that evolution should be of concern.
+
+The plot above shows the results of analyses we run each week. These analyses use all SARS-CoV-2 sequences sampled from wastewater in [NCBI](https://www.ncbi.nlm.nih.gov/)'s [Sequence Read Archive](https://www.ncbi.nlm.nih.gov/sra). The vertical and horizontal axes represent the abundance of mutations aggregated across a three-week period, with the more recent period on the vertical axis and the previous period on the horizontal axis.
+
+See [Acknowledgements](acknowledgements.qmd) for the contributors of these samples and statistics on their submissions.
+
+:::
+
+# Variant Data Browser
+
+##
+
+:::{.card title="Amino Acid Substitution Data" .flow}
+
+This searchable table displays all plotted mutations. It shows the nucleotide positions where changes occur, along with their corresponding gene region and standardized mutation naming conventions.
+
+:::
+
+
+## Variant Metadata {height=800 scrolling="false"}
+
+```{python}
+import itables as it
+import polars as pl
+
+it.options.maxBytes = "3048576"
+
+variant_data = pl.read_csv("./data/VariantPMsLong.tsv", separator="\t")
+it.init_notebook_mode(all_interactive=True)
+it.show(variant_data, column_filters="header", classes="display compact cell-border")
+```
+
+# Project Metadata Browser
+
+##
+
+:::{.card title="Wastewater Monitoring Project Metadata" .flow}
+
+Metadata file available for all recently reviewed submissions available <a href="../data/found_meta.tsv.gz" download="found_meta.tsv.gz">here</a>.
+
+:::
+
+## Project Metadata {height=800 scrolling="false"}
+
+```{python}
+project_data = pl.read_csv("./data/found_meta.tsv.gz", separator="\t", has_header=True, null_values=["NA", ">", "<"], schema_overrides={"Population":pl.Utf8})
+project_data = project_data.with_columns(
+    pl.col("Population").fill_null("N/A")
+)
+it.init_notebook_mode(all_interactive=True)
+it.show(project_data, column_filters="header", classes="display compact cell-border")
+```

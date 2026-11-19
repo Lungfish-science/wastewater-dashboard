@@ -2,6 +2,7 @@
 title: "Acknowledgements"
 format:
   dashboard:
+    theme: [default, lungfish.scss]
     scrolling: true
     css: styles.css
 ---
